@@ -13,14 +13,27 @@ class InitTest(unittest.TestCase):
         self.assertEqual(n0.parents, {})
         self.assertEqual(n0.children, {1:1})
         self.assertIsInstance(n0, node)
-        
-class NodeTest(unittest.testcase):
-    def setUp(self):
-        self.n0 = node(0, 'a', [], [1])
-    def test_get_id(self):
-        self.assertEqual(self.n0.get_id(), 0)
-    def test_get_label(self):
-        self.assertEqual(self.n0.get_label(), 'a')
+    def test_init_node2(self):
+        n1 = node (1, 'f', {0:1},{})
+        self.assertEqual(n1.id, 1)
+        self.assertEqual(n1.label, 'f')
+        self.assertEqual(n1.parents, {0:1})
+        self.assertEqual(n1.children, {})
+        self.assertIsInstance(n1, node)
+    def test_copy_node(self):
+        x = node (1, 'f', {0:1},{})
+        self.assertIsNot(x.copy(),x)
+    def test_copy_od(self):
+        n0 = node(0, 'a', {3:1, 4:1}, {1:1, 2:1})
+        n1 = node(1, 'b', {0:1}, {2:2, 5:1})
+        n2 = node(2, 'c', {0:1, 1:2}, {6:1})
+        i0 = node(3, 'i0', {}, {0:1})
+        i1 = node(4, 'i1', {}, {0:1})
+        o0 = node(5, 'o0', {1:1}, {})
+        o1 = node(6, 'o1', {2:1}, {})
+        G = open_digraph([3,4], [5,6], [n0,n1,n2,i0,i1,o0,o1])
+        self.assertIsNot(G.copy(),G)
+    
         
 if __name__ == '__main__': # the following code is called only when
     unittest.main() # precisely this file is run
