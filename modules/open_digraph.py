@@ -37,10 +37,16 @@ class node:
     def set_children_ids (self, l) : 
         self.children = l
     def add_child_id (self, id, mult) : 
-        self.children[id] = mult
-    def add_parents_id(self, id, mult) : 
-        self.parents[id] = mult
-    
+        if id in self.get_children_ids() :
+            self.children[id] += mult
+        else : 
+            self.children[id] = mult
+    def add_parents_id(self, id, mult) :
+        if id in self.get_parent_ids() :
+            self.parents[id] += mult
+        else : 
+            self.parents[id] = mult
+            
 class open_digraph: # for open directed graph
     def __init__(self, inputs, outputs, nodes):
         '''
@@ -98,6 +104,9 @@ class open_digraph: # for open directed graph
         self.outputs.append(n.get_id())
         self.nodes[n.get_id()] = n
 
+    def add_nodes(self, n ) : 
+        self.nodes[n.get_id()] = n
+
     '''fonction récursive qui renvoie le prochain indice libre'''
     def f(self,i) :
         for (id,n) in self.nodes.items() : 
@@ -120,14 +129,24 @@ class open_digraph: # for open directed graph
         for (src,tgt) in edges : 
             self.add_edge(src,tgt)
 
-    def add_node(self, label='', parents=None, children= None) : 
+    
+
+    def add_node(self, label,parents, children) : 
         if parents == None : 
             parents = {}
         if children == None : 
             children = {}
         ID = self.new_id()
-        n = node(ID,label, {parents:1}, {children:1})
-        self.add_edges([(ID,children), (parents,ID)])
+        n = node(ID,label, parents, children)
+        self.add_nodes(n)
+        if parents != {} : 
+            for (i,j) in parents.items() : 
+                for k in range (j) :
+                    self.add_edge(i, ID)
+        if children != {} : 
+            for (i,j) in children.items() : 
+                for k in range(j) : 
+                    self.add_edge(ID, i)
         return ID
 
 

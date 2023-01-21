@@ -104,6 +104,11 @@ class InitTest(unittest.TestCase):
         print(n2.get_children_ids())
         print(n1.get_children_ids())
         print(n0.get_parent_ids())
+        print('L ID du nouveau noeud :')
+        print(G.add_node('y', {2:1},{0:2} ))
+        print(n2.get_children_ids())
+        print(n0.get_parent_ids())
+
 
         
 if __name__ == '__main__': # the following code is called only when
