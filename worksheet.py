@@ -1,4 +1,6 @@
 from modules.open_digraph import *
+import inspect 
+
 
 n0 = node(0, 'a', {3:1, 4:1}, {1:1, 2:1})
 n1 = node(1, 'b', {0:1}, {2:2, 5:1})
@@ -13,3 +15,4 @@ G = open_digraph([3,4], [5,6], [n0,n1,n2,i0,i1,o0,o1])
 print(str(G))
 H = open_digraph.empty()
 print(str(H))
+# %%
