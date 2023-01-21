@@ -132,6 +132,12 @@ class open_digraph: # for open directed graph
     
 
     def add_node(self, label,parents, children) : 
+        ''' Méthode qui rajoute un noeud (avec label) au graphe (en utilisant un
+        nouvel id), et le lie avec les noeuds d’ids parents et children (avec leurs mul-
+        tiplicités respectives). Si les valeurs par défaut de parents et/ou children sont
+        None, leur attribuer un dictionnaire vide.
+        Output: id du nouveau noeud.
+        '''
         if parents == None : 
             parents = {}
         if children == None : 
