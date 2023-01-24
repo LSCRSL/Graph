@@ -136,6 +136,44 @@ class OpenDigraphTest (unittest.TestCase):
         print(n0.get_parent_ids())
         print(n0.get_parent_mult())
 
+        n = G.get_node_by_id(7)
+        print(n.get_children_ids())
+        print('On enlève une arete du n 7 au n 0 et une arete du n 1 au n 2 : ')
+        G.remove_edges([(7,0), (1,2)])
+        print(n.get_children_ids())
+
+        print('On enlève toutes les aretes du n 7 au n 0 : ')
+        G.remove__several_parallel_edges([7,0])
+        print(n.get_children_ids())
+
+        print('On enleve le n 7 et 6')
+        print(n2.get_children_ids())
+        print(n0.get_parent_ids())
+        G.remove_nodes_by_id([7,6])
+        print(n2.get_children_ids())
+        print(n0.get_parent_ids())
+
+    def dig_well_formed(self) : 
+        n0 = node(0, 'a', {3:1, 4:1}, {1:1, 2:1})
+        n1 = node(1, 'b', {0:1}, {2:2, 5:1})
+        n2 = node(2, 'c', {0:1,1:2}, {6:1})
+        i0 = node(3, 'i0', {}, {0:1})
+        i1 = node(4, 'i1', {}, {0:1})
+        o0 = node(5, 'o0', {1:1}, {})
+        o1 = node(6, 'o1', {2:1}, {})
+        G = open_digraph([3,4], [5,6], [n0,n1,n2,i0,i1,o0,o1])
+
+        self.assertIsEqual(G.assert_is_well_formed(), True)
+        o1.add_child_id(2,1)
+        self.assertIsNot(G.assert_is_well_formed(), True)
+        G.remove_edge(6,2)
+        G.add_edge(2,6)
+        self.assertIsNot(G.assert_is_well_formed(), True)
+        
+
+
+
+
         
 if __name__ == '__main__': # the following code is called only when
     unittest.main() # precisely this file is run
