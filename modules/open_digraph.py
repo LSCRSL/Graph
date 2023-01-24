@@ -105,6 +105,31 @@ class node:
             self.parents[id] += mult
         else : 
             self.parents[id] = mult
+
+    def remove_parent_once(self, id) : 
+        if id in self.get_parent_ids() : 
+            self.parents[id] -= 1
+            if self.parents[id] == 0 :
+                #il faut l'enlever dans la section enfant du noeud du parent
+                del self.parents[id]
+        
+    def remove_child_once(self, id) : 
+        if id in self.get_children_ids() : 
+            self.children[id] -= 1
+            if self.children[id] == 0 :
+                #ici on utilise .children c'est ok ?
+                del self.children[id]
+
+    def remove_parent_id(self, id) : 
+        #ca veut dire qu'on a un multiplicite = 0 ?
+        if id in self.get_parent_ids() : 
+            del self.parents[id]
+    
+    def remove_child_id(self, id) : 
+        if id in self.get_children_ids() :
+            del self.children[id]
+
+
             
 class open_digraph: # for open directed graph
     def __init__(self, inputs, outputs, nodes):
@@ -278,6 +303,74 @@ class open_digraph: # for open directed graph
                 for k in range(j) : 
                     self.add_edge(ID, i)
         return ID
+
+    def remove_node(self, id) : 
+        if id in self.get_input_ids() : 
+            self.inputs.remove(id)
+        if id in self.get_output_ids() : 
+            self.outputs.remove(id)
+        del self.nodes[id]
+
+    def remove_edge(self, src, tgt) : 
+        l = self.get_node_by_ids([src,tgt])
+        SRC = l[0]
+        TGT = l[1]
+        SRC.remove_child_once(tgt)
+        TGT.remove_parent_once(src)
+        if SRC.get_parents() == {} and SRC.get_children() == {} :
+            self.remove_node(src)
+        if TGT.get_parents() == {} and TGT.get_children() == {} :
+            self.remove_node(tgt)
+
+    def remove_parallel_edges(self, src, tgt) : 
+        l = self.get_node_by_ids([src,tgt])
+        SRC = l[0]
+        TGT = l[1]
+        SRC.remove_child_id()
+        TGT.remove_parent_id()
+        #supprimer un ou les deux noeuds s'ils ne sont plus réliés par des aretes au graphe
+        if SRC.get_parents() == {} and SRC.get_children() == {} :
+            self.remove_node(src)
+        if TGT.get_parents() == {} and TGT.get_children() == {} :
+            self.remove_node(tgt)
+
+    def remove_node_by_id(self, id) : 
+        #on a l'id du noeud en argument ? 
+        n = self.get_node_by_id(id)
+        for p in n.get_parents_ids() :
+            self.remove_parallel_edges(p, id)
+        for c in n.get_children_ids() : 
+            self.remove_parallel_edges(id, c)
+        self.remove_node(id)
+
+    def remove_edges(self, l_p_id) : 
+        for (src,tgt) in l_p_id : 
+            self.remove_edge(src, tgt)
+    
+    def remove_several_parallel_edges(self, l_p_id) : 
+        for (src,tgt) in l_p_id : 
+            self.remove_parallel_edges(src,tgt)
+    
+    def remove_nodes_by_id(self, l_id) : 
+        for id in l_id : 
+            self.remove_node_by_id(id)
+    
+    def is_well_formed(self) : 
+        inp = self.get_input_ids()
+        outp = self.get_output_ids()
+        n_id = self.get_node_ids() 
+        for i in inp : 
+            if inp not in n_id : 
+                return False
+        for o in outp : 
+            if outp not in n_id : 
+                return False
+
+        
+
+
+
+    
 
 
 
