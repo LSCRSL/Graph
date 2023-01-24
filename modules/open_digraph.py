@@ -32,21 +32,36 @@ class node:
         output: int; 
         '''
         return self.id
+
     def get_label(self) :
         '''
         output: string; label
         '''
         return self.label
+
     def get_parent_ids(self) : 
         '''
         output: int dict; 
         '''
         return self.parents.keys()
+
     def get_children_ids(self) : 
         '''
         output: int dict; 
         '''
         return self.children.keys()
+    
+    def get_parent_mult(self) : 
+        '''
+        output: int dict; 
+        '''
+        return self.parents.values()
+
+    def get_children_mult(self) : 
+        '''
+        output: int dict; 
+        '''
+        return self.children.values()
 
     #les setters
     def set_id (self,x) : 
@@ -54,21 +69,25 @@ class node:
         input: int ; 
         '''
         self.id = x
+
     def set_label(self, x) :
         '''
         input: string ; 
         '''
         self.label = x
+
     def set_parent_ids(self, l) : 
         '''
         input: int list; 
         '''
         self.parents = l
+
     def set_children_ids (self, l) : 
         '''
         input: int list; 
         '''
         self.children = l
+
     def add_child_id (self, id, mult) : 
         '''
         inputs: int, int; id, multiplicité
@@ -77,6 +96,7 @@ class node:
             self.children[id] += mult
         else : 
             self.children[id] = mult
+
     def add_parents_id(self, id, mult) :
         '''
         inputs: int, int; id, multiplicité
@@ -97,48 +117,57 @@ class open_digraph: # for open directed graph
         self.inputs = inputs
         self.outputs = outputs
         self.nodes = {node.id:node for node in nodes} # self.nodes: <int,node> dict
+
     def __str__(self):
         '''
         output: string; les noeuds du graph et leurs attributs
         '''
         return self.nodes.__repr__()
+
     @classmethod
     def empty(cls):
         '''
         output: open_digraph; graph vide
         '''
-        return cls([],[],[])     
+        return cls([],[],[]) 
+
     def copy(self):
         '''
         output: open_digraph; copie du graph
         '''
         return (open_digraph(self.inputs, self.outputs, self.nodes.values()))
+
     #les getters
     def get_input_ids(self) : 
         '''
         output: int list; ids des parents
         '''
         return self.inputs
+
     def get_output_ids(self) : 
         '''
         output: int list; ids des enfants
         '''
         return self.outputs
+
     def get_id_node_map(self) :
         '''
         output: int->node dict; dictionnaire id:node
         '''
         return self.nodes
+
     def get_node(self) : 
         '''
         output: node list; liste des noeuds
         '''
-        return [n for (id,n) in self.nodes.items()]    
+        return [n for (id,n) in self.nodes.items()]
+
     def get_node_ids(self) : 
         '''
         output: int dict; 
         '''
         return self.nodes.keys()
+
     def get_node_by_id(self,i) : 
         '''
         input: int; id
@@ -147,6 +176,7 @@ class open_digraph: # for open directed graph
         for (id,n) in self.get_id_node_map().items() :
             if id == i :
                 return n
+
     def get_node_by_ids(self, l) :
         '''
         input: int list; liste d'ids
@@ -195,7 +225,7 @@ class open_digraph: # for open directed graph
         '''
         output: int; méthode qui renvoie un indice non-utilisé dans le graphe
         '''
-        def f(self,i) :
+        def f(i) :
             '''
             input: int; id
             output: int; fonction récursive qui renvoie le prochain indice libre
@@ -203,9 +233,9 @@ class open_digraph: # for open directed graph
             for (id,n) in self.nodes.items() : 
                 if (i == id) : 
                     i+=1
-                    self.f(i)
+                    f(i)
             return i
-        return self.f(0)
+        return f(0)
 
     def add_edge(self,src,tgt) : 
         '''
