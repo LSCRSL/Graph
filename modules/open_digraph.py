@@ -342,8 +342,8 @@ class open_digraph: # for open directed graph
         l = self.get_node_by_ids([src,tgt])
         SRC = l[0]
         TGT = l[1]
-        SRC.remove_child_id()
-        TGT.remove_parent_id()
+        SRC.remove_child_id(tgt)
+        TGT.remove_parent_id(src)
 
     def remove_node_by_id(self, id) : 
         '''
@@ -419,8 +419,23 @@ class open_digraph: # for open directed graph
         if not(self.is_well_formed()) :
             raise ValueError
         
+    def add_input_node(self,tgt) :
+        '''
+        input: int; id du noeud vers lequel le nouveau noeud ajoputé au graphe pointe
+        '''
+        nid=self.new_id()
+        nnode= node(nid,'',{},{tgt:1})
+        self.add_node(nnode)
         
+    def add_output_node(self,src) :
+        '''
+        input: int; id du noeud qui pointe vers un nouveau noeud ajouté au graphe
+        '''
+        nid=self.new_id()
+        nnode= node(nid,'',{src:1},{})
+        self.add_node(nnode)
         
+
 
 
 
