@@ -16,6 +16,7 @@ G = open_digraph([3,4], [5,6], [n0,n1,n2,i0,i1,o0,o1])
 print(str(G))
 H = open_digraph.empty()
 print(str(H))
+G.assert_is_well_formed()
 
 # %% TP1 exercice 9
 print("\nMéthodes de la classe 'node':")

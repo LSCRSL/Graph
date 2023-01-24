@@ -351,9 +351,10 @@ class open_digraph: # for open directed graph
         '''
         #on a l'id du noeud en argument ? 
         n = self.get_node_by_id(id)
-        for p in n.get_parents_ids() :
+    
+        for p in list(n.get_parent_ids()) :
             self.remove_parallel_edges(p, id)
-        for c in n.get_children_ids() : 
+        for c in list(n.get_children_ids()) : 
             self.remove_parallel_edges(id, c)
         self.remove_node(id)
 
@@ -385,30 +386,39 @@ class open_digraph: # for open directed graph
         inp = self.get_input_ids()
         outp = self.get_output_ids()
         n_id = self.get_node_ids() 
+        NODE = self.get_id_node_map()
         for i in inp : 
             if i not in n_id : 
+                print('OK1')
                 return False
             n=self.get_node_by_id(i)
-            mc=n.get_children_mult()
-            if len(n.get_parent_mult())!=0 or len(mc)!=1 or mc.values()!=1:
+            mc= list(n.get_children_mult())
+            if len(n.get_parent_mult())!=0 or len(mc)!=1 or mc[0]!=1:
+                print('OK2')
                 return False
         for o in outp : 
-            if o not in n_id : 
+            if o not in n_id :
+                print('OK3')
                 return False
-            n=self.get_node_by_id(i)
-            mp=n.get_parent_mult()
-            if len(n.get_children_mult())!=0 or len(mp)!=1 or mp.values()!=1:
+            n=self.get_node_by_id(o)
+            mp=list(n.get_parent_mult())
+            if len(n.get_children_mult())!=0 or len(mp)!=1 or mp[0]!=1:
+                print('OK4')
                 return False
-        for j in n_id:
-            if j.keys() != j.values().get_id() :
+        #4e point
+        for (k,v) in NODE.items(): 
+            if k != v.get_id() :
+                print('OK5')
                 return False
             try:
                 for i in n.get_children_ids():
                     mj=j.children[i]
                     mi=i.parent[j.get_id()]
                     if mi!=mj :
+                        print('OK6')
                         return False
             except:
+                print('OK7')
                 return False
         return True
             
@@ -423,17 +433,18 @@ class open_digraph: # for open directed graph
         '''
         input: int; id du noeud vers lequel le nouveau noeud ajoputé au graphe pointe
         '''
-        nid=self.new_id()
-        nnode= node(nid,'',{},{tgt:1})
-        self.add_node(nnode)
+        x = self.add_node('',{},{tgt:1})
+        if not(self.is_well_formed()) : 
+            self.remove_node_by_id(x)
+
         
     def add_output_node(self,src) :
         '''
         input: int; id du noeud qui pointe vers un nouveau noeud ajouté au graphe
         '''
-        nid=self.new_id()
-        nnode= node(nid,'',{src:1},{})
-        self.add_node(nnode)
+        x = self.add_node('',{src:1},{})
+        if not(self.is_well_formed()) : 
+            self.remove_node_by_id(x)
         
 
 

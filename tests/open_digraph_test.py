@@ -153,7 +153,7 @@ class OpenDigraphTest (unittest.TestCase):
         print(n2.get_children_ids())
         print(n0.get_parent_ids())
 
-    def dig_well_formed(self) : 
+    def test_dig_well_formed(self) : 
         n0 = node(0, 'a', {3:1, 4:1}, {1:1, 2:1})
         n1 = node(1, 'b', {0:1}, {2:2, 5:1})
         n2 = node(2, 'c', {0:1,1:2}, {6:1})
@@ -162,22 +162,16 @@ class OpenDigraphTest (unittest.TestCase):
         o0 = node(5, 'o0', {1:1}, {})
         o1 = node(6, 'o1', {2:1}, {})
         G = open_digraph([3,4], [5,6], [n0,n1,n2,i0,i1,o0,o1])
+        self.assertEqual(True, G.is_well_formed())
         G.add_input_node(1)
-        
-
-        G.assert_is_well_formed()
-        o1.add_child_id(2,1)
-        #doit retourner une erreur
-        G.assert_is_well_formed()
+        self.assertEqual(True, G.is_well_formed())
+        o1.add_parents_id(2,1)
+        self.assertEqual(False, G.is_well_formed())
         G.remove_edge(6,2)
         G.add_edge(2,6)
-        #doit retourner une erreur
-        G.assert_is_well_formed()
         G.remove_edge(2,6)
         G.add_input_node(1)
-        G.assert_is_well_formed()
         G.add_output_node(2)
-        G.assert_is_well_formed()
 
 
 
