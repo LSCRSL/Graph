@@ -107,6 +107,9 @@ class node:
             self.parents[id] = mult
 
     def remove_parent_once(self, id) : 
+        '''
+        input: int; id du parent pour lequel on retire une multiplicité
+        '''
         if id in self.get_parent_ids() : 
             self.parents[id] -= 1
             if self.parents[id] == 0 :
@@ -114,6 +117,9 @@ class node:
                 del self.parents[id]
         
     def remove_child_once(self, id) : 
+        '''
+        input: int; id de l'enfant pour lequel on retire une multiplicité 
+        '''
         if id in self.get_children_ids() : 
             self.children[id] -= 1
             if self.children[id] == 0 :
@@ -121,11 +127,17 @@ class node:
                 del self.children[id]
 
     def remove_parent_id(self, id) : 
+        '''
+        input: int; id du parent pour lequel on retire toutes les multiplicités
+        '''
         #ca veut dire qu'on a un multiplicite = 0 ?
         if id in self.get_parent_ids() : 
             del self.parents[id]
     
     def remove_child_id(self, id) : 
+        '''
+        input: int; id de l'enfant pour lequel on retire toutes les multiplicités
+        '''
         if id in self.get_children_ids() :
             del self.children[id]
 
@@ -305,6 +317,9 @@ class open_digraph: # for open directed graph
         return ID
 
     def remove_node(self, id) : 
+        '''
+        input: int; id du noeud à retirer
+        '''
         if id in self.get_input_ids() : 
             self.inputs.remove(id)
         if id in self.get_output_ids() : 
@@ -312,6 +327,9 @@ class open_digraph: # for open directed graph
         del self.nodes[id]
 
     def remove_edge(self, src, tgt) : 
+        '''
+        inputs: int, int; id source et id cible de l'arête à retirer
+        '''
         l = self.get_node_by_ids([src,tgt])
         SRC = l[0]
         TGT = l[1]
@@ -323,6 +341,9 @@ class open_digraph: # for open directed graph
             self.remove_node(tgt)
 
     def remove_parallel_edges(self, src, tgt) : 
+        '''
+        inputs: int, int; id source et id cible des arêtes à retirer
+        '''
         l = self.get_node_by_ids([src,tgt])
         SRC = l[0]
         TGT = l[1]
@@ -335,6 +356,9 @@ class open_digraph: # for open directed graph
             self.remove_node(tgt)
 
     def remove_node_by_id(self, id) : 
+        '''
+        input: int; id du noeud pour lequel on retire les arêtes associées
+        '''
         #on a l'id du noeud en argument ? 
         n = self.get_node_by_id(id)
         for p in n.get_parents_ids() :
@@ -344,18 +368,30 @@ class open_digraph: # for open directed graph
         self.remove_node(id)
 
     def remove_edges(self, l_p_id) : 
+        '''
+        input: (int*int) list; liste des couples id source/id target qui caractérisent les arêtes à retirer pour une multiplicité
+        '''
         for (src,tgt) in l_p_id : 
             self.remove_edge(src, tgt)
     
     def remove_several_parallel_edges(self, l_p_id) : 
+        '''
+        input: (int*int) list; liste des couples id source/id target qui caractérisent les arêtes à retirer pour toutes les multiplicités
+        '''
         for (src,tgt) in l_p_id : 
             self.remove_parallel_edges(src,tgt)
     
     def remove_nodes_by_id(self, l_id) : 
+        '''
+        input: int list; liste des id des noeuds à retirer
+        '''
         for id in l_id : 
             self.remove_node_by_id(id)
     
     def is_well_formed(self) : 
+        '''
+        output: bool; true si le graphe est bien formé, false sinon
+        '''
         inp = self.get_input_ids()
         outp = self.get_output_ids()
         n_id = self.get_node_ids() 
@@ -366,7 +402,9 @@ class open_digraph: # for open directed graph
             if outp not in n_id : 
                 return False
 
-        
+'''
+output: error_type; une erreur est levée si le graph est mal formé
+'''      
 
 
 
