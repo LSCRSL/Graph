@@ -335,11 +335,6 @@ class open_digraph: # for open directed graph
         TGT = l[1]
         SRC.remove_child_once(tgt)
         TGT.remove_parent_once(src)
-        if SRC.get_parents() == {} and SRC.get_children() == {} :
-            self.remove_node(src)
-        if TGT.get_parents() == {} and TGT.get_children() == {} :
-            self.remove_node(tgt)
-
     def remove_parallel_edges(self, src, tgt) : 
         '''
         inputs: int, int; id source et id cible des arêtes à retirer
@@ -349,11 +344,6 @@ class open_digraph: # for open directed graph
         TGT = l[1]
         SRC.remove_child_id()
         TGT.remove_parent_id()
-        #supprimer un ou les deux noeuds s'ils ne sont plus réliés par des aretes au graphe
-        if SRC.get_parents() == {} and SRC.get_children() == {} :
-            self.remove_node(src)
-        if TGT.get_parents() == {} and TGT.get_children() == {} :
-            self.remove_node(tgt)
 
     def remove_node_by_id(self, id) : 
         '''
@@ -396,15 +386,41 @@ class open_digraph: # for open directed graph
         outp = self.get_output_ids()
         n_id = self.get_node_ids() 
         for i in inp : 
-            if inp not in n_id : 
+            if i not in n_id : 
+                return False
+            n=self.get_node_by_id(i)
+            mc=n.get_children_mult()
+            if len(n.get_parent_mult())!=0 or len(mc)!=1 or mc.values()!=1:
                 return False
         for o in outp : 
-            if outp not in n_id : 
+            if o not in n_id : 
                 return False
-
-'''
-output: error_type; une erreur est levée si le graph est mal formé
-'''      
+            n=self.get_node_by_id(i)
+            mp=n.get_parent_mult()
+            if len(n.get_children_mult())!=0 or len(mp)!=1 or mp.values()!=1:
+                return False
+        for j in n_id:
+            if j.keys() != j.values().get_id() :
+                return False
+            try:
+                for i in n.get_children_ids():
+                    mj=j.children[i]
+                    mi=i.parent[j.get_id()]
+                    if mi!=mj :
+                        return False
+            except:
+                return False
+        return True
+            
+    def assert_is_well_formed(self) :
+        '''
+        output: error_type; une erreur est levée si le graph est mal formé
+        '''
+        if not(self.is_well_formed()) :
+            raise ValueError
+        
+        
+        
 
 
 
