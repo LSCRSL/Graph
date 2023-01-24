@@ -143,7 +143,7 @@ class OpenDigraphTest (unittest.TestCase):
         print(n.get_children_ids())
 
         print('On enlève toutes les aretes du n 7 au n 0 : ')
-        G.remove__several_parallel_edges([7,0])
+        G.remove_several_parallel_edges([(7,0)])
         print(n.get_children_ids())
 
         print('On enleve le n 7 et 6')
@@ -162,14 +162,23 @@ class OpenDigraphTest (unittest.TestCase):
         o0 = node(5, 'o0', {1:1}, {})
         o1 = node(6, 'o1', {2:1}, {})
         G = open_digraph([3,4], [5,6], [n0,n1,n2,i0,i1,o0,o1])
+        G.add_input_node(1)
+        
 
-        self.assertIsEqual(G.assert_is_well_formed(), True)
+        G.assert_is_well_formed()
         o1.add_child_id(2,1)
-        self.assertIsNot(G.assert_is_well_formed(), True)
+        #doit retourner une erreur
+        G.assert_is_well_formed()
         G.remove_edge(6,2)
         G.add_edge(2,6)
-        self.assertIsNot(G.assert_is_well_formed(), True)
-        
+        #doit retourner une erreur
+        G.assert_is_well_formed()
+        G.remove_edge(2,6)
+        G.add_input_node(1)
+        G.assert_is_well_formed()
+        G.add_output_node(2)
+        G.assert_is_well_formed()
+
 
 
 
