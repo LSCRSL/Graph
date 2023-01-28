@@ -427,12 +427,6 @@ class open_digraph: # for open directed graph
 
         Vérifie si l'ajout de l'input est possible, si oui effectue l'ajout, si non renvoie une erreur
         '''
-        '''
-        x = self.add_node('',{},{tgt:1})
-        if not(self.is_well_formed()) : 
-            print(f'OK')
-            self.remove_node_by_id(x)
-        '''
         if (tgt in self.get_input_ids() or (tgt in self.get_output_ids())) :
             raise ValueError
         else : 
@@ -449,13 +443,6 @@ class open_digraph: # for open directed graph
 
         Vérifie si l'ajout de l'output est possible, si oui effectue l'ajout, si non renvoie une erreur
         '''
-        '''
-        x = self.add_node('',{src:1},{})
-        if not(self.is_well_formed()) : 
-            print('OKk')
-            self.remove_node_by_id(x)
-        '''
-
         if (src in self.get_input_ids() or (src in self.get_output_ids())) : 
             raise ValueError
         else : 
