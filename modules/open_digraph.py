@@ -130,7 +130,6 @@ class node:
         '''
         input: int; id du parent pour lequel on retire toutes les multiplicités
         '''
-        #ca veut dire qu'on a un multiplicite = 0 ?
         if id in self.get_parent_ids() : 
             del self.parents[id]
     
@@ -349,7 +348,6 @@ class open_digraph: # for open directed graph
         '''
         input: int; id du noeud pour lequel on retire les arêtes associées
         '''
-        #on a l'id du noeud en argument ? 
         n = self.get_node_by_id(id)
     
         for p in list(n.get_parent_ids()) :
