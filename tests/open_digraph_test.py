@@ -41,27 +41,36 @@ class InitTest(unittest.TestCase):
 
 class NodeTest(unittest.TestCase):
     '''
-    Classe pour tester les méthodes de node
+    Classe pour tester les méthodes de 
+    la classe node
     '''
     def test_copy_node(self):
+        '''
+        Méthode pour tester la fonction copy 
+        de la classe node 
+        '''
         x = node (1, 'f', {0:1},{})
         self.assertIsNot(x.copy(),x)
 
     def test_get_node(self) : 
+        '''
+        Méthode pour tester les getters de la classe node
+        '''
         N = node(0, 'a', {3:1, 4:1}, {1:1, 2:1})
         self.assertEqual(N.id, N.get_id())
         self.assertEqual(N.label, N.get_label())
         self.assertEqual(N.parents.keys(), N.get_parent_ids())
         self.assertEqual(N.children.keys(), N.get_children_ids())
-
+    
     def test_set_node(self) : 
+        '''
+        Méthode pour tester les setters de la classe node
+        '''
         N = node(0, 'a', {3:1, 4:1}, {1:1, 2:1})
         N.set_id(1)
         N.set_label('f')
         N.set_children_ids({5:1,6:1,7:1})
         N.set_parent_ids({0:1,2:1})
-        print(N.get_id())
-        print(N.get_label())
         print(N.get_children_ids())
         print(N.get_parent_ids())
         N.add_child_id(9,1)
@@ -73,9 +82,12 @@ class NodeTest(unittest.TestCase):
 
 class OpenDigraphTest (unittest.TestCase):
     '''
-    Classe pour tester les méthodes de open_digraph
+    Classe pour tester les méthodes de la classe open_digraph
     '''
     def test_copy_od(self):
+        '''
+        Méthode pour tester la fonction copy de la classe open_digraph 
+        '''
         n0 = node(0, 'a', {3:1, 4:1}, {1:1, 2:1})
         n1 = node(1, 'b', {0:1}, {2:2, 5:1})
         n2 = node(2, 'c', {0:1,1:2}, {6:1})
@@ -87,6 +99,9 @@ class OpenDigraphTest (unittest.TestCase):
         self.assertIsNot(G.copy(),G)
     
     def test_get_dig(self) : 
+        '''
+        Méthode pour tester les getters de la classe open_digraph
+        '''
         n0 = node(0, 'a', {2:1}, {1:1})
         n1 = node(1, 'b', {0:1}, {})
         i0 = node(2, 'c', {}, {0:1})
@@ -99,6 +114,9 @@ class OpenDigraphTest (unittest.TestCase):
         self.assertEqual([n0,n1,i0], G.get_node_by_ids([0,1,2]))
 
     def test_set_dig(self) : 
+        '''
+        Méthode pour tester les setters de la classe open_digraph
+        '''
         G = open_digraph.empty()
         n0 = node(0, 'a', {2:1}, {1:1})
         n1 = node(1, 'b', {0:1}, {})
@@ -111,6 +129,10 @@ class OpenDigraphTest (unittest.TestCase):
         self.assertEqual([i0,n1], G.get_node())
 
     def test_init_dig(self) : 
+        '''
+        Méthode pour tester les fonctions générales de la class open_digraph
+        fonction TP1
+        '''
         n0 = node(0, 'a', {3:1, 4:1}, {1:1, 2:1})
         n1 = node(1, 'b', {0:1}, {2:2, 5:1})
         n2 = node(2, 'c', {0:1,1:2}, {6:1})
@@ -119,17 +141,7 @@ class OpenDigraphTest (unittest.TestCase):
         o0 = node(5, 'o0', {1:1}, {})
         o1 = node(6, 'o1', {2:1}, {})
         G = open_digraph([3,4], [5,6], [n0,n1,n2,i0,i1,o0,o1])
-        print (f'Nouvel ID trouvé : {G.new_id()}')
-        print('Avant avoir rajouté une arête: ')
-        print(n2.get_children_ids())
-        print(n1.get_children_ids())
-        print(n0.get_parent_ids())
-        G.add_edges([(2,0),(1,0)] )
-        print('Apres avoir rajouté une arête:')
-        print(n2.get_children_ids())
-        print(n1.get_children_ids())
-        print(n0.get_parent_ids())
-        print('L ID du nouveau noeud :')
+        print('L ID du nouveau noeud rajouté:')
         print(G.add_node('y', {2:1},{0:2} ))
         print(n2.get_children_ids())
         print(n2.get_children_mult())
@@ -138,22 +150,23 @@ class OpenDigraphTest (unittest.TestCase):
 
         n = G.get_node_by_id(7)
         print(n.get_children_ids())
-        print('On enlève une arete du n 7 au n 0 et une arete du n 1 au n 2 : ')
-        G.remove_edges([(7,0), (1,2)])
-        print(n.get_children_ids())
-
         print('On enlève toutes les aretes du n 7 au n 0 : ')
         G.remove_several_parallel_edges([(7,0)])
         print(n.get_children_ids())
 
         print('On enleve le n 7 et 6')
-        print(n2.get_children_ids())
-        print(n0.get_parent_ids())
         G.remove_nodes_by_id([7,6])
         print(n2.get_children_ids())
         print(n0.get_parent_ids())
 
+
     def test_dig_well_formed(self) : 
+        '''
+        Méthode pour tester la fonction is_well_formed, 
+        et vérifier que l'ajout d'inputs et d'outputs
+        est correct
+        
+        '''
         n0 = node(0, 'a', {3:1, 4:1}, {1:1, 2:1})
         n1 = node(1, 'b', {0:1}, {2:2, 5:1})
         n2 = node(2, 'c', {0:1,1:2}, {6:1})
@@ -162,16 +175,17 @@ class OpenDigraphTest (unittest.TestCase):
         o0 = node(5, 'o0', {1:1}, {})
         o1 = node(6, 'o1', {2:1}, {})
         G = open_digraph([3,4], [5,6], [n0,n1,n2,i0,i1,o0,o1])
-        self.assertEqual(True, G.is_well_formed())
+        G.assert_is_well_formed()
         G.add_input_node(1)
-        self.assertEqual(True, G.is_well_formed())
+        G.assert_is_well_formed()
+        print('les id des parents : ')
+        print(G.get_input_ids())
         o1.add_parents_id(2,1)
         self.assertEqual(False, G.is_well_formed())
-        G.remove_edge(6,2)
-        G.add_edge(2,6)
         G.remove_edge(2,6)
-        G.add_input_node(1)
+        G.assert_is_well_formed()
         G.add_output_node(2)
+        G.assert_is_well_formed()
 
 
 

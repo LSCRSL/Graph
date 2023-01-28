@@ -238,19 +238,17 @@ class open_digraph: # for open directed graph
             self.outputs.append(n.get_id())
             self.nodes[n.get_id()] = n
 
-    def add_input_id(self, n) : 
+    def add_input_id(self, id) : 
         ''' 
-        input: node ; n un noeud
+        input: int ; id l'id du noeud
         '''
-        self.inputs.append(n.get_id())
-        self.nodes[n.get_id()] = n
+        self.inputs.append(id)
 
-    def add_output_id(self, n) : 
+    def add_output_id(self, id) : 
         ''' 
-        input: node ; n un noeud
+        input: int ; id l'id du noeud
         '''
-        self.outputs.append(n.get_id())
-        self.nodes[n.get_id()] = n
+        self.outputs.append(id)
 
     def add_nodes(self, n ) : 
         ''' 
@@ -299,12 +297,13 @@ class open_digraph: # for open directed graph
         None, leur attribuer un dictionnaire vide.
         Output: id du nouveau noeud.
         '''
+        
         if parents == None : 
             parents = {}
-        if children == None : 
+        if children == None :
             children = {}
-        ID = self.new_id()
-        n = node(ID,label, parents, children)
+        ID = self.new_id()  
+        n = node(ID,label, {}, {})
         self.add_nodes(n)
         if parents != {} : 
             for (i,j) in parents.items() : 
@@ -335,6 +334,7 @@ class open_digraph: # for open directed graph
         TGT = l[1]
         SRC.remove_child_once(tgt)
         TGT.remove_parent_once(src)
+
     def remove_parallel_edges(self, src, tgt) : 
         '''
         inputs: int, int; id source et id cible des arêtes à retirer
@@ -375,13 +375,14 @@ class open_digraph: # for open directed graph
     def remove_nodes_by_id(self, l_id) : 
         '''
         input: int list; liste des id des noeuds à retirer
+         
         '''
         for id in l_id : 
             self.remove_node_by_id(id)
     
     def is_well_formed(self) : 
         '''
-        output: bool; true si le graphe est bien formé, false sinon
+        output: bool; renvoie true si le graphe est bien formé, false sinon
         '''
         inp = self.get_input_ids()
         outp = self.get_output_ids()
@@ -389,36 +390,29 @@ class open_digraph: # for open directed graph
         NODE = self.get_id_node_map()
         for i in inp : 
             if i not in n_id : 
-                print('OK1')
                 return False
             n=self.get_node_by_id(i)
             mc= list(n.get_children_mult())
             if len(n.get_parent_mult())!=0 or len(mc)!=1 or mc[0]!=1:
-                print('OK2')
                 return False
         for o in outp : 
             if o not in n_id :
-                print('OK3')
                 return False
             n=self.get_node_by_id(o)
             mp=list(n.get_parent_mult())
             if len(n.get_children_mult())!=0 or len(mp)!=1 or mp[0]!=1:
-                print('OK4')
                 return False
         #4e point
         for (k,v) in NODE.items(): 
             if k != v.get_id() :
-                print('OK5')
                 return False
             try:
                 for i in n.get_children_ids():
                     mj=j.children[i]
                     mi=i.parent[j.get_id()]
                     if mi!=mj :
-                        print('OK6')
                         return False
             except:
-                print('OK7')
                 return False
         return True
             
@@ -432,19 +426,43 @@ class open_digraph: # for open directed graph
     def add_input_node(self,tgt) :
         '''
         input: int; id du noeud vers lequel le nouveau noeud ajoputé au graphe pointe
+
+        Vérifie si l'ajout de l'input est possible, si oui effectue l'ajout, si non renvoie une erreur
+        '''
         '''
         x = self.add_node('',{},{tgt:1})
         if not(self.is_well_formed()) : 
+            print(f'OK')
             self.remove_node_by_id(x)
+        '''
+        if (tgt in self.get_input_ids() or (tgt in self.get_output_ids())) :
+            raise ValueError
+        else : 
+            x = self.add_node('', {}, {tgt:1})
+            self.add_input_id(x)
+            
+
+
 
         
     def add_output_node(self,src) :
         '''
         input: int; id du noeud qui pointe vers un nouveau noeud ajouté au graphe
+
+        Vérifie si l'ajout de l'output est possible, si oui effectue l'ajout, si non renvoie une erreur
+        '''
         '''
         x = self.add_node('',{src:1},{})
         if not(self.is_well_formed()) : 
+            print('OKk')
             self.remove_node_by_id(x)
+        '''
+
+        if (src in self.get_input_ids() or (src in self.get_output_ids())) : 
+            raise ValueError
+        else : 
+            x = self.add_node('', {src:1}, {})
+            self.add_output_id(x)
         
 
 
