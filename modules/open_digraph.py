@@ -296,7 +296,6 @@ class open_digraph: # for open directed graph
         None, leur attribuer un dictionnaire vide.
         Output: id du nouveau noeud.
         '''
-        
         if parents == None : 
             parents = {}
         if children == None :
@@ -433,9 +432,6 @@ class open_digraph: # for open directed graph
             x = self.add_node('', {}, {tgt:1})
             self.add_input_id(x)
             
-
-
-
         
     def add_output_node(self,src) :
         '''
