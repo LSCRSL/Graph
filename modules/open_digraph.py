@@ -406,8 +406,8 @@ class open_digraph: # for open directed graph
                 return False
             try:
                 for i in n.get_children_ids():
-                    mj=j.children[i]
-                    mi=i.parent[j.get_id()]
+                    mj=v.children[i]
+                    mi=i.parent[v.get_id()]
                     if mi!=mj :
                         return False
             except:
@@ -487,6 +487,10 @@ def affiche_matrix(mat) :
     print(']')
 
 def random_symetric_int_matrix(n, bound,null_diag=True) : 
+    '''
+    input: int, int, bool; taille de la matrice, limite, paramètre indiquant si la diagonale est nulle
+    output: int list list; matrice symetrique de taille n contenant des entiers compris entre 0 et n
+    '''
     l = []
     if null_diag : 
         l.append(random_int_list(n,bound,0))
@@ -511,24 +515,65 @@ def random_symetric_int_matrix(n, bound,null_diag=True) :
             l.append(t)
     return l
 
+def random_oriented_int_matrix(n, bound, null_diag=True):
+    '''
+    input: int, int, bool; taille, valeur max, diagonale nulle
+    ouput: int list list; 
+    '''
+    l = random_int_matrix(n,bound, null_diag)
+    for i in range(n):
+        for k in range(n):
+            if l[i][k]!=0:
+                l[k][i]=0
+    return l
 
+def random_triangular_int_matrix(n, bound, null_diag=True):
+    '''
+    input: int, int, bool; taille, valeur max, diagonale nulle
+    ouput: int list list; 
+    '''
+    l = random_oriented_int_matrix(n,bound, null_diag=True)
+    for i in range(n):
+        for j in range(n):
+            if i>j:
+                l[i][j]=0
+    return l
 
-
+def graph_from_adjacency_matrix(mat):
+    '''
+    input: int list list; matrice à convertir en graphe
+    output: open_digraph; grphe obtenu à partir de la matrice
+    '''
+    nodelist=[]
+    for i in range(len(mat)): #il y a n noeuds
+        nwnd=node(i, '', {}, {}) #on init le ième noeud
+        for j in range(len(mat)):  #on parcourt les colonnes d'une même ligne
+            if mat[i][j]!=0: #si !=0 alors le noeud a un enfant d'id le num de colonne
+                nwnd.add_child_id(j,mat[i][j])  #on ajoute l'enfant
+            if j==i: #on se place dans la ième colonne pour parcourir les parents
+                for l in len(mat):  #on parcourt les lignes de cette colonne
+                    if mat[l][j]!=0: #si !=0 alors l est l'id du parent du noeud i
+                        nwnd.add_parents_id(l,mat[l][j]) #on ajoute le parent
+        nodelist.append(nwnd)
+    return open_digraph([],[],nodelist)
     
-
-
-    
-
-        
-
-
-
-
-    
-
-
-
-
-
-
-    
+@classmethod
+def random(cls,n, bound, inputs=0, outputs=0, form="free"):
+    '''
+    inputs: int, int, int list, int list, string;
+    taille, nb arrêtes max par noeud, v inputs, outputs, option parmis:
+    free, DAG, oriented, loop-free, unidrected et loop-free undirected
+    outputs: open_digraph: graphe à n noeuds respectant l'option choisie
+    '''
+    if form=="free":
+        return random_int_matrix(n, bound,False)
+    elif form=="DAG":
+        return random_triangular_int_matrix(n,bound)
+    elif form=="oriented":
+        return random_oriented_int_matrix(n, bound)
+    elif form=="loop-free":
+        return random_int_matrix(n, bound)
+    elif form=="undirected":
+        return random_symetric_int_matrix(n,bound,False)
+    elif form=="loop-free undirected":
+        return random_symetric_int_matrix(n,bound)

@@ -196,6 +196,9 @@ class OpenDigraphTest (unittest.TestCase):
         affiche_matrix(random_int_matrix(4,8))
         affiche_matrix(random_symetric_int_matrix(4,8,False))
         affiche_matrix(random_symetric_int_matrix(4,8))
+        affiche_matrix(random_oriented_int_matrix(4,3,False))
+        print("ex 6:")
+        affiche_matrix(random_triangular_int_matrix(5,4,False))
 
 
 
