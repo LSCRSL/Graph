@@ -1,3 +1,4 @@
+import random
 class node:
     def __init__(self, identity, label, parents, children):
         '''
@@ -444,6 +445,80 @@ class open_digraph: # for open directed graph
         else : 
             x = self.add_node('', {src:1}, {})
             self.add_output_id(x)
+
+def random_int_list(n,bound,j) :
+    '''
+    input : int, int, int
+        
+    renvoie une liste de taille n de nombres aléatoires entre 0 et bound
+    ''' 
+    l = []
+    for i in range(n) : 
+        if i == j: 
+            l.append(0)
+        else :
+            l.append(random.randrange(0,bound))
+    return l
+
+def random_int_matrix(n,bound,null_diag=True) : 
+    '''
+    input : int , int, bool
+    matrice carrée de taille n d'entiers tirés aléatoirement entre 0 et
+    bound
+    '''
+    l = []
+    if null_diag :
+        for j in range(n) :
+            l.append(random_int_list(n,bound,j))
+    else :
+        for j in range(n) :
+            l.append(random_int_list(n,bound,-1))
+    return l
+
+def affiche_matrix(mat) : 
+    '''
+    input : int list list
+    affiche une matrice carrée
+    '''
+    t = len(mat)
+    print('[')
+    for i in range(t) : 
+        print(mat[i])
+    print(']')
+
+def random_symetric_int_matrix(n, bound,null_diag=True) : 
+    l = []
+    if null_diag : 
+        l.append(random_int_list(n,bound,0))
+        for i in range(1,n) : 
+            t = []
+            taille = len(l)
+            for j in range(1,taille+1) : 
+                t.append(l[j-1][taille])
+            t.append(0)
+            for k in range(taille+1, n) :
+                t.append(random.randrange(0,bound))
+            l.append(t)
+    else : 
+        l.append(random_int_list(n,bound,-1))
+        for i in range(1,n) : 
+            t = []
+            taille = len(l)
+            for j in range(1,taille+1) : 
+                t.append(l[j-1][taille])
+            for k in range(taille, n) :
+                t.append(random.randrange(0,bound))
+            l.append(t)
+    return l
+
+
+
+
+    
+
+
+    
+
         
 
 

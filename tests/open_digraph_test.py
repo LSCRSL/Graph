@@ -187,6 +187,16 @@ class OpenDigraphTest (unittest.TestCase):
         G.add_output_node(2)
         G.assert_is_well_formed()
 
+    def test_matrice(self) : 
+        '''
+        Méthode pour tester les fonctions de matrices
+        '''
+        print(random_int_list(2,1,-1))
+        affiche_matrix(random_int_matrix(4,8,False))
+        affiche_matrix(random_int_matrix(4,8))
+        affiche_matrix(random_symetric_int_matrix(4,8,False))
+        affiche_matrix(random_symetric_int_matrix(4,8))
+
 
 
 
