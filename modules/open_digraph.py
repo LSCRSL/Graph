@@ -446,6 +446,43 @@ class open_digraph: # for open directed graph
             x = self.add_node('', {src:1}, {})
             self.add_output_id(x)
 
+
+    def dict_of_graph(self):
+        '''
+        input: open_digraph; graph à n noeuds
+        output: int->int dict; dictionnaire qui à chaque id de noeud associe un entier entre 0 et n-1
+        '''
+        nlist=self.get_id_node_map().keys()
+        cpt=0
+        dict={}
+        for (id) in nlist :
+            dict[id] = cpt
+            cpt=cpt+1
+        return dict
+
+    def adjacency_matrix(self):
+        '''
+        output: int list list; matrice du graph
+        '''
+        n=len(self.get_node())
+        l = []
+        for i in range(n) :
+            l.append(0)
+        mat=[]
+        for j in range(n) :
+            mat.append(l)
+        d=self.dict_of_graph()
+        idlist=d.keys()
+        for i in range (n):
+            noeud=self.get_node_by_id(idlist[i])
+            for j in range (n):
+                for c in noeud.get_children_ids():
+                    if c==j:
+                        mat[i][j]=noeud.get_children_multiplicity()[c]
+        return mat
+
+                
+
     @classmethod
     def random(cls,n, bound, inputs=0, outputs=0, form="free"):
         '''
@@ -604,7 +641,7 @@ def random_triangular_int_matrix(n, bound, null_diag=True):
 def graph_from_adjacency_matrix(mat):
     '''
     input: int list list; matrice à convertir en graphe
-    output: open_digraph; grphe obtenu à partir de la matrice
+    output: open_digraph; graphe obtenu à partir de la matrice
     '''
     nodelist=[]
     for i in range(len(mat)): #il y a n noeuds
@@ -618,6 +655,8 @@ def graph_from_adjacency_matrix(mat):
                         nwnd.add_parents_id(l,mat[l][j]) #on ajoute le parent
         nodelist.append(nwnd)
     return open_digraph([],[],nodelist)
+
+
 
     
 
