@@ -199,8 +199,13 @@ class OpenDigraphTest (unittest.TestCase):
         affiche_matrix(random_oriented_int_matrix(4,3,False))
         print("ex 6:")
         affiche_matrix(random_triangular_int_matrix(5,4,False))
-
-
+        print("exo 8 :")
+        x = ["free", "DAG", "oriented", "loop-free", "undirected", "loop-free undirected"]
+        for i in range(len(x)) :
+            G = open_digraph.random(4,2,2,1,"DAG")
+            print(f'graph {x[i]} : ')
+            print(str(G))
+            G.assert_is_well_formed()
 
 
 

@@ -1,4 +1,4 @@
-import random
+import random as rand
 class node:
     def __init__(self, identity, label, parents, children):
         '''
@@ -446,6 +446,68 @@ class open_digraph: # for open directed graph
             x = self.add_node('', {src:1}, {})
             self.add_output_id(x)
 
+    @classmethod
+    def random(cls,n, bound, inputs=0, outputs=0, form="free"):
+        '''
+        inputs: int, int, int list, int list, string;
+        taille, nb arrêtes max par noeud, v inputs, outputs, option parmis:
+        free, DAG, oriented, loop-free, unidrected et loop-free undirected
+        outputs: open_digraph: graphe à n noeuds respectant l'option choisie
+        '''
+        #on déclare une variable G : graphe vide
+        G = cls.empty()
+        #on obtient le graphe suivant les conditions souhaitées
+        if form=="free":
+            G = graph_from_adjacency_matrix(random_int_matrix(n, bound,False))
+        elif form=="DAG":
+            G = graph_from_adjacency_matrix(random_triangular_int_matrix(n,bound))
+        elif form=="oriented":
+            G = graph_from_adjacency_matrix(random_oriented_int_matrix(n, bound))
+        elif form=="loop-free":
+            G = graph_from_adjacency_matrix(random_int_matrix(n, bound))
+        elif form=="undirected":
+            G = graph_from_adjacency_matrix(random_symetric_int_matrix(n,bound,False))
+        elif form=="loop-free undirected":
+            G = graph_from_adjacency_matrix(random_symetric_int_matrix(n,bound))
+
+        #on récupère les noeuds de notre graphe
+        n = G.get_id_node_map()
+        l = list(n.keys())        
+        x = len(l)   
+        #on ajoute i inputs au graphe (le chiffre donné en argument)
+        for i in range(inputs) : 
+            id = l[rand.randrange(0,x)]
+            G.add_input_node(id)
+
+        #on ajoute j outputs au graphe (le chiffre donné en argument)  
+        for j in range(outputs) :
+            id = l[rand.randrange(0,x)]
+            G.add_output_node(id)
+
+        #on doit vérifier si on a bien que i inputs et j outputs dans notre graphe
+        #on initialise les compteurs d'inputs et d'outputs
+        cpt_inputs = 0
+        cpt_outputs = 0
+        #on parcourt notre liste de noeuds
+        for (k,v) in list(n.items()) : 
+            #on regarde si on a un input
+            if len(list(v.get_parent_ids())) == 0 and len(list(v.get_children_ids())) == 1 and list(v.get_children_mult())[0] == 1 :
+                #si on a deja assez d'inputs dans notre graphe on supprime celui qu'on vient de trouver
+                if cpt_inputs == inputs : 
+                    G.remove_node_by_id(k)
+                #sinon on augmente le compteur
+                else :
+                    cpt_inputs += 1
+            if len(list(v.get_children_ids())) == 0 and len(list(v.get_parent_ids())) == 1 and list(v.get_parent_mult())[0] == 1 :
+                #si on a deja assez d'outputs dans notre graphe on supprime celui qu'on vient de trouver
+                if cpt_outputs == outputs : 
+                    G.remove_node_by_id(k)
+                #sinon on augmente le compteur
+                else : 
+                    cpt_outputs += 1
+
+        return G
+
 def random_int_list(n,bound,j) :
     '''
     input : int, int, int
@@ -457,7 +519,7 @@ def random_int_list(n,bound,j) :
         if i == j: 
             l.append(0)
         else :
-            l.append(random.randrange(0,bound))
+            l.append(rand.randrange(0,bound))
     return l
 
 def random_int_matrix(n,bound,null_diag=True) : 
@@ -501,7 +563,7 @@ def random_symetric_int_matrix(n, bound,null_diag=True) :
                 t.append(l[j-1][taille])
             t.append(0)
             for k in range(taille+1, n) :
-                t.append(random.randrange(0,bound))
+                t.append(rand.randrange(0,bound))
             l.append(t)
     else : 
         l.append(random_int_list(n,bound,-1))
@@ -511,7 +573,7 @@ def random_symetric_int_matrix(n, bound,null_diag=True) :
             for j in range(1,taille+1) : 
                 t.append(l[j-1][taille])
             for k in range(taille, n) :
-                t.append(random.randrange(0,bound))
+                t.append(rand.randrange(0,bound))
             l.append(t)
     return l
 
@@ -551,29 +613,12 @@ def graph_from_adjacency_matrix(mat):
             if mat[i][j]!=0: #si !=0 alors le noeud a un enfant d'id le num de colonne
                 nwnd.add_child_id(j,mat[i][j])  #on ajoute l'enfant
             if j==i: #on se place dans la ième colonne pour parcourir les parents
-                for l in len(mat):  #on parcourt les lignes de cette colonne
+                for l in range(len(mat)):  #on parcourt les lignes de cette colonne
                     if mat[l][j]!=0: #si !=0 alors l est l'id du parent du noeud i
                         nwnd.add_parents_id(l,mat[l][j]) #on ajoute le parent
         nodelist.append(nwnd)
     return open_digraph([],[],nodelist)
+
     
-@classmethod
-def random(cls,n, bound, inputs=0, outputs=0, form="free"):
-    '''
-    inputs: int, int, int list, int list, string;
-    taille, nb arrêtes max par noeud, v inputs, outputs, option parmis:
-    free, DAG, oriented, loop-free, unidrected et loop-free undirected
-    outputs: open_digraph: graphe à n noeuds respectant l'option choisie
-    '''
-    if form=="free":
-        return random_int_matrix(n, bound,False)
-    elif form=="DAG":
-        return random_triangular_int_matrix(n,bound)
-    elif form=="oriented":
-        return random_oriented_int_matrix(n, bound)
-    elif form=="loop-free":
-        return random_int_matrix(n, bound)
-    elif form=="undirected":
-        return random_symetric_int_matrix(n,bound,False)
-    elif form=="loop-free undirected":
-        return random_symetric_int_matrix(n,bound)
+
+
