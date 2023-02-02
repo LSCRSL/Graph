@@ -194,32 +194,47 @@ class OpenDigraphTest (unittest.TestCase):
         print(random_int_list(2,1,-1))
         affiche_matrix(random_int_matrix(4,8,False))
         affiche_matrix(random_int_matrix(4,8))
-        affiche_matrix(random_symetric_int_matrix(4,8,False))
+        x = random_symetric_int_matrix(4,8,False)
+        affiche_matrix(x)
+        j = graph_from_adjacency_matrix(x)
+        print(str(j))
         affiche_matrix(random_symetric_int_matrix(4,8))
         affiche_matrix(random_oriented_int_matrix(4,3,False))
         print("ex 6:")
         affiche_matrix(random_triangular_int_matrix(5,4,False))
         print("exo 8 :")
         x = ["free", "DAG", "oriented", "loop-free", "undirected", "loop-free undirected"]
-        for i in range(len(x)) :
-            G = open_digraph.random(4,2,2,1,"DAG")
-            print(f'graph {x[i]} : ')
-            print(str(G))
-            #G.assert_is_well_formed()
 
-    def test_extraction_matrice(self): #fonctionne lorsque c'est éxécuté dans worksheet
-        '''
-        Méthode pour tester les fonctions d'extraction de matrices
-        '''
-        n0 = node(8, 'a', {3:1, 4:1}, {1:1, 2:1})
-        n1 = node(1, 'b', {0:1}, {2:2, 5:1})
-        n2 = node(6, 'c', {0:1,1:2}, {6:1})
-        i0 = node(3, 'i0', {}, {0:1})
-        i1 = node(4, 'i1', {}, {0:1})
-        o0 = node(5, 'o0', {1:1}, {})
-        o1 = node(0, 'o1', {2:1}, {})
-        G = open_digraph([3,4], [5,6], [n0,n1,n2,i0,i1,o0,o1])
+        for i in range(len(x)) :
+            G = open_digraph.random(4,2,2,1,x[i])
+            G.assert_is_well_formed()
+
+        n0 = node(8, 'a', {2:1, 3:1, 4:1, 6:1}, {2:1, 7:1})
+        n1 = node(1, 'o0', {6:1}, {})
+        n2 = node(6, 'c', {2:1}, {1:1,8:1})
+        i0 = node(3, 'i0', {}, {8:1})
+        i1 = node(4, 'i1', {}, {8:1})
+        o0 = node(2, 'b', {8:1}, {6:1, 8:1})
+        o1 = node(7, 'o1', {8:1}, {})
+        G = open_digraph([3,4], [1,7], [n0,n1,n2,i0,i1,o0,o1])
+        G.assert_is_well_formed()
         print(G.dict_of_graph())
+        affiche_matrix(G.adjacency_matrix())
+        rmat = random_triangular_int_matrix(5,4,False)
+        affiche_matrix(rmat)
+        G = graph_from_adjacency_matrix(rmat)
+        affiche_matrix(G.adjacency_matrix())
+        print("exo 10 :")
+        x = ["free", "DAG", "oriented", "loop-free", "undirected", "loop-free undirected"]
+
+        for i in range(len(x)) :
+            print(f'graph {x[i]} : ')
+            G = open_digraph.random(4,2,2,1,x[i])
+            
+            affiche_matrix(G.adjacency_matrix())
+            G.assert_is_well_formed()
+            
+
 
         
 if __name__ == '__main__': # the following code is called only when

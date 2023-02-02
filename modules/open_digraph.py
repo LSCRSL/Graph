@@ -21,11 +21,12 @@ class node:
         output: string; appelle __str__
         '''
         return str(self)
+
     def copy(self):
         '''
         output: node; copie du noeud
         '''
-        return (node(self.id, self.label, self.parents, self.children))
+        return (node(self.id, str(self.label), self.parents.copy(), self.children.copy()))
 
     #les getters
     def get_id(self):
@@ -169,10 +170,13 @@ class open_digraph: # for open directed graph
         return cls([],[],[]) 
 
     def copy(self):
-        '''
-        output: open_digraph; copie du graph
-        '''
-        return (open_digraph(self.inputs, self.outputs, self.nodes.values()))
+        """
+        create a copy of the graph
+        """
+        i = self.inputs.copy()
+        o = self.outputs.copy()
+        l_n = [node.copy() for node in self.nodes.values()]
+        return open_digraph(i, o, l_n)
 
     #les getters
     def get_input_ids(self) : 
@@ -452,7 +456,7 @@ class open_digraph: # for open directed graph
         input: open_digraph; graph à n noeuds
         output: int->int dict; dictionnaire qui à chaque id de noeud associe un entier entre 0 et n-1
         '''
-        nlist=self.get_id_node_map().keys()
+        nlist= self.get_id_node_map().keys()
         cpt=0
         dict={}
         for (id) in nlist :
@@ -464,21 +468,32 @@ class open_digraph: # for open directed graph
         '''
         output: int list list; matrice du graph
         '''
-        n=len(self.get_node())
-        l = []
-        for i in range(n) :
-            l.append(0)
-        mat=[]
-        for j in range(n) :
-            mat.append(l)
-        d=self.dict_of_graph()
-        idlist=d.keys()
-        for i in range (n):
-            noeud=self.get_node_by_id(idlist[i])
-            for j in range (n):
-                for c in noeud.get_children_ids():
-                    if c==j:
-                        mat[i][j]=noeud.get_children_multiplicity()[c]
+        sc = self.copy()
+        n= sc.get_node()
+        inp = list(sc.get_input_ids())
+        out = list(sc.get_output_ids())
+        int_out = inp + out
+        sc.remove_nodes_by_id(int_out)
+        d = sc.dict_of_graph()
+        idlist=list(d.keys())
+        size_l = len(idlist)
+        mat = []
+        for i in range(size_l):
+            for (k,v) in d.items() : 
+                if v == i : 
+                    ll = []
+                    noeud = sc.get_node_by_id(k)
+                    child = list(noeud.get_children_ids())
+                    mult = list(noeud.get_children_mult())
+                    for j in range (size_l) : 
+                        b = False
+                        for c in range(len(child)) :
+                            if d[child[c]] == j :
+                                ll.append(mult[c])
+                                b = True
+                        if not(b) : 
+                            ll.append(0)
+                    mat.append(ll)       
         return mat
 
                 
@@ -491,57 +506,34 @@ class open_digraph: # for open directed graph
         free, DAG, oriented, loop-free, unidrected et loop-free undirected
         outputs: open_digraph: graphe à n noeuds respectant l'option choisie
         '''
-        #on déclare une variable G : graphe vide
         G = cls.empty()
-        #on obtient le graphe suivant les conditions souhaitées
+        mat = []
         if form=="free":
-            G = graph_from_adjacency_matrix(random_int_matrix(n, bound,False))
+            mat = random_int_matrix(n, bound,False)
+            G = graph_from_adjacency_matrix(mat)
         elif form=="DAG":
-            G = graph_from_adjacency_matrix(random_triangular_int_matrix(n,bound))
+            mat = random_triangular_int_matrix(n,bound)
+            G = graph_from_adjacency_matrix(mat)
         elif form=="oriented":
-            G = graph_from_adjacency_matrix(random_oriented_int_matrix(n, bound))
+            mat = random_oriented_int_matrix(n, bound)
+            G = graph_from_adjacency_matrix(mat)
         elif form=="loop-free":
-            G = graph_from_adjacency_matrix(random_int_matrix(n, bound))
+            mat = random_int_matrix(n, bound)
+            G = graph_from_adjacency_matrix(mat)
         elif form=="undirected":
-            G = graph_from_adjacency_matrix(random_symetric_int_matrix(n,bound,False))
+            mat = random_symetric_int_matrix(n,bound,False)
+            G = graph_from_adjacency_matrix(mat)
         elif form=="loop-free undirected":
-            G = graph_from_adjacency_matrix(random_symetric_int_matrix(n,bound))
-
-        #on récupère les noeuds de notre graphe
+            mat = random_symetric_int_matrix(n,bound)
+            G = graph_from_adjacency_matrix(mat)
+        affiche_matrix(mat)
         n = G.get_id_node_map()
-        l = list(n.keys())        
-        x = len(l)   
-        #on ajoute i inputs au graphe (le chiffre donné en argument)
+        l = list(n.keys())       
         for i in range(inputs) : 
-            id = l[rand.randrange(0,x)]
-            G.add_input_node(id)
+            G.add_input_node(l[rand.randrange(0,len(l))])
 
-        #on ajoute j outputs au graphe (le chiffre donné en argument)  
         for j in range(outputs) :
-            id = l[rand.randrange(0,x)]
-            G.add_output_node(id)
-
-        #on doit vérifier si on a bien que i inputs et j outputs dans notre graphe
-        #on initialise les compteurs d'inputs et d'outputs
-        cpt_inputs = 0
-        cpt_outputs = 0
-        #on parcourt notre liste de noeuds
-        for (k,v) in list(n.items()) : 
-            #on regarde si on a un input
-            if len(list(v.get_parent_ids())) == 0 and len(list(v.get_children_ids())) == 1 and list(v.get_children_mult())[0] == 1 :
-                #si on a deja assez d'inputs dans notre graphe on supprime celui qu'on vient de trouver
-                if cpt_inputs == inputs : 
-                    G.remove_node_by_id(k)
-                #sinon on augmente le compteur
-                else :
-                    cpt_inputs += 1
-            if len(list(v.get_children_ids())) == 0 and len(list(v.get_parent_ids())) == 1 and list(v.get_parent_mult())[0] == 1 :
-                #si on a deja assez d'outputs dans notre graphe on supprime celui qu'on vient de trouver
-                if cpt_outputs == outputs : 
-                    G.remove_node_by_id(k)
-                #sinon on augmente le compteur
-                else : 
-                    cpt_outputs += 1
+            G.add_output_node(l[rand.randrange(0,len(l))])
 
         return G
 
