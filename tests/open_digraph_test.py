@@ -229,8 +229,9 @@ class OpenDigraphTest (unittest.TestCase):
 
         for i in range(len(x)) :
             print(f'graph {x[i]} : ')
+            print('La matrice générée aléatoirement :')
             G = open_digraph.random(4,2,2,1,x[i])
-            
+            print('La matrice trouvée à partir du graphe :')
             affiche_matrix(G.adjacency_matrix())
             G.assert_is_well_formed()
             
