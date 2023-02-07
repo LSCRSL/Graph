@@ -516,8 +516,7 @@ class open_digraph: # for open directed graph
     def save_as_dot_file(self,path, verbose=False):
         '''
 
-        
-        input : path; lieu d'enregistrement, bool ; affichage du label et de l'id
+        input : string, bool ; lieu d'enregistrement, flag pour l'affichage du label et de l'id
 
         enregistre le graphe en question en format .dot a l’endroit specifie par
         path avec l'affichage déterminé par verbose.
@@ -551,6 +550,18 @@ class open_digraph: # for open directed graph
                     f.write("   "+str(n.get_id())+" -> "+str(cid[c])+";\n")
         f.write("}\n")
         f.close()
+
+    def display(self, verbose=False):
+        '''
+        input : bool ; affichage du label et de l'id
+
+        ouvre le document pdf avec le graphe
+        '''
+        self.save_as_dot_file(os.getcwd(), verbose)
+        convert='dot -Tpdf graph.dot -o graph.pdf'
+        open_file='xdg-open graph.pdf'
+        os.system(convert)
+        os.system(open_file)
 
     @classmethod
     def random(cls,n, bound, inputs=0, outputs=0, form="free"):

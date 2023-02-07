@@ -13,6 +13,7 @@ o1 = node(6, 'o1', {2:1}, {})
 G = open_digraph([3,4], [5,6], [n0,n1,n2,i0,i1,o0,o1])
 
 G.save_as_dot_file(os.getcwd(), True)
+G.display()
 
 #%% TP1 tests
 print(str(G))
@@ -41,13 +42,4 @@ o0 = node(5, 'o0', {1:1}, {})
 o1 = node(0, 'o1', {2:1}, {})
 G = open_digraph([3,4], [5,6], [n0,n1,n2,i0,i1,o0,o1])
 print(G.dict_of_graph())
-# %% TP4 display
-
-def display(self, verbose=False):
-    G.save_as_dot_file(os.getcwd(), verbose)
-    convert='dot -Tpdf graph.dot -o graph.pdf'
-    open_file='xdg-open graph.pdf'
-    os.system(convert)
-    os.system(open_file)
-    
     

@@ -109,9 +109,9 @@ lit le fichier et crée/renvoie le graphe associé au fichier lu
 
 - EX 3 : 
 '''
-input : bool : affichage du label et de l'id
+input : bool ; affichage du label et de l'id
 
-affiche directement le graphe
+ouvre le document pdf avec le graphe
 '''
 - 
 - 
