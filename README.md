@@ -94,7 +94,7 @@ save_as_dot_file(self, path, verbose=False)
 ''' 
 input : path; lieu d'enregistrement, bool ; affichage du label et de l'id
 
-elle va enregistrer le graphe en question en format .dot `a l’endroit sp´ecifi´e par
+enregistrele graphe en question en format .dot `a l’endroit sp´ecifi´e par
 path avec l'affichage déterminé par verbose.
 '''
 

@@ -68,6 +68,15 @@ class node:
         '''
         return self.children.values()
 
+    @classmethod
+    def node_empty(cls) : 
+        '''
+        output : node
+
+        crée un noeud vide
+        '''
+        return cls(-1, "", {}, {})
+
     #les setters
     def set_id (self,x) : 
         '''
@@ -458,6 +467,9 @@ class open_digraph: # for open directed graph
         '''
         input: open_digraph; graph à n noeuds
         output: int->int dict; dictionnaire qui à chaque id de noeud associe un entier entre 0 et n-1
+
+        renvoie un dictionnaire, associant a chaque id de noeud un unique
+        entier
         '''
         nlist= self.get_id_node_map().keys()
         cpt=0
@@ -470,6 +482,8 @@ class open_digraph: # for open directed graph
     def adjacency_matrix(self):
         '''
         output: int list list; matrice du graph
+
+        renvoie une matrice d'adjacence du graphe donne
         '''
         sc = self.copy()
         n= sc.get_node()
@@ -501,6 +515,14 @@ class open_digraph: # for open directed graph
 
     def save_as_dot_file(self,path, verbose=False):
         '''
+
+        
+        input : path; lieu d'enregistrement, bool ; affichage du label et de l'id
+
+        enregistre le graphe en question en format .dot a l’endroit specifie par
+        path avec l'affichage déterminé par verbose.
+
+        dans notre fct : 
         input=indice_input si entrée, -1 sinon
         output=indice_sortie si sortie, -1 sinon
         '''
@@ -537,6 +559,9 @@ class open_digraph: # for open directed graph
         taille, nb arrêtes max par noeud, v inputs, outputs, option parmis:
         free, DAG, oriented, loop-free, unidrected et loop-free undirected
         outputs: open_digraph: graphe à n noeuds respectant l'option choisie
+
+        genere un graphe aleatoire suivant les contraintes donnees par l'utilisateur
+
         '''
         G = cls.empty()
         mat = []
@@ -571,13 +596,39 @@ class open_digraph: # for open directed graph
     
     @classmethod
     def from_dot_file(cls, filename):
+        '''
+        input : fichier.dot : fichier à lire
+
+        output : open_digraph ; le graphe associé au fichier
+
+        lit le fichier et crée/renvoie le graphe associé au fichier lu
+        '''
+
         G=cls.empty()
         f = open(filename, 'r')
+        aretes = []
+        noeuds = []
         content=[]
         for line in f:
             if "{" or "}" in line:
                 continue
-            content.append(line.split('->'))
+            first_split = line.split('->')
+            if len(first_split) == 1 : 
+                second_split = line.split('[')
+                if len(second_split) == 2 : 
+                    third_split = second_split[1].split(',')
+                    ''' il faut verifier pour le label s'il y a l'id colle ou pas'''
+                    N_ode = node(second_split[0], third_split[1], {}, {})
+                    if third_split[2] != -1 : 
+                        G.add_input_node(N_ode)
+                    elif third_split[3] != -1 : 
+                        G.add_output_node(N_ode)
+                    else : 
+                        G.add_node(N_ode)
+
+            else : 
+                G.add_edge(first_split[0], first_split[1])
+        return G
         
             
         
@@ -626,6 +677,9 @@ def random_symetric_int_matrix(n, bound,null_diag=True) :
     '''
     input: int, int, bool; taille de la matrice, limite, paramètre indiquant si la diagonale est nulle
     output: int list list; matrice symetrique de taille n contenant des entiers compris entre 0 et n
+
+    renvoie une matrice carree symétrique
+
     '''
     l = []
     if null_diag : 
@@ -655,6 +709,9 @@ def random_oriented_int_matrix(n, bound, null_diag=True):
     '''
     input: int, int, bool; taille, valeur max, diagonale nulle
     ouput: int list list; 
+
+    renvoie la matrice d'adjacence d'un graphe oriente
+
     '''
     l = random_int_matrix(n,bound, null_diag)
     for i in range(n):
@@ -667,6 +724,9 @@ def random_triangular_int_matrix(n, bound, null_diag=True):
     '''
     input: int, int, bool; taille, valeur max, diagonale nulle
     ouput: int list list; 
+
+    renvoie la matrice d'adjacence d'un graphe dirige cyclique
+
     '''
     l = random_oriented_int_matrix(n,bound, null_diag=True)
     for i in range(n):
@@ -679,6 +739,9 @@ def graph_from_adjacency_matrix(mat):
     '''
     input: int list list; matrice à convertir en graphe
     output: open_digraph; graphe obtenu à partir de la matrice
+
+    renvoie un multigraphe à partir d'une matrice
+
     '''
     nodelist=[]
     for i in range(len(mat)): #il y a n noeuds
