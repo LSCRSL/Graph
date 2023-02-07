@@ -1,5 +1,7 @@
 import random as rand
 import graphviz
+import os
+
 class node:
     def __init__(self, identity, label, parents, children):
         '''
@@ -498,12 +500,35 @@ class open_digraph: # for open directed graph
         return mat
 
     def save_as_dot_file(self,path, verbose=False):
-        dot=graphviz.Digraph('Open_digraph') 
-        for n in self.get_node:
-            dot.node(n.id,n.label)
-            for c in list(n.get_children_ids()):
-                dot.edge(n.id,c)
-                    
+        '''
+        input=indice_input si entrée, -1 sinon
+        output=indice_sortie si sortie, -1 sinon
+        '''
+        filepath = os.path.join(path, 'graph.dot')
+        f = open(filepath, "w")
+        f.write("digraph G{\n")
+        for n in self.get_node():
+            i=-1
+            o=-1
+            for k in range (0, len(list(self.get_input_ids()))):
+                if n.get_id()==list(self.get_input_ids())[k]:
+                    i=k
+            for k in range (0, len(list(self.get_output_ids()))):
+                if n.get_id()==list(self.get_output_ids())[k]:
+                    o=k
+            
+            if verbose:
+                f.write("   "+str(n.get_id())+" [label="+n.get_label()+str(n.get_id())+",input="+str(i)+",output="+str(o)+"];\n")
+            else:
+                f.write("   "+str(n.get_id())+" [label="+n.get_label()+",input="+str(i)+",output="+str(o)+"];\n")
+        for n in self.get_node():
+            cid=list(n.get_children_ids())
+            cmul=list(n.get_children_mult())
+            for c in range (len(cid)):
+                for m in range (0,cmul[c]):
+                    f.write("   "+str(n.get_id())+" -> "+str(cid[c])+";\n")
+        f.write("}\n")
+        f.close()
 
     @classmethod
     def random(cls,n, bound, inputs=0, outputs=0, form="free"):
@@ -543,6 +568,19 @@ class open_digraph: # for open directed graph
             G.add_output_node(l[rand.randrange(0,len(l))])
 
         return G
+    
+    @classmethod
+    def from_dot_file(cls, filename):
+        G=cls.empty()
+        f = open(filename, 'r')
+        content=[]
+        for line in f:
+            if "{" or "}" in line:
+                continue
+            content.append(line.split('->'))
+        
+            
+        
 
 def random_int_list(n,bound,j) :
     '''

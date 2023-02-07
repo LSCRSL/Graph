@@ -12,6 +12,8 @@ o1 = node(6, 'o1', {2:1}, {})
 # Déclaration et initialisation du graph
 G = open_digraph([3,4], [5,6], [n0,n1,n2,i0,i1,o0,o1])
 
+#G.save_as_dot_file("/home/tp-home004/eciocar/projet-s4", True)
+
 #%% TP1 tests
 print(str(G))
 H = open_digraph.empty()
@@ -39,4 +41,3 @@ o0 = node(5, 'o0', {1:1}, {})
 o1 = node(0, 'o1', {2:1}, {})
 G = open_digraph([3,4], [5,6], [n0,n1,n2,i0,i1,o0,o1])
 print(G.dict_of_graph())
-G.save_as_dot_file("/home/tp-home004/eciocar")
