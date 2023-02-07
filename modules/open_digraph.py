@@ -1,4 +1,5 @@
 import random as rand
+import graphviz
 class node:
     def __init__(self, identity, label, parents, children):
         '''
@@ -488,7 +489,7 @@ class open_digraph: # for open directed graph
                     for j in range (size_l) : 
                         b = False
                         for c in range(len(child)) :
-                            if d[child[c]] == j :
+                            if (d[child[c]] == j) :
                                 ll.append(mult[c])
                                 b = True
                         if not(b) : 
@@ -496,7 +497,13 @@ class open_digraph: # for open directed graph
                     mat.append(ll)       
         return mat
 
-                
+    def save_as_dot_file(self,path, verbose=False):
+        dot=graphviz.Digraph('Open_digraph') 
+        for n in self.get_node:
+            dot.node(n.id,n.label)
+            for c in list(n.get_children_ids()):
+                dot.edge(n.id,c)
+                    
 
     @classmethod
     def random(cls,n, bound, inputs=0, outputs=0, form="free"):
