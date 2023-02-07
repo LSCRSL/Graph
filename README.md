@@ -63,22 +63,56 @@ input: int; id du noeud qui pointe vers un nouveau noeud ajouté au graphe
 
 ## TP3
 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
+- EX 4 : 
+renvoie une matrice carree symétrique
+
+- EX 5 :
+renvoie la matrice d'adjacence d'un graphe oriente
+
+- EX 6 : 
+renvoie la matrice d'adjacence d'un graphe dirige cyclique
+
+- EX 7 : 
+renvoie un multigraphe à partir d'une matrice
+
+- EX 8 : 
+genere un graphe aleatoire suivant les contraintes donnees par l'utilisateur
+
+- EX 9 : 
+renvoie un dictionnaire, associant a chaque id de noeud un unique
+entier 
+
+- EX 10:
+renvoie une matrice d'adjacence du graphe donne
 - 
 
 
 ## TP4
 
-- 
-- 
-- 
-- 
+save_as_dot_file(self, path, verbose=False)
+- EX 1 : 
+''' 
+input : path; lieu d'enregistrement, bool ; affichage du label et de l'id
+
+elle va enregistrer le graphe en question en format .dot `a l’endroit sp´ecifi´e par
+path avec l'affichage déterminé par verbose.
+'''
+
+- EX 2 : 
+'''
+input : fichier.dot : fichier à lire
+
+output : open_digraph ; le graphe associé au fichier
+
+lit le fichier et crée/renvoie le graphe associé au fichier lu
+'''
+
+- EX 3 : 
+'''
+input : bool : affichage du label et de l'id
+
+affiche directement le graphe
+'''
 - 
 - 
 - 
