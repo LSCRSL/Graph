@@ -606,7 +606,7 @@ class open_digraph: # for open directed graph
         return G
     
     @classmethod
-    def from_dot_file(cls, filename):
+    def from_dot_file(cls):
         '''
         input : fichier.dot : fichier à lire
 
@@ -616,30 +616,31 @@ class open_digraph: # for open directed graph
         '''
 
         G=cls.empty()
-        f = open(filename, 'r')
-        aretes = []
-        noeuds = []
-        content=[]
+        f = open('graph.dot', 'r')
         for line in f:
-            if "{" or "}" in line:
+            if "{" in line or "}" in line:
                 continue
             first_split = line.split('->')
             if len(first_split) == 1 : 
                 second_split = line.split('[')
                 if len(second_split) == 2 : 
                     third_split = second_split[1].split(',')
-                    ''' il faut verifier pour le label s'il y a l'id colle ou pas'''
-                    N_ode = node(second_split[0], third_split[1], {}, {})
-                    if third_split[2] != -1 : 
-                        G.add_input_node(N_ode)
-                    elif third_split[3] != -1 : 
-                        G.add_output_node(N_ode)
-                    else : 
-                        G.add_node(N_ode)
-
-            else : 
-                G.add_edge(first_split[0], first_split[1])
+                    fourth_split = third_split[2].split('=')
+                    ''' il faut verifier pour le label s'il y a l'id colle ou pas'
+                    '''
+                    N_ode = node(second_split[0].replace(" ", ""), third_split[0].split('=')[1], {}, {})
+                    if third_split[1].split('=')[1] != -1 :
+                        G.set_input_ids([N_ode])
+                    elif fourth_split[1].split(']')[0] != -1 : 
+                        G.set_output_ids([N_ode])
+                    else :
+                        G.add_nodes(N_ode)
+                    
+            else :
+                G.add_edge(first_split[0].replace(" ", ""), first_split[1].split(';')[0].replace(" ",""))
+        f.close()
         return G
+        
         
             
         

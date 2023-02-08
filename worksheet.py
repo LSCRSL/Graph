@@ -14,6 +14,8 @@ G = open_digraph([3,4], [5,6], [n0,n1,n2,i0,i1,o0,o1])
 
 G.save_as_dot_file(os.getcwd(), True)
 G.display()
+print('ici')
+open_digraph.from_dot_file()
 
 #%% TP1 tests
 print(str(G))
