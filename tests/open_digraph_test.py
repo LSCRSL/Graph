@@ -235,13 +235,6 @@ class OpenDigraphTest (unittest.TestCase):
             affiche_matrix(G.adjacency_matrix())
             G.assert_is_well_formed()
 
-        G = open_digraph.from_dot_file()
-        print(str(G))
-        #revoir les inputs + outputs
-        print(G.get_input_ids())
-        print(G.get_output_ids())
-        #liste des noeuds OK
-        print(G.get_node_ids())
             
 
 

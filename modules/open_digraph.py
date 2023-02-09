@@ -513,55 +513,6 @@ class open_digraph: # for open directed graph
                     mat.append(ll)       
         return mat
 
-    def save_as_dot_file(self,path, verbose=False):
-        '''
-
-        input : string, bool ; lieu d'enregistrement, flag pour l'affichage du label et de l'id
-
-        enregistre le graphe en question en format .dot a l’endroit specifie par
-        path avec l'affichage déterminé par verbose.
-
-        dans notre fct : 
-        input=indice_input si entrée, -1 sinon
-        output=indice_sortie si sortie, -1 sinon
-        '''
-        filepath = os.path.join(path, 'graph.dot')
-        f = open(filepath, "w")
-        f.write("digraph G{\n")
-        for n in self.get_node():
-            i=-1
-            o=-1
-            for k in range (0, len(list(self.get_input_ids()))):
-                if n.get_id()==list(self.get_input_ids())[k]:
-                    i=k
-            for k in range (0, len(list(self.get_output_ids()))):
-                if n.get_id()==list(self.get_output_ids())[k]:
-                    o=k
-            
-            if verbose:
-                f.write("   "+str(n.get_id())+" [label="+n.get_label()+str(n.get_id())+",input="+str(i)+",output="+str(o)+"];\n")
-            else:
-                f.write("   "+str(n.get_id())+" [label="+n.get_label()+",input="+str(i)+",output="+str(o)+"];\n")
-        for n in self.get_node():
-            cid=list(n.get_children_ids())
-            cmul=list(n.get_children_mult())
-            for c in range (len(cid)):
-                for m in range (0,cmul[c]):
-                    f.write("   "+str(n.get_id())+" -> "+str(cid[c])+";\n")
-        f.write("}\n")
-        f.close()
-
-    def display(self, verbose=False):
-        '''
-        input : bool ; affichage du label et de l'id
-
-        ouvre le document pdf avec le graphe
-        '''
-        self.save_as_dot_file(os.getcwd(), verbose)
-        convert='dot -Tpdf graph.dot -o graph.pdf'
-        open_file='xdg-open graph.pdf'
-        os.system(convert)
-        os.system(open_file)
 
     @classmethod
     def random(cls,n, bound, inputs=0, outputs=0, form="free"):
@@ -604,9 +555,54 @@ class open_digraph: # for open directed graph
             G.add_output_node(l[rand.randrange(0,len(l))])
 
         return G
+
+    def save_as_dot_file(self,path, verbose=False):
+        '''
+        input : string, bool ; lieu d'enregistrement, flag pour l'affichage du label et de l'id
+
+        enregistre le graphe en question en format .dot a l’endroit specifie par
+        path avec l'affichage déterminé par verbose.
+
+        dans notre fct : 
+        input=indice_input si entrée, -1 sinon
+        output=indice_sortie si sortie, -1 sinon
+        '''
+        filepath = os.path.join(path, 'graph.dot')
+        f = open(filepath, "w")
+        f.write("digraph G{\n")
+        inp = self.get_input_ids()
+        out = self.get_output_ids()
+        for n in self.get_node():
+            '''
+            i=-1
+            o=-1
+            for k in range (0, len(list(self.get_input_ids()))):
+                if n.get_id()==list(self.get_input_ids())[k]:
+                    i=k
+            for k in range (0, len(list(self.get_output_ids()))):
+                if n.get_id()==list(self.get_output_ids())[k]:
+                    o=k
+            '''
+            color = "black"
+            if n.get_id() in inp :
+                color = "purple"
+            if n.get_id() in out :
+                color = "blue"
+            if verbose:
+                f.write(f"{n.get_id()} [label=\"{n.get_label()}\\n{n.get_id()}\", color={color}];\n")
+            else:
+                f.write(f"{n.get_id()} [label={n.get_label()}, color={color}];\n")
+        for n in self.get_node():
+            cid=list(n.get_children_ids())
+            cmul=list(n.get_children_mult())
+            for c in range (len(cid)):
+                for m in range (0,cmul[c]):
+                    f.write(f"{n.get_id()} -> {cid[c]};\n")
+        f.write("}\n")
+        f.close()
     
     @classmethod
-    def from_dot_file(cls):
+    def from_dot_file(cls,filename):
         '''
         input : fichier.dot : fichier à lire
 
@@ -616,7 +612,7 @@ class open_digraph: # for open directed graph
         '''
 
         G=cls.empty()
-        f = open('graph.dot', 'r')
+        f = open(filename, 'r')
         for line in f:
             if "{" in line or "}" in line:
                 continue
@@ -625,23 +621,36 @@ class open_digraph: # for open directed graph
                 second_split = line.split('[')
                 if len(second_split) == 2 : 
                     third_split = second_split[1].split(',')
-                    fourth_split = third_split[2].split('=')
                     ''' il faut verifier pour le label s'il y a l'id colle ou pas'
                     '''
-                    N_ode = node(second_split[0].replace(" ", ""), third_split[0].split('=')[1], {}, {})
-                    if third_split[1].split('=')[1] != -1 :
+                    color = third_split[1].split('=')[1].split(']')[0]
+                    print(color)
+                    id = second_split[0]
+                    label = third_split[0].split('=')[1]
+                    N_ode = node(int(id),label , {}, {})
+                    if color == "purple":
                         G.set_input_ids([N_ode])
-                    elif fourth_split[1].split(']')[0] != -1 : 
-                        G.set_output_ids([N_ode])
+                    elif color == "blue" : 
+                        G.set_outputs_ids([N_ode])
                     else :
                         G.add_nodes(N_ode)
-                    
             else :
-                G.add_edge(first_split[0].replace(" ", ""), first_split[1].split(';')[0].replace(" ",""))
+                G.add_edge(int(first_split[0]), int(first_split[1].split(';')[0]))
         f.close()
         return G
         
-        
+
+    def display(self,verbose=False):
+        '''
+        input : bool ; affichage du label et de l'id
+
+        ouvre le document pdf avec le graphe
+        '''
+        self.save_as_dot_file(os.getcwd(), verbose)
+        convert='dot -Tpdf graph.dot -o graph.pdf'
+        open_file='xdg-open graph.pdf'
+        os.system(convert)
+        os.system(open_file)
             
         
 
