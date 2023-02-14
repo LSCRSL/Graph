@@ -154,7 +154,28 @@ class node:
         if id in self.get_children_ids() :
             del self.children[id]
 
+    def indegree(self) : 
+        """
+        output : int; le degre entrant du noeud
+        """
+        mult = list(self.get_parent_mult())
+        cpt = 0;
+        for i in mult : 
+            cpt += i
+        return cpt
 
+    def outdegree(self) : 
+        """
+        output : int; le degre entrant du noeud
+        """
+        mult = list(self.get_children_mult())
+        cpt = 0;
+        for i in mult : 
+            cpt += i
+        return cpt
+
+    def degree(self) : 
+        return self.indegree() + self.outdegree()
             
 class open_digraph: # for open directed graph
     def __init__(self, inputs, outputs, nodes):
@@ -573,16 +594,6 @@ class open_digraph: # for open directed graph
         inp = self.get_input_ids()
         out = self.get_output_ids()
         for n in self.get_node():
-            '''
-            i=-1
-            o=-1
-            for k in range (0, len(list(self.get_input_ids()))):
-                if n.get_id()==list(self.get_input_ids())[k]:
-                    i=k
-            for k in range (0, len(list(self.get_output_ids()))):
-                if n.get_id()==list(self.get_output_ids())[k]:
-                    o=k
-            '''
             color = "black"
             if n.get_id() in inp :
                 color = "purple"
@@ -621,10 +632,7 @@ class open_digraph: # for open directed graph
                 second_split = line.split('[')
                 if len(second_split) == 2 : 
                     third_split = second_split[1].split(',')
-                    ''' il faut verifier pour le label s'il y a l'id colle ou pas'
-                    '''
                     color = third_split[1].split('=')[1].split(']')[0]
-                    print(color)
                     id = second_split[0]
                     label = third_split[0].split('=')[1]
                     N_ode = node(int(id),label , {}, {})
@@ -638,7 +646,6 @@ class open_digraph: # for open directed graph
                 G.add_edge(int(first_split[0]), int(first_split[1].split(';')[0]))
         f.close()
         return G
-        
 
     def display(self,verbose=False):
         '''
@@ -651,8 +658,7 @@ class open_digraph: # for open directed graph
         open_file='xdg-open graph.pdf'
         os.system(convert)
         os.system(open_file)
-            
-        
+      
 
 def random_int_list(n,bound,j) :
     '''
@@ -777,7 +783,66 @@ def graph_from_adjacency_matrix(mat):
         nodelist.append(nwnd)
     return open_digraph([],[],nodelist)
 
+class bool_circ(open_digraph):
 
+    def __init__(self,g) :
+        super().__init__(g.get_input_ids(), g.get_output_ids(), g.get_node())
+    
+    def is_cyclic(self) : 
+        '''
+        output : bool;
+        renvoie vrai si le graphe est acyclique
+        '''
+
+        def is_cycle(g) : 
+            if g.get_id_node_map() == {} : 
+                return True
+            else : 
+                l_oupt = g.get_output_ids()
+                if l_oupt == [] : 
+                    return False
+                else :
+                    g.remove_node(l_oupt.pop(0))
+                    return is_cycle(g)
+        return is_cycle(self.copy())
+
+    def is_well_formed(self):
+        if self.is_cyclic() : 
+            print('ici')
+            return False 
+        else : 
+            n = self.get_node()
+            outp = self.get_input_ids()
+            inp = self.get_input_ids()
+            for node in n : 
+                l = node.get_label()
+                if  l == '' : 
+                    if node.get_id() in outp or node.get_id() in inp :
+                        continue 
+                    elif node.indegree() != 1 :
+                        print('ici1')
+                        return False
+                elif l == '&' or l == '|' : 
+                    if node.outdegree() != 1 :
+                        print(node.outdegree())
+                        print('ici2')
+                        return False
+                elif l == '~' :
+                    if node.indegree() != 1 and node.outdegree() != 1 :
+                        print('ici3') 
+                        return False
+                elif l != '0' and l != '1' and l != '^' :
+                    print('ici4')
+                    print(l)
+                    return False
+            return True 
+
+
+
+
+
+                     
+                
 
     
 
