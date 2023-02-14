@@ -17,7 +17,7 @@ G.save_as_dot_file(os.getcwd())
 G1 = open_digraph.from_dot_file('graph.dot')
 print(str(G1))
 
-G1.display()
+#G1.display()
 
 #%% TP1 tests
 print(str(G))
@@ -49,9 +49,9 @@ print(G.dict_of_graph())
 '''
 
 print('ici :')
-GC = bool_circ(G1)
-print(GC.is_cyclic())
-print(GC.is_well_formed())
+#GC = bool_circ(G1)
+#print(GC.is_cyclic())
+#print(GC.is_well_formed())
 
 x1 = node(10, '', {}, {0:1} )
 x2 = node(11, '', {}, {2:1} )

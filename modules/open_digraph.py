@@ -159,7 +159,7 @@ class node:
         output : int; le degre entrant du noeud
         """
         mult = list(self.get_parent_mult())
-        cpt = 0;
+        cpt = 0
         for i in mult : 
             cpt += i
         return cpt
@@ -169,7 +169,7 @@ class node:
         output : int; le degre entrant du noeud
         """
         mult = list(self.get_children_mult())
-        cpt = 0;
+        cpt = 0
         for i in mult : 
             cpt += i
         return cpt
@@ -658,6 +658,28 @@ class open_digraph: # for open directed graph
         open_file='xdg-open graph.pdf'
         os.system(convert)
         os.system(open_file)
+
+    def shift_indices(self,n):
+        '''
+        input: int; valeur à ajouter à tous les id des noeuds du graph
+        '''
+        
+        for nd in self.get_node():
+            p_id=nd.get_id() #on recupère l'id et on le met à jour
+            n_id=p_id+n
+            nd.set_id(n_id)
+            #on modifie les ids des parents du noeud
+            pplist=list(nd.get_parent_ids())
+            nplist=[]
+            for i in pplist:
+                nplist.append(i+n)
+            nd.set_parent_ids(nplist)
+            #on modifie les ids des enfants du noeud
+            pclist=list(nd.get_child_ids())
+            nclist=[]
+            for i in pclist:
+                nclist.append(i+n)
+            nd.set_child_ids(nclist)
       
 
 def random_int_list(n,bound,j) :
@@ -787,6 +809,8 @@ class bool_circ(open_digraph):
 
     def __init__(self,g) :
         super().__init__(g.get_input_ids(), g.get_output_ids(), g.get_node())
+        if not self.is_well_formed():
+            raise ValueError
     
     def is_cyclic(self) : 
         '''
@@ -835,7 +859,32 @@ class bool_circ(open_digraph):
                     print('ici4')
                     print(l)
                     return False
-            return True 
+            return True
+
+    def min_id(self):
+        '''
+        output : int; le plus petit id porté dans le graph
+        '''
+        n_list=self.get_node()
+        min=n_list[0].get_id()
+        for n in n_list:
+            id=n.get_id()
+            if id<min :
+                min=id
+        return min
+
+    def max_id(self):
+        '''
+        output : int; le plus grand id porté dans le graph
+        '''
+        n_list=self.get_node()
+        max=n_list[0].get_id()
+        for n in n_list:
+            id=n.get_id()
+            if id>max :
+                max=id
+        return max
+
 
 
 
