@@ -92,23 +92,16 @@ class node:
 
     def set_parent_ids(self, l) : 
         '''
-        input: int list; 
+        input: int-> int dict; 
         '''
-        dict={}
-        lm=list(self.get_parent_mult())
-        for i in range (len(l)):
-            dict[l[i]]=lm[i]
-        self.parents = dict
+        self.parents = l
 
     def set_children_ids (self, l) : 
         '''
-        input: int list; 
+        input: int-> int dict; 
         '''
-        dict={}
-        lm=list(self.get_children_mult())
-        for i in range (len(l)):
-            dict[l[i]]=lm[i]
-        self.parents = dict
+        self.children = l
+    
 
     def add_child_id (self, id, mult) : 
         '''
@@ -184,6 +177,7 @@ class node:
 
     def degree(self) : 
         return self.indegree() + self.outdegree()
+
             
 class open_digraph: # for open directed graph
     def __init__(self, inputs, outputs, nodes):
@@ -675,33 +669,67 @@ class open_digraph: # for open directed graph
         '''
         plin=self.get_input_ids()
         plout=self.get_output_ids()
+        map=self.get_id_node_map()
+
         nlin=[]
         nlout=[]
-        map=self.get_id_node_map()
+        nnode = []
+
         for id in plin:
             nlin.append(map[id])
         for id in plout:
             nlout.append(map[id])
-        ndlist=self.get_node()
+        ndlist = list(map.values())
+
         for k in range (len(ndlist)):
             nd=ndlist[k]
             p_id=nd.get_id() #on recupère l'ancien id du noeud et on le met à jour
+            pplist = list(nd.get_parent_ids()) #id des parents
+            ppmlist = list(nd.get_parent_mult()) #mult des parents 
+            pclist = list(nd.get_children_ids()) #id des enfants
+            pcmlist = list(nd.get_children_mult()) #mult des enfants
             n_id=p_id+n
+            self.remove_node(p_id)
             nd.set_id(n_id)
-            #on modifie les ids des parents du noeud
-            pplist=list(nd.get_parent_ids())
-            nplist=[]
-            for i in pplist:
-                nplist.append(i+n)
-            nd.set_parent_ids(nplist)
-            #on modifie les ids des enfants du noeud
-            pclist=list(nd.get_children_ids())
-            nclist=[]
-            for i in pclist:
-                nclist.append(i+n)
-            nd.set_children_ids(nclist)
+            dictc = {}
+            for i in range(len(pclist)) : 
+                dictc[pclist[i]+n] = pcmlist[i]
+            nd.set_children_ids(dictc)
+            dictp = {}
+            for j in range(len(pplist)) : 
+                dictp[pplist[j]+n] = ppmlist[j]
+            nd.set_parent_ids(dictp)
+            nnode.append(nd)
+            
+        for node in nnode :
+            self.add_nodes(node)
         self.set_input_ids(nlin)
         self.set_outputs_ids(nlout)
+
+
+    def min_id(self):
+        '''
+        output : int; le plus petit id porté dans le graph
+        '''
+        n_list=self.get_node()
+        min=n_list[0].get_id()
+        for n in n_list:
+            id=n.get_id()
+            if id<min :
+                min=id
+        return min
+
+    def max_id(self):
+        '''
+        output : int; le plus grand id porté dans le graph
+        '''
+        n_list=self.get_node()
+        max=n_list[0].get_id()
+        for n in n_list:
+            id=n.get_id()
+            if id>max :
+                max=id
+        return max
 
 def random_int_list(n,bound,j) :
     '''
@@ -865,46 +893,21 @@ class bool_circ(open_digraph):
                     if node.get_id() in outp or node.get_id() in inp :
                         continue 
                     elif node.indegree() != 1 :
-                        print('ici1')
                         return False
                 elif l == '&' or l == '|' : 
                     if node.outdegree() != 1 :
-                        print(node.outdegree())
-                        print('ici2')
                         return False
                 elif l == '~' :
                     if node.indegree() != 1 and node.outdegree() != 1 :
-                        print('ici3') 
                         return False
-                elif l != '0' and l != '1' and l != '^' :
-                    print('ici4')
-                    print(l)
+                elif l == '0' or l == '1':
+                    if node.indegree() != 0 and node.outdegree() != 1 : 
+                        return False
+                elif  l != '^' :
                     return False
             return True
 
-    def min_id(self):
-        '''
-        output : int; le plus petit id porté dans le graph
-        '''
-        n_list=self.get_node()
-        min=n_list[0].get_id()
-        for n in n_list:
-            id=n.get_id()
-            if id<min :
-                min=id
-        return min
-
-    def max_id(self):
-        '''
-        output : int; le plus grand id porté dans le graph
-        '''
-        n_list=self.get_node()
-        max=n_list[0].get_id()
-        for n in n_list:
-            id=n.get_id()
-            if id>max :
-                max=id
-        return max
+    
 
 
 

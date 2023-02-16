@@ -202,12 +202,6 @@ class OpenDigraphTest (unittest.TestCase):
         affiche_matrix(random_oriented_int_matrix(4,3,False))
         print("ex 6:")
         affiche_matrix(random_triangular_int_matrix(5,4,False))
-        print("exo 8 :")
-        x = ["free", "DAG", "oriented", "loop-free", "undirected", "loop-free undirected"]
-
-        for i in range(len(x)) :
-            G = open_digraph.random(4,2,2,1,x[i])
-            G.assert_is_well_formed()
 
         n0 = node(8, 'a', {2:1, 3:1, 4:1, 6:1}, {2:1, 7:1})
         n1 = node(1, 'o0', {6:1}, {})
@@ -224,7 +218,8 @@ class OpenDigraphTest (unittest.TestCase):
         affiche_matrix(rmat)
         G = graph_from_adjacency_matrix(rmat)
         affiche_matrix(G.adjacency_matrix())
-        print("exo 10 :")
+
+        print("exo 8 et 10 :")
         x = ["free", "DAG", "oriented", "loop-free", "undirected", "loop-free undirected"]
 
         for i in range(len(x)) :
