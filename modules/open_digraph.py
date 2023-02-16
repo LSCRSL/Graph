@@ -94,13 +94,21 @@ class node:
         '''
         input: int list; 
         '''
-        self.parents = l
+        dict={}
+        lm=list(self.get_parent_mult())
+        for i in range (len(l)):
+            dict[l[i]]=lm[i]
+        self.parents = dict
 
     def set_children_ids (self, l) : 
         '''
         input: int list; 
         '''
-        self.children = l
+        dict={}
+        lm=list(self.get_children_mult())
+        for i in range (len(l)):
+            dict[l[i]]=lm[i]
+        self.parents = dict
 
     def add_child_id (self, id, mult) : 
         '''
@@ -263,6 +271,7 @@ class open_digraph: # for open directed graph
         ''' 
         input: node list; ln une liste de noeuds
         '''
+        self.inputs=[]
         for n in ln : 
             self.inputs.append(n.get_id())
             self.nodes[n.get_id()] = n
@@ -271,6 +280,7 @@ class open_digraph: # for open directed graph
         ''' 
         input: node list; ln une liste de noeuds
         '''
+        self.outputs=[]
         for n in ln : 
             self.outputs.append(n.get_id())
             self.nodes[n.get_id()] = n
@@ -663,9 +673,19 @@ class open_digraph: # for open directed graph
         '''
         input: int; valeur à ajouter à tous les id des noeuds du graph
         '''
-        
-        for nd in self.get_node():
-            p_id=nd.get_id() #on recupère l'id et on le met à jour
+        plin=self.get_input_ids()
+        plout=self.get_output_ids()
+        nlin=[]
+        nlout=[]
+        map=self.get_id_node_map()
+        for id in plin:
+            nlin.append(map[id])
+        for id in plout:
+            nlout.append(map[id])
+        ndlist=self.get_node()
+        for k in range (len(ndlist)):
+            nd=ndlist[k]
+            p_id=nd.get_id() #on recupère l'ancien id du noeud et on le met à jour
             n_id=p_id+n
             nd.set_id(n_id)
             #on modifie les ids des parents du noeud
@@ -675,12 +695,13 @@ class open_digraph: # for open directed graph
                 nplist.append(i+n)
             nd.set_parent_ids(nplist)
             #on modifie les ids des enfants du noeud
-            pclist=list(nd.get_child_ids())
+            pclist=list(nd.get_children_ids())
             nclist=[]
             for i in pclist:
                 nclist.append(i+n)
-            nd.set_child_ids(nclist)
-      
+            nd.set_children_ids(nclist)
+        self.set_input_ids(nlin)
+        self.set_outputs_ids(nlout)
 
 def random_int_list(n,bound,j) :
     '''
