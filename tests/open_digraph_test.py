@@ -247,10 +247,12 @@ class BoolCircTest (unittest.TestCase):
         GCa = bool_circ(Ga)
         self.assertEqual(0, GCa.min_id())
         self.assertEqual(20, GCa.max_id())
-
         GCa.shift_indices(10)
         self.assertEqual(10, GCa.min_id())
         self.assertEqual(30, GCa.max_id())
+        GCa.shift_indices(-5)
+        self.assertEqual(5, GCa.min_id())
+        self.assertEqual(25, GCa.max_id())
 
             
 

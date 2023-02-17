@@ -881,7 +881,6 @@ class bool_circ(open_digraph):
 
     def is_well_formed(self):
         if self.is_cyclic() : 
-            print('ici')
             return False 
         else : 
             n = self.get_node()
