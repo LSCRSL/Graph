@@ -731,7 +731,12 @@ class open_digraph: # for open directed graph
                 max=id
         return max
     
-    def iparrallel(self,g){
+    def iparrallel(self,g):
+        '''
+        input : open_digraph; graphe à ajouter à notre graphe de départ
+        
+        modifie notre graphe par l'ajout d'un graphe supplémentaire
+        '''
         minId=g.min_id()
         maxId=g.max_id()
         self.shift_indices(maxId-minId+1)
@@ -741,7 +746,7 @@ class open_digraph: # for open directed graph
         outId=g.get_output_ids()
         for o in range(len(outId)):
             self.add_output_id(o)
-        noeuds=g.get_nodes()
+        noeuds=g.get_node()
         edges=[]
         for n in noeuds:
             self.add_nodes(n)
@@ -750,7 +755,7 @@ class open_digraph: # for open directed graph
             for c in children:
                 edges.append((nId,c))
         self.add_edges(edges)
-    }
+
 
 def random_int_list(n,bound,j) :
     '''
@@ -874,6 +879,17 @@ def graph_from_adjacency_matrix(mat):
                         nwnd.add_parents_id(l,mat[l][j]) #on ajoute le parent
         nodelist.append(nwnd)
     return open_digraph([],[],nodelist)
+
+    def parrallel(g1,g2):
+        ''' 
+        input : open_digraph, open_digraph; graphes à fusionner
+        output : open_digraph 
+        renvoie un nouveau graphe qui est la composition parallele des graphes donnes
+        '''     
+        ge=open_digraph.empty()
+        ge.iparrallel(g1)
+        ge.iparrallel(g2)
+        return ge
 
 class bool_circ(open_digraph):
 
