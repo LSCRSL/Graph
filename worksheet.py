@@ -130,10 +130,13 @@ Gb = open_digraph([10,11],[20], [a0,a1,a2,a3,a4, x1, x2,x4] )
 '''
 GC = parallel(G0, Gb)
 GC.save_as_dot_file(os.getcwd())
-'''
 
 GCC = compose(Gb, G0)
 GCC.save_as_dot_file(os.getcwd())
+'''
+
+GT = open_digraph.identity(4)
+GT.save_as_dot_file(os.getcwd())
 
 
 

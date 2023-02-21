@@ -791,13 +791,13 @@ class open_digraph: # for open directed graph
     def identity(cls, n):
         g=open_digraph.empty()
         for i in range(n):
-            ni=node(i,'',{},{})
-            no=node(i+n+1,'',{},{})
+            ni=node(i,'{:}'.format(i),{},{})
+            no=node(i+n,'{:}'.format(n+i),{},{})
             g.add_nodes(ni)
             g.add_input_id(i)
             g.add_nodes(no)
-            g.add_output_id(i+n+1)
-            g.add_edge(i,i+n+1)
+            g.add_output_id(i+n)
+            g.add_edge(i,i+n)
         return g
 
 
