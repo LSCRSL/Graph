@@ -120,11 +120,56 @@ ouvre le document pdf avec le graphe
 
 ## TP5
 
-- 
-- 
-- 
-- 
-- 
+- EX 1 :
+'''
+input : open_digraph; graphe à ajouter à notre graphe de départ
+
+modifie notre graphe par l'ajout d'un graphe supplémentaire
+'''
+
+''' 
+input : open_digraph; graphe à combiner avec notre graphe de départ
+output : open_digraph 
+
+renvoie un nouveau graphe qui est la composition parallele des graphes donnes
+'''
+
+- EX 2 : 
+'''
+input : open_digraph; graphe à combiner avec notre graphe de départ
+
+modifie notre graphe en reliant les entrees de self et les sorties de l'open_digraph donne en argument
+'''
+
+'''
+input : open_digraph; graphe à combiner avec notre graphe de départ
+output : open_digraph 
+
+renvoie un nouveau graphe qui est la composition sequentielle des graphes donnes
+'''
+
+- EX 3 :
+'''
+input : int; le nombre de fils
+output : open_digraph 
+
+cree et renvoie un open_digraph de l'identite sur n fils
+'''
+
+- EX 4 : 
+'''
+output : int; int->int dict;
+
+renvoie le nombre de composantes connexes et un dictionnaire a associe à chaque id de noeud à une composante connexe
+'''
+
+- EX 5 : 
+'''
+output : open_digraph list;
+
+renvoie une liste d'open_digraph, chacun correspondant à une composante connexe du graphe de départ
+'''
+
 - 
 - 
 - 
