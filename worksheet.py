@@ -108,16 +108,6 @@ print(GCa.get_node_ids())
 print(GCa.get_input_ids())
 print(GCa.get_output_ids())
 
-'''
-GC = G.parallel(Ga)
-G.save_as_dot_file(os.getcwd())
-
-Ga.remove_node(10)
-G.icompose(Ga)
-G.save_as_dot_file(os.getcwd())
-
-'''
-
 n0 = node(0, 'a', {3:1, 4:1}, {1:1, 2:1})
 n1 = node(1, 'b', {0:1}, {2:2, 5:1})
 n2 = node(2, 'c', {0:1, 1:2}, {6:1})
@@ -137,9 +127,14 @@ a4 = node(4, 'x7', {1:1, 3:1}, {20:1})
 x4 = node(20, 'x8', {4:1}, {})
     
 Gb = open_digraph([10,11],[20], [a0,a1,a2,a3,a4, x1, x2,x4] )
+'''
+GC = parallel(G0, Gb)
+GC.save_as_dot_file(os.getcwd())
+'''
 
-G0.iparrallel(Gb)
-G0.save_as_dot_file(os.getcwd())
+GCC = compose(Gb, G0)
+GCC.save_as_dot_file(os.getcwd())
+
 
 
 # %%

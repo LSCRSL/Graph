@@ -279,6 +279,18 @@ class open_digraph: # for open directed graph
             self.outputs.append(n.get_id())
             self.nodes[n.get_id()] = n
 
+    def set_output(self, l_id) : 
+        '''
+        input : int list; l_id liste d'id
+        '''
+        self.outputs = l_id
+
+    def set_input(self, l_id) : 
+        '''
+        input : int list; l_id liste d'id
+        '''
+        self.inputs = l_id
+
     def add_input_id(self, id) : 
         ''' 
         input: int ; id l'id du noeud
@@ -731,7 +743,7 @@ class open_digraph: # for open directed graph
                 max=id
         return max
     
-    def iparrallel(self,g):
+    def iparallel(self,g):
         '''
         input : open_digraph; graphe à ajouter à notre graphe de départ
         
@@ -764,21 +776,16 @@ class open_digraph: # for open directed graph
             self.shift_indices(maxId-minId+1)
             inpId=f.get_input_ids()
             outId=f.get_output_ids()
-            selfOutId=self.get_output_ids()
-            self.set_output_ids(outId)
+            #selfOutId=self.get_output_ids()
+            selfInpId = self.get_input_ids()
+            self.set_input(inpId)
             noeuds=f.get_node()
-            #edges=[]
             for n in noeuds:
                 self.add_nodes(n)
-                '''children=list(n.get_children_ids())
-                nId=n.get_id()
-                for c in children:
-                    edges.append((nId,c))
-            self.add_edges(edges)'''
-            for k in range(len(selfOutId)):
-                ii=inp[k]
-                oi=selfOutId[k]
-                self.add_edge((oi,ii))
+            for k in range(len(selfInpId)):
+                ii=outId[k]
+                oi=selfInpId[k]
+                self.add_edge(oi,ii)
 
 
 def random_int_list(n,bound,j) :
@@ -904,15 +911,15 @@ def graph_from_adjacency_matrix(mat):
         nodelist.append(nwnd)
     return open_digraph([],[],nodelist)
 
-def parrallel(g1,g2):
+def parallel(g1,g2):
     ''' 
     input : open_digraph, open_digraph; graphes à fusionner
     output : open_digraph 
     renvoie un nouveau graphe qui est la composition parallele des graphes donnes
     '''     
     ge=open_digraph.empty()
-    ge.iparrallel(g1)
-    ge.iparrallel(g2)
+    ge.iparallel(g1)
+    ge.iparallel(g2)
     return ge
 
 def compose(g,f):
