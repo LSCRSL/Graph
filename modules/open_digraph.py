@@ -747,14 +747,9 @@ class open_digraph: # for open directed graph
         for o in range(len(outId)):
             self.add_output_id(o)
         noeuds=g.get_node()
-        edges=[]
         for n in noeuds:
             self.add_nodes(n)
-            children=list(n.get_children_ids())
-            nId=n.get_id()
-            for c in children:
-                edges.append((nId,c))
-        self.add_edges(edges)
+        
 
 
 def random_int_list(n,bound,j) :
