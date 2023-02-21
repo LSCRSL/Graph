@@ -750,6 +750,35 @@ class open_digraph: # for open directed graph
         for n in noeuds:
             self.add_nodes(n)
         
+    def icompose(self,f):
+        '''
+        input : open_digraph; graphe à combiner avec notre graphe de départ
+        
+        modifie notre graphe en reliant les entrees de self et les sorties de l'open_digraph donne en argument
+        '''
+        if (len(self.get_input_ids())!=len(f.get_output_ids())):
+            raise ValueError
+        else:
+            minId=f.min_id()
+            maxId=f.max_id()
+            self.shift_indices(maxId-minId+1)
+            inpId=f.get_input_ids()
+            outId=f.get_output_ids()
+            selfOutId=self.get_output_ids()
+            self.set_output_ids(outId)
+            noeuds=f.get_node()
+            #edges=[]
+            for n in noeuds:
+                self.add_nodes(n)
+                '''children=list(n.get_children_ids())
+                nId=n.get_id()
+                for c in children:
+                    edges.append((nId,c))
+            self.add_edges(edges)'''
+            for k in range(len(selfOutId)):
+                ii=inp[k]
+                oi=selfOutId[k]
+                self.add_edge((oi,ii))
 
 
 def random_int_list(n,bound,j) :
@@ -875,16 +904,27 @@ def graph_from_adjacency_matrix(mat):
         nodelist.append(nwnd)
     return open_digraph([],[],nodelist)
 
-    def parrallel(g1,g2):
-        ''' 
-        input : open_digraph, open_digraph; graphes à fusionner
-        output : open_digraph 
-        renvoie un nouveau graphe qui est la composition parallele des graphes donnes
-        '''     
-        ge=open_digraph.empty()
-        ge.iparrallel(g1)
-        ge.iparrallel(g2)
-        return ge
+def parrallel(g1,g2):
+    ''' 
+    input : open_digraph, open_digraph; graphes à fusionner
+    output : open_digraph 
+    renvoie un nouveau graphe qui est la composition parallele des graphes donnes
+    '''     
+    ge=open_digraph.empty()
+    ge.iparrallel(g1)
+    ge.iparrallel(g2)
+    return ge
+
+def compose(g,f):
+    '''
+    input : open_digraph, open_digraph; graphes f et g à composer
+    output : open_digraph 
+    
+    renvoie un nouveau graphe qui est la composition sequentielle des graphes donnes, ie f 'rond' g
+    '''    
+    compo=g.copy()
+    compo.icompose(f)
+    return compo
 
 class bool_circ(open_digraph):
 
