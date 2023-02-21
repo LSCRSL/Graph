@@ -464,7 +464,7 @@ class open_digraph: # for open directed graph
         
     def add_input_node(self,tgt) :
         '''
-        input: int; id du noeud vers lequel le nouveau noeud ajoputé au graphe pointe
+        input: int; id du noeud vers lequel le nouveau noeud ajouté au graphe pointe
 
         Vérifie si l'ajout de l'input est possible, si oui effectue l'ajout, si non renvoie une erreur
         '''
@@ -730,6 +730,27 @@ class open_digraph: # for open directed graph
             if id>max :
                 max=id
         return max
+    
+    def iparrallel(self,g){
+        minId=g.min_id()
+        maxId=g.max_id()
+        self.shift_indices(maxId-minId+1)
+        inpId=g.get_input_ids()
+        for i in range(len(inpId)):
+            self.add_input_id(i)
+        outId=g.get_output_ids()
+        for o in range(len(outId)):
+            self.add_output_id(o)
+        noeuds=g.get_nodes()
+        edges=[]
+        for n in noeuds:
+            self.add_nodes(n)
+            children=list(n.get_children_ids())
+            nId=n.get_id()
+            for c in children:
+                edges.append((nId,c))
+        self.add_edges(edges)
+    }
 
 def random_int_list(n,bound,j) :
     '''
