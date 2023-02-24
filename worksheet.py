@@ -127,17 +127,19 @@ a4 = node(4, 'x7', {1:1, 3:1}, {20:1})
 x4 = node(20, 'x8', {4:1}, {})
     
 Gb = open_digraph([10,11],[20], [a0,a1,a2,a3,a4, x1, x2,x4] )
-'''
+
 GC = parallel(G0, Gb)
+#GCC = compose(Gb, G0)
+#GT = open_digraph.identity(4)
+'''
 GC.save_as_dot_file(os.getcwd())
 
-GCC = compose(Gb, G0)
+
 GCC.save_as_dot_file(os.getcwd())
-'''
 
-GT = open_digraph.identity(4)
+
 GT.save_as_dot_file(os.getcwd())
-
+'''
 
 
 # %%

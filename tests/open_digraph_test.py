@@ -230,6 +230,55 @@ class OpenDigraphTest (unittest.TestCase):
             affiche_matrix(G.adjacency_matrix())
             G.assert_is_well_formed()
 
+    def test_coonected_components(self):
+        #GRAPH GO sans composantes connexe (1)
+        n0 = node(0, 'a', {3:1, 4:1}, {1:1, 2:1})
+        n1 = node(1, 'b', {0:1}, {2:2, 5:1})
+        n2 = node(2, 'c', {0:1, 1:2}, {6:1})
+        i0 = node(3, 'i0', {}, {0:1})
+        i1 = node(4, 'i1', {}, {0:1})
+        o0 = node(5, 'o0', {1:1}, {})
+        o1 = node(6, 'o1', {2:1}, {})
+        G0 = open_digraph([3,4], [5,6], [n0,n1,n2,i0,i1,o0,o1])
+        self.assertEqual(G0.connected_components()[0],1)
+        self.assertEqual(G0.connected_components()[1][0],0)
+        self.assertEqual(G0.connected_components()[1][6],0)
+        #GRAPH Gb sans composantes connexe (1)
+        x1 = node(10, 'x1', {}, {0:1} )
+        x2 = node(11, 'x2', {}, {2:1} )
+        a0 = node(0, 'x3', {10:1}, {1:1, 2:1})
+        a1 = node(1, 'x4', {0:1}, {4:1})
+        a2 = node(2, 'x5', {0:1, 11:1}, {3:1} )
+        a3 = node(3, 'x6', {2:1}, {4:1} )
+        a4 = node(4, 'x7', {1:1, 3:1}, {20:1})
+        x4 = node(20, 'x8', {4:1}, {})
+        Gb = open_digraph([10,11],[20], [a0,a1,a2,a3,a4, x1, x2,x4] )
+        self.assertEqual(Gb.connected_components()[0],1)
+        self.assertEqual(G0.connected_components()[1][0],0)
+        self.assertEqual(G0.connected_components()[1][20],0)
+        #GRAPH GC avec 2 composantes connexes (2)
+        vSI=Gb.max_id()-Gb.min_id()+1 #les indices de G0 sont modifiés de +vSI
+        GC = parallel(G0, Gb)
+        nb=GC.connected_components()[0]
+        self.assertEqual(nb,2)
+        self.assertEqual(GC.connected_components()[1][0],1)
+        self.assertEqual(GC.connected_components()[1][0+vSI],0)
+        #GRAPH Gd avec 3 composantes connexes (3)
+        vSI1=G0.max_id()-G0.min_id()+1 #les indices de GC sont modifiés de +vSI1
+        Gd = parallel(GC, G0)
+        self.assertEqual(Gd.connected_components()[0],3)
+        self.assertEqual(Gd.connected_components()[1][0],2)
+        self.assertEqual(Gd.connected_components()[1][0+vSI+vSI1],0)
+        self.assertEqual(Gd.connected_components()[1][0+vSI],1)
+        self.assertEqual(len(Gd.connected_list()),Gd.connected_components()[0]) #TEST fonction connected_list()
+        #GRAPH Ge d'une composition de GO et Gb donc sans composantes connexes
+        Ge= compose(G0,Gb)
+        self.assertEqual(Ge.connected_components()[0],1)
+
+
+
+
+
 class BoolCircTest (unittest.TestCase):
     def test_id(self):
         x1 = node(10, '', {}, {0:1} )

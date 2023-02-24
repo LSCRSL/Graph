@@ -593,9 +593,9 @@ class open_digraph: # for open directed graph
 
         return G
 
-    def save_as_dot_file(self,path, verbose=False):
+    def save_as_dot_file(self,path, filename='graph', verbose=False):
         '''
-        input : string, bool ; lieu d'enregistrement, flag pour l'affichage du label et de l'id
+        input : string, bool, string ; lieu d'enregistrement, flag pour l'affichage du label et de l'id, nom du fichier sans ".dot" ("graph" par défaut)
 
         enregistre le graphe en question en format .dot a l’endroit specifie par
         path avec l'affichage déterminé par verbose.
@@ -604,7 +604,7 @@ class open_digraph: # for open directed graph
         input=indice_input si entrée, -1 sinon
         output=indice_sortie si sortie, -1 sinon
         '''
-        filepath = os.path.join(path, 'graph.dot')
+        filepath = os.path.join(path, filename+'.dot')
         f = open(filepath, "w")
         f.write("digraph G{\n")
         inp = self.get_input_ids()
@@ -663,15 +663,15 @@ class open_digraph: # for open directed graph
         f.close()
         return G
 
-    def display(self,verbose=False):
+    def display(self, filename='graph', verbose=False):
         '''
         input : bool ; affichage du label et de l'id
 
         ouvre le document pdf avec le graphe
         '''
-        self.save_as_dot_file(os.getcwd(), verbose)
-        convert='dot -Tpdf graph.dot -o graph.pdf'
-        open_file='xdg-open graph.pdf'
+        self.save_as_dot_file(os.getcwd(), filename, verbose)
+        convert='dot -Tpdf {}.dot -o {}.pdf' .format(filename,filename)
+        open_file='xdg-open {}.pdf' .format(filename)
         os.system(convert)
         os.system(open_file)
 
@@ -800,6 +800,21 @@ class open_digraph: # for open directed graph
             g.add_edge(i,i+n)
         return g
 
+    def connected_components(self):
+        '''
+        output : int, int->int dict;
+
+        renvoie le nombre de composantes connexes et un dictionnaire a associe à chaque id de noeud à un numéro de composante connexe
+        '''
+        return (0,{0:0,1:0})
+
+    def connected_list(self):
+        '''
+        output : open_digraph list;
+
+        renvoie une liste d'open_digraph, chacun correspondant à une composante connexe du graphe de départ
+        '''
+        return "To do"
 
 def random_int_list(n,bound,j) :
     '''
@@ -930,7 +945,7 @@ def parallel(g1,g2):
     output : open_digraph 
     renvoie un nouveau graphe qui est la composition parallele des graphes donnes
     '''     
-    ge=open_digraph.empty()
+    ge=g1.copy()
     ge.iparallel(g1)
     ge.iparallel(g2)
     return ge
@@ -997,17 +1012,4 @@ class bool_circ(open_digraph):
                 elif  l != '^' :
                     return False
             return True
-
-    
-
-
-
-
-
-
-                     
-                
-
-    
-
 
