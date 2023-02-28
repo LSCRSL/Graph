@@ -776,7 +776,6 @@ class open_digraph: # for open directed graph
             self.shift_indices(maxId-minId+1)
             inpId=f.get_input_ids()
             outId=f.get_output_ids()
-            #selfOutId=self.get_output_ids()
             selfInpId = self.get_input_ids()
             self.set_input(inpId)
             noeuds=f.get_node()
@@ -785,7 +784,7 @@ class open_digraph: # for open directed graph
             for k in range(len(selfInpId)):
                 ii=outId[k]
                 oi=selfInpId[k]
-                self.add_edge(oi,ii)
+                self.add_edge(ii,oi)
         
     @classmethod
     def identity(cls, n):
@@ -810,19 +809,15 @@ class open_digraph: # for open directed graph
         dict = {}
         mat = self.adjacency_matrix()
         list_indices = [i for i in range(len(mat))]
+
+        list_node = [n_id for n_id in list(self.get_node_ids()) if (n_id not in list(self.get_input_ids()) and n_id not in list(self.get_output_ids()))]
         while len(dict) != len(mat) : 
             for i in list_indices : 
-                if i in list(dict.keys()) : 
+                if list_node[i] in list(dict.keys()) : 
                     continue
                 else :
-                    parcours_mat(mat, i, dict, cpt)
-                    #probleme de compteur
+                    parcours_mat(mat, i, dict, cpt, list_node)
                     cpt += 1  
-        #on doit mettre les inputs et outputs du graphe ? 
-        #j'ai fait le choix de ne pas les ajouter 
-        #pour la fonction qui renvoie la liste, je vais dans les inputs et outputs je regarde le parent/enfant
-        #et je cherche dans mon dictionnaire le numero de la composante associée
-        #et je le rajoute à mon graphe ? on doit recréer le graphe donc il faut passer par les fils etc...
         return (cpt, dict)
 
     def connected_list(self):
@@ -831,17 +826,32 @@ class open_digraph: # for open directed graph
 
         renvoie une liste d'open_digraph, chacun correspondant à une composante connexe du graphe de départ
         '''
-        list = []
         (ctp, dict) = self.connected_components()
+        l = [open_digraph.empty() for i in range(ctp)]
+        for (k,v) in dict.items() : 
+            l[v].add_nodes(self.get_node_by_id(k))
         
-        return "To do"
+        #ajout des inputs et outputs 
+        for input in self.get_input_ids() : 
+            n_input = self.get_node_by_id(input)
+            #on prend l'id des enfants, et on prend le numero du graphe associe dans la liste, on prend le graphe
+            graph = l[dict[list(n_input.get_children_ids())[0]]]
+            graph.add_nodes(n_input)
+            graph.add_input_id(n_input)
+        
+        for output in self.get_output_ids() :
+            n_output = self.get_node_by_id(output)
+            graph = l[dict[list(n_output.get_parent_ids())[0]]]
+            graph.add_nodes(n_output)
+            graph.add_input_id(n_output)
+        return l
 
-def parcours_mat(mat, ligne, dict, compteur) : 
-    if ligne not in dict.keys() : 
-        dict[ligne] = compteur
+def parcours_mat(mat, ligne, dict, compteur, list_node) : 
+    if list_node[ligne] not in dict.keys() : 
+        dict[list_node[ligne]] = compteur
         for j in range(len(mat)) : 
             if mat[ligne][j] != 0 : 
-                parcours_mat(mat, j, dict, compteur)
+                parcours_mat(mat, j, dict, compteur, list_node)
 
 def random_int_list(n,bound,j) :
     '''
