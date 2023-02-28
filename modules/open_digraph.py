@@ -753,10 +753,10 @@ class open_digraph: # for open directed graph
         maxId=g.max_id()
         self.shift_indices(maxId-minId+1)
         inpId=g.get_input_ids()
-        for i in range(len(inpId)):
+        for i in inpId:
             self.add_input_id(i)
         outId=g.get_output_ids()
-        for o in range(len(outId)):
+        for o in outId:
             self.add_output_id(o)
         noeuds=g.get_node()
         for n in noeuds:
@@ -806,7 +806,24 @@ class open_digraph: # for open directed graph
 
         renvoie le nombre de composantes connexes et un dictionnaire a associe à chaque id de noeud à un numéro de composante connexe
         '''
-        return (0,{0:0,1:0})
+        cpt = 0
+        dict = {}
+        mat = self.adjacency_matrix()
+        list_indices = [i for i in range(len(mat))]
+        while len(dict) != len(mat) : 
+            for i in list_indices : 
+                if i in list(dict.keys()) : 
+                    continue
+                else :
+                    parcours_mat(mat, i, dict, cpt)
+                    #probleme de compteur
+                    cpt += 1  
+        #on doit mettre les inputs et outputs du graphe ? 
+        #j'ai fait le choix de ne pas les ajouter 
+        #pour la fonction qui renvoie la liste, je vais dans les inputs et outputs je regarde le parent/enfant
+        #et je cherche dans mon dictionnaire le numero de la composante associée
+        #et je le rajoute à mon graphe ? on doit recréer le graphe donc il faut passer par les fils etc...
+        return (cpt, dict)
 
     def connected_list(self):
         '''
@@ -814,7 +831,17 @@ class open_digraph: # for open directed graph
 
         renvoie une liste d'open_digraph, chacun correspondant à une composante connexe du graphe de départ
         '''
+        list = []
+        (ctp, dict) = self.connected_components()
+        
         return "To do"
+
+def parcours_mat(mat, ligne, dict, compteur) : 
+    if ligne not in dict.keys() : 
+        dict[ligne] = compteur
+        for j in range(len(mat)) : 
+            if mat[ligne][j] != 0 : 
+                parcours_mat(mat, j, dict, compteur)
 
 def random_int_list(n,bound,j) :
     '''
@@ -946,7 +973,6 @@ def parallel(g1,g2):
     renvoie un nouveau graphe qui est la composition parallele des graphes donnes
     '''     
     ge=g1.copy()
-    ge.iparallel(g1)
     ge.iparallel(g2)
     return ge
 
