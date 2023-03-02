@@ -71,14 +71,14 @@ class NodeTest(unittest.TestCase):
         N.set_label('f')
         N.set_children_ids({5:1,6:1,7:1})
         N.set_parent_ids({0:1,2:1})
-        print(N.get_children_ids())
-        print(N.get_parent_ids())
+        '''print(N.get_children_ids())
+        print(N.get_parent_ids())'''
         N.add_child_id(9,1)
         N.add_parents_id(3,1)
-        print('Après avoir rajouté un enfant : ')
+        '''print('Après avoir rajouté un enfant : ')
         print(N.get_children_ids())
         print('Après avoir rajouté un parent : ')
-        print(N.get_parent_ids())
+        print(N.get_parent_ids())'''
 
 class OpenDigraphTest (unittest.TestCase):
     '''
@@ -141,7 +141,7 @@ class OpenDigraphTest (unittest.TestCase):
         o0 = node(5, 'o0', {1:1}, {})
         o1 = node(6, 'o1', {2:1}, {})
         G = open_digraph([3,4], [5,6], [n0,n1,n2,i0,i1,o0,o1])
-        print('L ID du nouveau noeud rajouté:')
+        '''print('L ID du nouveau noeud rajouté:')
         print(G.add_node('y', {2:1},{0:2} ))
         print(n2.get_children_ids())
         print(n2.get_children_mult())
@@ -157,7 +157,7 @@ class OpenDigraphTest (unittest.TestCase):
         print('On enleve le n 7 et 6')
         G.remove_nodes_by_id([7,6])
         print(n2.get_children_ids())
-        print(n0.get_parent_ids())
+        print(n0.get_parent_ids())'''
 
 
     def test_dig_well_formed(self) : 
@@ -178,8 +178,8 @@ class OpenDigraphTest (unittest.TestCase):
         G.assert_is_well_formed()
         G.add_input_node(1)
         G.assert_is_well_formed()
-        print('les id des parents : ')
-        print(G.get_input_ids())
+        '''print('les id des parents : ')
+        print(G.get_input_ids())'''
         o1.add_parents_id(2,1)
         self.assertEqual(False, G.is_well_formed())
         G.remove_edge(2,6)
@@ -241,11 +241,12 @@ class OpenDigraphTest (unittest.TestCase):
         o0 = node(5, 'o0', {1:1}, {})
         o1 = node(6, 'o1', {2:1}, {})
         G0 = open_digraph([3,4], [5,6], [n0,n1,n2,i0,i1,o0,o1])
-        print(G0.connected_components())
         #G0.save_as_dot_file(os.getcwd(), 'graphG0')
-        
+        #G0.display()
         self.assertEqual(G0.connected_components()[0],1)
         self.assertEqual(G0.connected_components()[1][0],0)
+        print("TEST")
+        print(G0.connected_components())
         #self.assertEqual(G0.connected_components()[1][6],0)
         
         #GRAPH Gb sans composantes connexe (1)
@@ -259,6 +260,7 @@ class OpenDigraphTest (unittest.TestCase):
         x4 = node(20, 'x8', {4:1}, {})
         Gb = open_digraph([10,11],[20], [a0,a1,a2,a3,a4, x1, x2,x4] )
         #Gb.save_as_dot_file(os.getcwd(), 'graphGb')
+        #Gb.display()
         self.assertEqual(Gb.connected_components()[0],1)
         self.assertEqual(G0.connected_components()[1][0],0)
         #self.assertEqual(G0.connected_components()[1][20],0)
@@ -267,7 +269,7 @@ class OpenDigraphTest (unittest.TestCase):
         GC = parallel(G0, Gb)
         nb=GC.connected_components()[0]
         self.assertEqual(nb,2)
-        #self.assertEqual(GC.connected_components()[1][0],1)
+        self.assertEqual(GC.connected_components()[1][0],1)
         self.assertEqual(GC.connected_components()[1][0+vSI],0)
         
         #GRAPH Gd avec 3 composantes connexes (3)
@@ -278,15 +280,14 @@ class OpenDigraphTest (unittest.TestCase):
         self.assertEqual(Gd.connected_components()[1][0+vSI+vSI1],0)
         self.assertEqual(Gd.connected_components()[1][0+vSI1],1)
         self.assertEqual(len(Gd.connected_list()),Gd.connected_components()[0]) #TEST fonction connected_list()
+        #On rajoute une arrête pour revenir à 2 composantes connexes
+        Gd.add_edge(7,0)
+        self.assertEqual(Gd.connected_components()[0],2)
         #GRAPH Ge d'une composition de GO et Gb donc sans composantes connexes
-
-        #il faut modifer la fct compose pour la matrice d'adjacence soit ecrite en lisant le graphe de haut en bas
         Ge= compose(Gb,G0)
-        Ge.save_as_dot_file(os.getcwd(),'graphGe', True)
+        #Ge.display()
+        #Ge.save_as_dot_file(os.getcwd(),'graphGe', True)
         self.assertEqual(Ge.connected_components()[0],1)
-
-
-
 
 
 class BoolCircTest (unittest.TestCase):
@@ -312,9 +313,6 @@ class BoolCircTest (unittest.TestCase):
         GCa.shift_indices(-5)
         self.assertEqual(5, GCa.min_id())
         self.assertEqual(25, GCa.max_id())
-
-            
-
 
         
 if __name__ == '__main__': # the following code is called only when

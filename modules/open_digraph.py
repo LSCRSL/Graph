@@ -183,7 +183,6 @@ class open_digraph: # for open directed graph
     def __init__(self, inputs, outputs, nodes):
         '''
         inputs: int list; the ids of the input nodes
-        1
         outputs: int list; the ids of the output nodes
         nodes: node iter;
         '''
@@ -308,6 +307,18 @@ class open_digraph: # for open directed graph
         input: node ; n un noeud
         '''
         self.nodes[n.get_id()] = n
+
+    def add_nodes_list(self,nn):
+        '''
+        input: node list, node list;
+        nn les noeuds à rajouter au debut du dict de nodes de self
+        '''
+        sn=self.get_node()
+        self.nodes={}
+        for n in nn:
+            self.add_nodes(n)
+        for n in sn:
+            self.add_nodes(n)
 
     def new_id(self) : 
         '''
@@ -779,8 +790,9 @@ class open_digraph: # for open directed graph
             selfInpId = self.get_input_ids()
             self.set_input(inpId)
             noeuds=f.get_node()
-            for n in noeuds:
-                self.add_nodes(n)
+            '''for n in noeuds:
+                self.add_nodes(n)'''
+            self.add_nodes_list(noeuds)
             for k in range(len(selfInpId)):
                 ii=outId[k]
                 oi=selfInpId[k]
@@ -809,8 +821,7 @@ class open_digraph: # for open directed graph
         dict = {}
         mat = self.adjacency_matrix()
         list_indices = [i for i in range(len(mat))]
-
-        list_node = [n_id for n_id in list(self.get_node_ids()) if (n_id not in list(self.get_input_ids()) and n_id not in list(self.get_output_ids()))]
+        list_node = [n_id for n_id in list(self.get_node_ids()) if (n_id not in list(self.get_input_ids()) and n_id not in list(self.get_output_ids()))] 
         while len(dict) != len(mat) : 
             for i in list_indices : 
                 if list_node[i] in list(dict.keys()) : 
