@@ -130,15 +130,19 @@ Gb = open_digraph([10,11],[20], [a0,a1,a2,a3,a4, x1, x2,x4] )
 
 GC = parallel(G0, Gb)
 Gd = parallel(GC, G0)
-#Gd.display("Gd",True)
+#Gd.display("G1",True)
+Gd.add_edge(9,29)
+#Gd.display("G2",True)
 Graph_list=Gd.connected_list()
+print(len(Graph_list))
 for i in range (len(Graph_list)):
     g=Graph_list[i]
     #g.display("Gd"+str(i), True)
-#GCC = compose(Gb, G0)
-'''Gb.display('Gb')
+G0.display('G01')
+GCC = compose(Gb, G0)
+Gb.display('Gb')
 G0.display('G0')
-GCC.display()'''
+GCC.display()
 #GT = open_digraph.identity(4)
 '''
 GC.save_as_dot_file(os.getcwd())

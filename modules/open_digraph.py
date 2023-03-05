@@ -46,27 +46,27 @@ class node:
 
     def get_parent_ids(self) : 
         '''
-        output: int dict; 
+        output: int list; 
         '''
-        return self.parents.keys()
+        return list(self.parents.keys())
 
     def get_children_ids(self) : 
         '''
-        output: int dict; 
+        output: int list; 
         '''
-        return self.children.keys()
+        return list(self.children.keys())
     
     def get_parent_mult(self) : 
         '''
-        output: int dict; 
+        output: int list; 
         '''
-        return self.parents.values()
+        return list(self.parents.values())
 
     def get_children_mult(self) : 
         '''
-        output: int dict; 
+        output: int list; 
         '''
-        return self.children.values()
+        return list(self.children.values())
 
     @classmethod
     def node_empty(cls) : 
@@ -159,7 +159,7 @@ class node:
         """
         output : int; le degre entrant du noeud
         """
-        mult = list(self.get_parent_mult())
+        mult = self.get_parent_mult()
         cpt = 0
         for i in mult : 
             cpt += i
@@ -169,7 +169,7 @@ class node:
         """
         output : int; le degre entrant du noeud
         """
-        mult = list(self.get_children_mult())
+        mult = self.get_children_mult()
         cpt = 0
         for i in mult : 
             cpt += i
@@ -239,9 +239,9 @@ class open_digraph: # for open directed graph
 
     def get_node_ids(self) : 
         '''
-        output: int dict; 
+        output: int list; 
         '''
-        return self.nodes.keys()
+        return list(self.nodes.keys())
 
     def get_node_by_id(self,i) : 
         '''
@@ -414,9 +414,9 @@ class open_digraph: # for open directed graph
         '''
         n = self.get_node_by_id(id)
     
-        for p in list(n.get_parent_ids()) :
+        for p in n.get_parent_ids() :
             self.remove_parallel_edges(p, id)
-        for c in list(n.get_children_ids()) : 
+        for c in n.get_children_ids() : 
             self.remove_parallel_edges(id, c)
         self.remove_node(id)
 
@@ -454,14 +454,14 @@ class open_digraph: # for open directed graph
             if i not in n_id : 
                 return False
             n=self.get_node_by_id(i)
-            mc= list(n.get_children_mult())
+            mc= n.get_children_mult()
             if len(n.get_parent_mult())!=0 or len(mc)!=1 or mc[0]!=1:
                 return False
         for o in outp : 
             if o not in n_id :
                 return False
             n=self.get_node_by_id(o)
-            mp=list(n.get_parent_mult())
+            mp=n.get_parent_mult()
             if len(n.get_children_mult())!=0 or len(mp)!=1 or mp[0]!=1:
                 return False
         #4e point
@@ -548,8 +548,8 @@ class open_digraph: # for open directed graph
                 if v == i : 
                     ll = []
                     noeud = sc.get_node_by_id(k)
-                    child = list(noeud.get_children_ids())
-                    mult = list(noeud.get_children_mult())
+                    child = noeud.get_children_ids()
+                    mult = noeud.get_children_mult()
                     for j in range (size_l) : 
                         b = False
                         for c in range(len(child)) :
@@ -631,8 +631,8 @@ class open_digraph: # for open directed graph
             else:
                 f.write(f"{n.get_id()} [label={n.get_label()}, color={color}];\n")
         for n in self.get_node():
-            cid=list(n.get_children_ids())
-            cmul=list(n.get_children_mult())
+            cid=n.get_children_ids()
+            cmul=n.get_children_mult()
             for c in range (len(cid)):
                 for m in range (0,cmul[c]):
                     f.write(f"{n.get_id()} -> {cid[c]};\n")
@@ -707,10 +707,10 @@ class open_digraph: # for open directed graph
         for k in range (len(ndlist)):
             nd=ndlist[k]
             p_id=nd.get_id() #on recupère l'ancien id du noeud et on le met à jour
-            pplist = list(nd.get_parent_ids()) #id des parents
-            ppmlist = list(nd.get_parent_mult()) #mult des parents 
-            pclist = list(nd.get_children_ids()) #id des enfants
-            pcmlist = list(nd.get_children_mult()) #mult des enfants
+            pplist = nd.get_parent_ids() #id des parents
+            ppmlist = nd.get_parent_mult() #mult des parents 
+            pclist = nd.get_children_ids() #id des enfants
+            pcmlist = nd.get_children_mult() #mult des enfants
             n_id=p_id+n
             self.remove_node(p_id)
             nd.set_id(n_id)
@@ -790,8 +790,6 @@ class open_digraph: # for open directed graph
             selfInpId = self.get_input_ids()
             self.set_input(inpId)
             noeuds=f.get_node()
-            '''for n in noeuds:
-                self.add_nodes(n)'''
             self.add_nodes_list(noeuds)
             for k in range(len(selfInpId)):
                 ii=outId[k]
@@ -821,7 +819,7 @@ class open_digraph: # for open directed graph
         dict = {}
         mat = self.adjacency_matrix()
         list_indices = [i for i in range(len(mat))]
-        list_node = [n_id for n_id in list(self.get_node_ids()) if (n_id not in list(self.get_input_ids()) and n_id not in list(self.get_output_ids()))] 
+        list_node = [n_id for n_id in self.get_node_ids() if (n_id not in list(self.get_input_ids()) and n_id not in list(self.get_output_ids()))] 
         while len(dict) != len(mat) : 
             for i in list_indices : 
                 if list_node[i] in list(dict.keys()) : 
@@ -829,6 +827,12 @@ class open_digraph: # for open directed graph
                 else :
                     parcours_mat(mat, i, dict, cpt, list_node)
                     cpt += 1  
+        inputs = self.get_input_ids()
+        outputs = self.get_output_ids()
+        for input in inputs : 
+            dict[input] = dict[self.get_node_by_id(input).get_children_ids()[0]]
+        for output in outputs : 
+            dict[output] = dict[self.get_node_by_id(output).get_parent_ids()[0]]
         return (cpt, dict)
 
     def connected_list(self):
@@ -841,20 +845,21 @@ class open_digraph: # for open directed graph
         l = [open_digraph.empty() for i in range(ctp)]
         for (k,v) in dict.items() : 
             l[v].add_nodes(self.get_node_by_id(k))
-        
+        '''
         #ajout des inputs et outputs 
         for input in self.get_input_ids() : 
             n_input = self.get_node_by_id(input)
             #on prend l'id des enfants, et on prend le numero du graphe associe dans la liste, on prend le graphe
             graph = l[dict[list(n_input.get_children_ids())[0]]]
             graph.add_nodes(n_input)
-            graph.add_input_id(n_input)
+            graph.add_input_id(n_input.get_id())
         
         for output in self.get_output_ids() :
             n_output = self.get_node_by_id(output)
             graph = l[dict[list(n_output.get_parent_ids())[0]]]
             graph.add_nodes(n_output)
-            graph.add_input_id(n_output)
+            graph.add_output_id(n_output.get_id())
+        '''
         return l
 
 def parcours_mat(mat, ligne, dict, compteur, list_node) : 
@@ -1005,7 +1010,7 @@ def compose(g,f):
     renvoie un nouveau graphe qui est la composition sequentielle des graphes donnes, ie f 'rond' g
     '''    
     compo=g.copy()
-    compo.icompose(f)
+    compo.icompose(f.copy())
     return compo
 
 class bool_circ(open_digraph):
