@@ -168,7 +168,6 @@ o1 = node(6, 'o1', {2:1}, {})
 G = open_digraph([3,4], [5,6], [n0,n1,n2,i0,i1,o0,o1])
 G.add_edge(2,5)
 
-G.display()
 print("\n\nAlgo Dijkstra à partir de 'a' quand direction=1, ie les enfants:\n")
 print(G.dijkstra(n0,1))
 print("\n\nAlgo Dijkstra à partir de 'b' quand direction=-1, ie les parents:\n")
@@ -179,4 +178,36 @@ print("\n\nAlgo Dijkstra à partir de 'a' quand direction=1, dès qu'on est sûr
 print(G.dijkstra(n0,1,n1))
 print("\n\nChemin le plus court pour aller de 'a' à 'o0':\n")
 print(G.shortest_path(n0,o0))
+print("Distance avec ancetre : \n")
 print(G.dist_ancetre(o0,o1))
+
+x1 = node(10, 'x1', {}, {0:1} )
+x2 = node(11, 'x2', {}, {2:1} )
+a0 = node(0, 'x3', {10:1}, {1:1, 2:1})
+a1 = node(1, 'x4', {0:1}, {4:1})
+a2 = node(2, 'x5', {0:1, 11:1}, {3:1} )
+a3 = node(3, 'x6', {2:1}, {4:1} )
+a4 = node(4, 'x7', {1:1, 3:1}, {20:1})
+x4 = node(20, 'x8', {4:1}, {})
+Gb = open_digraph([10,11],[20], [a0,a1,a2,a3,a4, x1, x2,x4] )
+GC = parallel(G, Gb)
+
+print("\nChemin le plus court pour aller de 'a' à 'o0':")
+print(GC.shortest_path(GC.get_node_by_id(21),GC.get_node_by_id(26)))
+print("\nChemin le plus court pour aller de 'x5' à 'x4':")
+print(GC.shortest_path(GC.get_node_by_id(2),GC.get_node_by_id(1)))
+print("\nChemin le plus court pour aller de 'x2' à 'x7':")
+print(GC.shortest_path(GC.get_node_by_id(11),GC.get_node_by_id(4)))
+print("\nChemin le plus court pour aller de 'x2' à 'b':")
+print(GC.shortest_path(GC.get_node_by_id(11),GC.get_node_by_id(22)))
+print("\nDistance avec ancetre : \n")
+print(GC.dist_ancetre(GC.get_node_by_id(26),GC.get_node_by_id(27)))
+print("\nDistance avec ancetre de 2 noeuds qui ne sont pas dans la même composante : ")
+print(GC.dist_ancetre(GC.get_node_by_id(20),GC.get_node_by_id(27)))
+
+
+
+
+
+
+

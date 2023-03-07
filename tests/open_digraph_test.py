@@ -284,7 +284,7 @@ class OpenDigraphTest (unittest.TestCase):
         self.assertEqual(GdC[1][0+vSI1],1)
         self.assertEqual(len(Gd.connected_list()),GdC[0]) #TEST fonction connected_list()
         #On rajoute une arrête pour revenir à 2 composantes connexes
-        Gd.add_edge(7,0)
+        Gd.add_edge(29,9)
         Gd.save_as_dot_file(os.getcwd(), 'graphGD', True)
         affiche_matrix(Gd.adjacency_matrix())
         self.assertEqual(Gd.connected_components()[0],2)

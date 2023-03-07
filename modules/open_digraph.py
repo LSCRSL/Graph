@@ -808,32 +808,33 @@ class open_digraph: # for open directed graph
             g.add_output_id(i+n)
             g.add_edge(i,i+n)
         return g
-
-    def connected_components(self):
-        '''
-        output : int, int->int dict;
-
-        renvoie le nombre de composantes connexes et un dictionnaire a associe à chaque id de noeud à un numéro de composante connexe
-        '''
+    
+    def connected_components(self) : 
         cpt = 0
         dict = {}
-        mat = self.adjacency_matrix()
-        list_indices = [i for i in range(len(mat))]
-        list_node = [n_id for n_id in self.get_node_ids() if (n_id not in list(self.get_input_ids()) and n_id not in list(self.get_output_ids()))] 
-        while len(dict) != len(mat) : 
-            for i in list_indices : 
-                if list_node[i] in list(dict.keys()) : 
-                    continue
-                else :
-                    parcours_mat(mat, i, dict, cpt, list_node)
-                    cpt += 1  
-        inputs = self.get_input_ids()
-        outputs = self.get_output_ids()
-        for input in inputs : 
-            dict[input] = dict[self.get_node_by_id(input).get_children_ids()[0]]
-        for output in outputs : 
-            dict[output] = dict[self.get_node_by_id(output).get_parent_ids()[0]]
-        return (cpt, dict)
+        for node in self.get_node() :
+            if node.get_id() not in dict.keys() :
+                self.same_graph(node, cpt, dict)
+                cpt += 1
+        return (cpt,dict)
+    
+    def same_graph(self,node, cpt, dict) :
+        if node.get_id() in dict.keys() : 
+            for parent in node.get_parent_ids() : 
+                if parent not in dict.keys() : 
+                    self.same_graph(self.get_node_by_id(parent), cpt,dict)
+            
+            for child in node.get_children_ids() :
+                if child not in dict.keys() : 
+                    self.same_graph(self.get_node_by_id(child), cpt,dict)
+        else : 
+            dict[node.get_id()] = cpt
+            for parent in  node.get_parent_ids():
+                self.same_graph(self.get_node_by_id(parent), cpt,dict)
+
+            for child in node.get_children_ids() :
+                dict[child] = cpt
+                self.same_graph(self.get_node_by_id(child), cpt,dict)
 
     def connected_list(self):
         '''
@@ -845,21 +846,11 @@ class open_digraph: # for open directed graph
         l = [open_digraph.empty() for i in range(ctp)]
         for (k,v) in dict.items() : 
             l[v].add_nodes(self.get_node_by_id(k))
-        '''
-        #ajout des inputs et outputs 
-        for input in self.get_input_ids() : 
-            n_input = self.get_node_by_id(input)
-            #on prend l'id des enfants, et on prend le numero du graphe associe dans la liste, on prend le graphe
-            graph = l[dict[list(n_input.get_children_ids())[0]]]
-            graph.add_nodes(n_input)
-            graph.add_input_id(n_input.get_id())
-        
-        for output in self.get_output_ids() :
-            n_output = self.get_node_by_id(output)
-            graph = l[dict[list(n_output.get_parent_ids())[0]]]
-            graph.add_nodes(n_output)
-            graph.add_output_id(n_output.get_id())
-        '''
+            if k in self.get_input_ids() : 
+                l[v].add_input_id(k)
+
+            if k in self.get_output_ids() : 
+                l[v].add_output_id(k)
         return l
     
     def dijkstra(self,src, direction=None, tgt=None): #testée dans worksheet
@@ -908,7 +899,10 @@ class open_digraph: # for open directed graph
         res=[tgt]
         while src not in res:
             d1,d2=self.dijkstra(src,direction)
-            tgt=d2[tgt]
+            try : 
+                tgt=d2[tgt]
+            except : 
+                return []
             res.insert(0,tgt)
         return res
     
