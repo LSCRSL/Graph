@@ -861,7 +861,57 @@ class open_digraph: # for open directed graph
             graph.add_output_id(n_output.get_id())
         '''
         return l
-
+    
+    def dijkstra(self,src, direction=None, tgt=None): #testée dans worksheet
+            '''
+            input: node, int, node;
+            output: node->int dict, node->int dict;
+            Algorithme de Dijkstra qui calcule les distances à partir du noeud src
+            dans les parents si direction=-1, dans les enfants si direction=1 et les 2 si direction=None
+            Renvoie dist le dictionnaire qui à chaque noeud associe sa distance à src 
+            et prev le dictionnaire qui à chaque enfant et/ou parent associe le noeud précédent par lequel il passe en empruntant le plus court chemin
+            '''
+            Q=[src]
+            dist={src:0}
+            prev={}
+            while Q!=[]:
+                u=min(Q,dist)
+                Q.remove(u)
+                children=[]
+                parents=[]
+                for cid in u.get_children_ids():
+                    children.append(self.get_node_by_id(cid))
+                for pid in u.get_parent_ids():
+                    parents.append(self.get_node_by_id(pid))
+                if direction==1:
+                    neighbours=children
+                else:
+                    neighbours=parents
+                    if direction==None :
+                        neighbours.extend(children)
+                for v in neighbours:
+                    if v not in dist.keys():
+                        Q.append(v)
+                    if (v not in dist.keys()) or (dist[v]>dist[u]+1):
+                        dist[v]=dist[u]+1
+                        prev[v]=u
+                if tgt==u:
+                    return dist, prev
+            return dist, prev
+        
+        
+    def shortest_path(self, src, tgt):
+        '''
+        input: node, node; noeud source et noeud d'arrivé
+        output: list; liste des noeuds qui forment le chemin le plus court du noeud source au noeud d'arrivé
+        '''
+        res=[tgt]
+        while src not in res:
+            d1,d2=self.dijkstra(src,None,tgt)
+            tgt=d2[tgt]
+            res.insert(0,tgt)
+        return res
+                
 def parcours_mat(mat, ligne, dict, compteur, list_node) : 
     if list_node[ligne] not in dict.keys() : 
         dict[list_node[ligne]] = compteur
@@ -1012,6 +1062,18 @@ def compose(g,f):
     compo=g.copy()
     compo.icompose(f.copy())
     return compo
+
+def min(l, f):
+    '''
+    input:node list, node->int dict;
+    output: node; l'élément de la liste qui est associé au plus petit entier
+    '''
+    u=l[0]
+    for v in l:
+        if f[v]>f[u]:
+            u=v
+    return u
+            
 
 class bool_circ(open_digraph):
 

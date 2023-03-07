@@ -138,11 +138,11 @@ print(len(Graph_list))
 for i in range (len(Graph_list)):
     g=Graph_list[i]
     #g.display("Gd"+str(i), True)
-G0.display('G01')
+'''G0.display('G01')
 GCC = compose(Gb, G0)
 Gb.display('Gb')
 G0.display('G0')
-GCC.display()
+GCC.display()'''
 #GT = open_digraph.identity(4)
 '''
 GC.save_as_dot_file(os.getcwd())
@@ -154,6 +154,26 @@ GCC.save_as_dot_file(os.getcwd())
 GT.save_as_dot_file(os.getcwd())
 '''
 
+# %% TP7 TESTS DIJKSTRA
 
+# Déclaration et initialisation des noeuds
+n0 = node(0, 'a', {3:1, 4:1}, {1:1, 2:1})
+n1 = node(1, 'b', {0:1}, {2:2, 5:1})
+n2 = node(2, 'c', {0:1, 1:2}, {6:1})
+i0 = node(3, 'i0', {}, {0:1})
+i1 = node(4, 'i1', {}, {0:1})
+o0 = node(5, 'o0', {1:1}, {})
+o1 = node(6, 'o1', {2:1}, {})
+# Déclaration et initialisation du graph
+G = open_digraph([3,4], [5,6], [n0,n1,n2,i0,i1,o0,o1])
+G.add_edge(2,5)
 
-# %%
+G.display()
+print("\n\nAlgo Dijkstra à partir de 'a' quand direction=1, ie les enfants:\n")
+print(G.dijkstra(n0,1))
+print("\n\nAlgo Dijkstra à partir de 'b' quand direction=-1, ie les parents:\n")
+print(G.dijkstra(n1,-1))
+print("\n\nAlgo Dijkstra à partir de 'o0' quand direction=None, ie les parents et les enfants:\n")
+print(G.dijkstra(o0,None))
+print("\n\nAlgo Dijkstra à partir de 'a' quand direction=1, dès qu'on est sûr que c'est le plus court chemin pour aller à 'c':\n")
+print(G.dijkstra(n0,1,n1))
