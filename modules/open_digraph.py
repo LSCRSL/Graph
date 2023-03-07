@@ -900,17 +900,32 @@ class open_digraph: # for open directed graph
             return dist, prev
         
         
-    def shortest_path(self, src, tgt):
+    def shortest_path(self, src, tgt, direction=None):
         '''
-        input: node, node; noeud source et noeud d'arrivé
+        input: node, node, int; noeud source et noeud d'arrivé, direction optionnel
         output: list; liste des noeuds qui forment le chemin le plus court du noeud source au noeud d'arrivé
         '''
         res=[tgt]
         while src not in res:
-            d1,d2=self.dijkstra(src,None,tgt)
+            d1,d2=self.dijkstra(src,direction)
             tgt=d2[tgt]
             res.insert(0,tgt)
         return res
+    
+    def dist_ancetre(self, n1, n2):
+        '''
+        input: node, node;
+        output: int->(int*int) dict; dictionnaire qui associe à chaque id d'un ancêtre 
+        commun aux 2 noeuds un tuple des distances resoectives de l'ancêtre à chacun des noeuds
+        '''
+        d1,p1=self.dijkstra(n1,-1)
+        d2,p2=self.dijkstra(n2,-1)
+        dict={}
+        for a in list(d1.keys()):
+            if a in list(d2.keys()) :
+                dict[a.get_id()]=(d1[a],d2[a])
+        return dict
+        
                 
 def parcours_mat(mat, ligne, dict, compteur, list_node) : 
     if list_node[ligne] not in dict.keys() : 
