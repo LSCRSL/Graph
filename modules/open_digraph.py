@@ -919,8 +919,38 @@ class open_digraph: # for open directed graph
             if a in list(d2.keys()) :
                 dict[a.get_id()]=(d1[a],d2[a])
         return dict
-        
-                
+
+    def tri_topologique(self):
+        '''
+        output: (int list) list; liste de listes de noeuds triés topologiquement
+        '''
+        g=self.copy()
+        res=[]
+        cofeuilles=[]
+        nl=g.get_node()
+        for n in nl:
+            if n.get_parent_ids()==[]:
+                cofeuilles.append(n.get_id())
+        while cofeuilles!=[] :
+            pocol=[]
+            for c in cofeuilles:
+                n=g.get_node_by_id(c)
+                for child in n.get_children_ids():
+                    if child not in cofeuilles and child not in pocol:
+                        pocol.append(child)
+            res.append(cofeuilles)
+            g.remove_nodes_by_id(cofeuilles)
+            cofeuilles=[]
+            for i in pocol:
+                n=g.get_node_by_id(i)
+                if n.get_parent_ids()==[]:
+                    cofeuilles.append(i)
+        if g.get_node()!=[]:
+            raise ValueError #Cycle détecté
+        else:
+            return res
+
+       
 def parcours_mat(mat, ligne, dict, compteur, list_node) : 
     if list_node[ligne] not in dict.keys() : 
         dict[list_node[ligne]] = compteur
@@ -1110,7 +1140,7 @@ class bool_circ(open_digraph):
         return is_cycle(self.copy())
 
     def is_well_formed(self):
-        if self.is_cyclic() : 
+        if self.is_cyclic() :
             return False 
         else : 
             n = self.get_node()

@@ -206,8 +206,30 @@ print("\nDistance avec ancetre de 2 noeuds qui ne sont pas dans la même composa
 print(GC.dist_ancetre(GC.get_node_by_id(20),GC.get_node_by_id(27)))
 
 
+#%% TP8 TESTS
+
+ai=node(21,'iO',{},{0:1})
+ci=node(20,'i2',{},{2:1})
+a=node(0,'0',{21:1},{3:1})
+b=node(1,'1', {},{5:1,8:1,4:1})
+c=node(2,'2',{20:1},{4:1})
+d=node(3,'3',{0:1},{7:1,5:1,6:1})
+e=node(4,'4',{1:1,2:1},{6:1})
+f=node(5,'5',{3:1,1:1},{7:1})
+g=node(6,'6',{3:1,4:1},{8:1,9:1})
+h=node(7,'7',{3:1,5:1},{10:1})
+i=node(8,'8',{1:1,6:1},{})
+j=node(9,'9',{6:1},{})
+k=node(10,'10',{7:1},{})
+    
+G8 = open_digraph([21,20],[10], [ai,ci,a,b,c,d,e,f,g,h,i,j,k] )
+
+G8.display()
+
+print(G8.tri_topologique())
 
 
 
 
 
+# %%
