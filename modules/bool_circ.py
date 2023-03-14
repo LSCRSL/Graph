@@ -1,6 +1,8 @@
 from modules.open_digraph import *
 class bool_circ(open_digraph):
-
+    '''
+    Classe des circuits booléens
+    '''
     def __init__(self,g) :
         super().__init__(g.get_input_ids(), g.get_output_ids(), g.get_node())
         if not self.is_well_formed():

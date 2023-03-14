@@ -192,7 +192,6 @@ class OpenDigraphTest (unittest.TestCase):
         '''
         Méthode pour tester les fonctions de matrices
         '''
-        
         print(random_int_list(2,1,-1))
         affiche_matrix(random_int_matrix(4,8,False))
         affiche_matrix(random_int_matrix(4,8))
@@ -268,7 +267,7 @@ class OpenDigraphTest (unittest.TestCase):
         self.assertEqual(GbC[1][20],0)
         #GRAPH GC avec 2 composantes connexes (2)
         vSI=Gb.max_id()-Gb.min_id()+1 #les indices de G0 sont modifiés de +vSI
-        GC = parallel(G0, Gb)
+        GC = open_digraph.parallel(G0, Gb)
         GC.save_as_dot_file(os.getcwd(),'GC')
         GCC = GC.connected_components()
         nb=GCC[0]
@@ -278,7 +277,7 @@ class OpenDigraphTest (unittest.TestCase):
         
         #GRAPH Gd avec 3 composantes connexes (3)
         vSI1=G0.max_id()-G0.min_id()+1 #les indices de GC sont modifiés de +vSI1
-        Gd = parallel(GC, G0)
+        Gd = open_digraph.parallel(GC, G0)
         GdC = Gd.connected_components()
         self.assertEqual(GdC[0],3)
         self.assertEqual(GdC[1][0],2)
@@ -291,10 +290,29 @@ class OpenDigraphTest (unittest.TestCase):
         affiche_matrix(Gd.adjacency_matrix())
         self.assertEqual(Gd.connected_components()[0],2)
         #GRAPH Ge d'une composition de GO et Gb donc sans composantes connexes
-        Ge= compose(Gb,G0)
+        Ge= open_digraph.compose(Gb,G0)
         #Ge.display()
         Ge.save_as_dot_file(os.getcwd(),'graphGe', True)
         self.assertEqual(Ge.connected_components()[0],1)
+
+    def test_chemin(self):
+        ai=node(21,'iO',{},{0:1})
+        ci=node(20,'i2',{},{2:1})
+        a=node(0,'0',{21:1},{3:1})
+        b=node(1,'1', {},{5:1,8:1,4:1})
+        c=node(2,'2',{20:1},{4:1})
+        d=node(3,'3',{0:1},{7:1,5:1,6:1})
+        e=node(4,'4',{1:1,2:1},{6:1})
+        f=node(5,'5',{3:1,1:1},{7:1})
+        g=node(6,'6',{3:1,4:1},{8:1,9:1})
+        h=node(7,'7',{3:1,5:1},{10:1})
+        i=node(8,'8',{1:1,6:1},{})
+        j=node(9,'9',{6:1},{})
+        k=node(10,'10',{7:1},{})
+    
+        G8 = open_digraph([21,20],[10], [ai,ci,a,b,c,d,e,f,g,h,i,j,k] )
+        res=[[21, 20, 1], [0, 2], [3, 4], [5, 6], [7, 8, 9], [10]]
+        self.assertEqual(G8.tri_topologique(),res)
 
 
 class BoolCircTest (unittest.TestCase):

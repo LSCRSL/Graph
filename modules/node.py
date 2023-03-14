@@ -1,4 +1,7 @@
 class node:
+    '''
+    Classe node
+    '''
     def __init__(self, identity, label, parents, children):
         '''
         identity: int; its unique id in the graph

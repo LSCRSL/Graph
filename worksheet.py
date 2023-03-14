@@ -129,8 +129,8 @@ x4 = node(20, 'x8', {4:1}, {})
     
 Gb = open_digraph([10,11],[20], [a0,a1,a2,a3,a4, x1, x2,x4] )
 
-GC = parallel(G0, Gb)
-Gd = parallel(GC, G0)
+GC = open_digraph.parallel(G0, Gb)
+Gd = open_digraph.parallel(GC, G0)
 #Gd.display("G1",True)
 Gd.add_edge(9,29)
 #Gd.display("G2",True)
@@ -191,7 +191,7 @@ a3 = node(3, 'x6', {2:1}, {4:1} )
 a4 = node(4, 'x7', {1:1, 3:1}, {20:1})
 x4 = node(20, 'x8', {4:1}, {})
 Gb = open_digraph([10,11],[20], [a0,a1,a2,a3,a4, x1, x2,x4] )
-GC = parallel(G, Gb)
+GC = open_digraph.parallel(G, Gb)
 
 print("\nChemin le plus court pour aller de 'a' à 'o0':")
 print(GC.shortest_path(GC.get_node_by_id(21),GC.get_node_by_id(26)))
@@ -226,8 +226,6 @@ k=node(10,'10',{7:1},{})
 G8 = open_digraph([21,20],[10], [ai,ci,a,b,c,d,e,f,g,h,i,j,k] )
 
 G8.display()
-
-print(G8.tri_topologique())
 
 print(G8.profondeur(5))
 
