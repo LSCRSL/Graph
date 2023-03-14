@@ -1,4 +1,5 @@
 from modules.open_digraph import *
+from modules.bool_circ import *
 import inspect 
 
 # Déclaration et initialisation des noeuds
@@ -227,6 +228,10 @@ G8 = open_digraph([21,20],[10], [ai,ci,a,b,c,d,e,f,g,h,i,j,k] )
 G8.display()
 
 print(G8.tri_topologique())
+
+print(G8.profondeur(5))
+
+print(G8.plusLongChemin(0,5))
 
 
 

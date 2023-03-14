@@ -4,6 +4,8 @@ root = os.path.normpath(os.path.join(__file__, './../..'))
 sys.path.append(root)# allows us to fetch files from the project root
 import unittest
 from modules.open_digraph import *
+from modules.bool_circ import *
+from modules.matrice import *
 
 class InitTest(unittest.TestCase):
     '''
@@ -196,7 +198,7 @@ class OpenDigraphTest (unittest.TestCase):
         affiche_matrix(random_int_matrix(4,8))
         x = random_symetric_int_matrix(4,8,False)
         affiche_matrix(x)
-        j = graph_from_adjacency_matrix(x)
+        j = open_digraph.graph_from_adjacency_matrix(x)
         print(str(j))
         affiche_matrix(random_symetric_int_matrix(4,8))
         affiche_matrix(random_oriented_int_matrix(4,3,False))
@@ -216,7 +218,7 @@ class OpenDigraphTest (unittest.TestCase):
         affiche_matrix(G.adjacency_matrix())
         rmat = random_triangular_int_matrix(5,4,False)
         affiche_matrix(rmat)
-        G = graph_from_adjacency_matrix(rmat)
+        G = open_digraph.graph_from_adjacency_matrix(rmat)
         affiche_matrix(G.adjacency_matrix())
 
         print("exo 8 et 10 :")

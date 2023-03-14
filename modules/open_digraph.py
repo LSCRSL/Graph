@@ -1,184 +1,13 @@
 import random as rand
+from modules.node import *
+from modules.matrice import *
+import modules.get_set as gs
+import modules.add_remove as arm
+import modules.chemin as path
+import modules.connectivity as connect
 import graphviz
 import os
-
-class node:
-    def __init__(self, identity, label, parents, children):
-        '''
-        identity: int; its unique id in the graph
-        label: string;
-        parents: int->int dict; maps a parent node's id to its multiplicity
-        children: int->int dict; maps a child node's id to its multiplicity
-        '''
-        self.id = identity
-        self.label = label
-        self.parents = parents
-        self.children = children
-    def __str__(self):
-        '''
-        output: string; les attributs du noeud
-        '''
-        return "ID: "+str(self.id)+"  Label:"+self.label+"  Parents:"+str(self.parents)+"  Children:"+str(self.children) +"\n"
-    def __repr__(self):
-        '''
-        output: string; appelle __str__
-        '''
-        return str(self)
-
-    def copy(self):
-        '''
-        output: node; copie du noeud
-        '''
-        return (node(self.id, str(self.label), self.parents.copy(), self.children.copy()))
-
-    #les getters
-    def get_id(self):
-        '''
-        output: int; 
-        '''
-        return self.id
-
-    def get_label(self) :
-        '''
-        output: string; label
-        '''
-        return self.label
-
-    def get_parent_ids(self) : 
-        '''
-        output: int list; 
-        '''
-        return list(self.parents.keys())
-
-    def get_children_ids(self) : 
-        '''
-        output: int list; 
-        '''
-        return list(self.children.keys())
-    
-    def get_parent_mult(self) : 
-        '''
-        output: int list; 
-        '''
-        return list(self.parents.values())
-
-    def get_children_mult(self) : 
-        '''
-        output: int list; 
-        '''
-        return list(self.children.values())
-
-    @classmethod
-    def node_empty(cls) : 
-        '''
-        output : node
-
-        crée un noeud vide
-        '''
-        return cls(-1, "", {}, {})
-
-    #les setters
-    def set_id (self,x) : 
-        '''
-        input: int ; 
-        '''
-        self.id = x
-
-    def set_label(self, x) :
-        '''
-        input: string ; 
-        '''
-        self.label = x
-
-    def set_parent_ids(self, l) : 
-        '''
-        input: int-> int dict; 
-        '''
-        self.parents = l
-
-    def set_children_ids (self, l) : 
-        '''
-        input: int-> int dict; 
-        '''
-        self.children = l
-    
-
-    def add_child_id (self, id, mult) : 
-        '''
-        inputs: int, int; id, multiplicité
-        '''
-        if id in self.get_children_ids() :
-            self.children[id] += mult
-        else : 
-            self.children[id] = mult
-
-    def add_parents_id(self, id, mult) :
-        '''
-        inputs: int, int; id, multiplicité
-        '''
-        if id in self.get_parent_ids() :
-            self.parents[id] += mult
-        else : 
-            self.parents[id] = mult
-
-    def remove_parent_once(self, id) : 
-        '''
-        input: int; id du parent pour lequel on retire une multiplicité
-        '''
-        if id in self.get_parent_ids() : 
-            self.parents[id] -= 1
-            if self.parents[id] == 0 :
-                #il faut l'enlever dans la section enfant du noeud du parent
-                del self.parents[id]
-        
-    def remove_child_once(self, id) : 
-        '''
-        input: int; id de l'enfant pour lequel on retire une multiplicité 
-        '''
-        if id in self.get_children_ids() : 
-            self.children[id] -= 1
-            if self.children[id] == 0 :
-                #ici on utilise .children c'est ok ?
-                del self.children[id]
-
-    def remove_parent_id(self, id) : 
-        '''
-        input: int; id du parent pour lequel on retire toutes les multiplicités
-        '''
-        if id in self.get_parent_ids() : 
-            del self.parents[id]
-    
-    def remove_child_id(self, id) : 
-        '''
-        input: int; id de l'enfant pour lequel on retire toutes les multiplicités
-        '''
-        if id in self.get_children_ids() :
-            del self.children[id]
-
-    def indegree(self) : 
-        """
-        output : int; le degre entrant du noeud
-        """
-        mult = self.get_parent_mult()
-        cpt = 0
-        for i in mult : 
-            cpt += i
-        return cpt
-
-    def outdegree(self) : 
-        """
-        output : int; le degre entrant du noeud
-        """
-        mult = self.get_children_mult()
-        cpt = 0
-        for i in mult : 
-            cpt += i
-        return cpt
-
-    def degree(self) : 
-        return self.indegree() + self.outdegree()
-
-            
+          
 class open_digraph: # for open directed graph
     def __init__(self, inputs, outputs, nodes):
         '''
@@ -577,22 +406,22 @@ class open_digraph: # for open directed graph
         mat = []
         if form=="free":
             mat = random_int_matrix(n, bound,False)
-            G = graph_from_adjacency_matrix(mat)
+            G = cls.graph_from_adjacency_matrix(mat)
         elif form=="DAG":
             mat = random_triangular_int_matrix(n,bound)
-            G = graph_from_adjacency_matrix(mat)
+            G = cls.graph_from_adjacency_matrix(mat)
         elif form=="oriented":
             mat = random_oriented_int_matrix(n, bound)
-            G = graph_from_adjacency_matrix(mat)
+            G = cls.graph_from_adjacency_matrix(mat)
         elif form=="loop-free":
             mat = random_int_matrix(n, bound)
-            G = graph_from_adjacency_matrix(mat)
+            G = cls.graph_from_adjacency_matrix(mat)
         elif form=="undirected":
             mat = random_symetric_int_matrix(n,bound,False)
-            G = graph_from_adjacency_matrix(mat)
+            G = cls.graph_from_adjacency_matrix(mat)
         elif form=="loop-free undirected":
             mat = random_symetric_int_matrix(n,bound)
-            G = graph_from_adjacency_matrix(mat)
+            G = cls.graph_from_adjacency_matrix(mat)
         affiche_matrix(mat)
         n = G.get_id_node_map()
         l = list(n.keys())       
@@ -949,138 +778,95 @@ class open_digraph: # for open directed graph
             raise ValueError #Cycle détecté
         else:
             return res
-
-       
-def parcours_mat(mat, ligne, dict, compteur, list_node) : 
-    if list_node[ligne] not in dict.keys() : 
-        dict[list_node[ligne]] = compteur
-        for j in range(len(mat)) : 
-            if mat[ligne][j] != 0 : 
-                parcours_mat(mat, j, dict, compteur, list_node)
-
-def random_int_list(n,bound,j) :
-    '''
-    input : int, int, int
         
-    renvoie une liste de taille n de nombres aléatoires entre 0 et bound
-    ''' 
-    l = []
-    for i in range(n) : 
-        if i == j: 
-            l.append(0)
-        else :
-            l.append(rand.randrange(0,bound))
-    return l
+    def profondeur(self, noeud=None):
+        '''
+        input : int ;id du noeud
+        output : profondeur
+        
+        si le noeud est à None on renvoie la profondeur du graphe, sinon la profondeur du noeud
+        '''
+        if noeud == None :
+            return len(self.tri_topologique())
+        tri = self.tri_topologique()
+        for i in range(len(tri)) : 
+            for j in range(len(tri[i])) : 
+                if tri[i][j] == noeud : 
+                    return i+1
 
-def random_int_matrix(n,bound,null_diag=True) : 
-    '''
-    input : int , int, bool
-    matrice carrée de taille n d'entiers tirés aléatoirement entre 0 et
-    bound
-    '''
-    l = []
-    if null_diag :
-        for j in range(n) :
-            l.append(random_int_list(n,bound,j))
-    else :
-        for j in range(n) :
-            l.append(random_int_list(n,bound,-1))
-    return l
+        raise ValueError
 
-def affiche_matrix(mat) : 
-    '''
-    input : int list list
-    affiche une matrice carrée
-    '''
-    t = len(mat)
-    print('[')
-    for i in range(t) : 
-        print(mat[i])
-    print(']')
 
-def random_symetric_int_matrix(n, bound,null_diag=True) : 
-    '''
-    input: int, int, bool; taille de la matrice, limite, paramètre indiquant si la diagonale est nulle
-    output: int list list; matrice symetrique de taille n contenant des entiers compris entre 0 et n
+    def plusLongChemin(self,u,v) : 
+        '''
+        input : node, node
+        output : int, node list
+        
+        renvoie la distance et le plus long chemin entre deux noeuds d'un même graphe
+        '''
+        Tri = self.tri_topologique()
+        taille = len(Tri)
+        pos = 0
+        #on récupère l'ensemble dans lequel est le noeud u
+        for i in range(taille) : 
+            for j in range(len(Tri[i])) : 
+                if Tri[i][j] == u :
+                    pos = i
+                    break
+                    
+        #on déclare et initialise nos dictionnaires
+        dist = {u:0}
+        prev = {}
 
-    renvoie une matrice carree symétrique
+        b = False
+        
+        #on parcourt les ensembles suivants
+        for ens in range(pos+1, taille):
+            if b :
+                break
+            for elt in Tri[ens] :
+                dist[elt] = 0
+                
+                for p in self.get_node_by_id(elt).get_parent_ids() :
+                    if p in dist.keys() and dist[p] >= dist[elt] : 
+                        dist[elt] = dist[p] + 1
+                        prev[elt] = p
+                        
+                if elt == v : 
+                    b = True
+                    break
+                    
+        #on crée le chemin
+        vv = v
+        res = [vv]
+        while u not in res : 
+            vv = prev[vv]
+            res.insert(0,vv)
+        print(dist)
+        return dist[v],res
+    
+    @classmethod
+    def graph_from_adjacency_matrix(cls, mat):
+        '''
+        input: int list list; matrice à convertir en graphe
+        output: open_digraph; graphe obtenu à partir de la matrice
 
-    '''
-    l = []
-    if null_diag : 
-        l.append(random_int_list(n,bound,0))
-        for i in range(1,n) : 
-            t = []
-            taille = len(l)
-            for j in range(1,taille+1) : 
-                t.append(l[j-1][taille])
-            t.append(0)
-            for k in range(taille+1, n) :
-                t.append(rand.randrange(0,bound))
-            l.append(t)
-    else : 
-        l.append(random_int_list(n,bound,-1))
-        for i in range(1,n) : 
-            t = []
-            taille = len(l)
-            for j in range(1,taille+1) : 
-                t.append(l[j-1][taille])
-            for k in range(taille, n) :
-                t.append(rand.randrange(0,bound))
-            l.append(t)
-    return l
+        renvoie un multigraphe à partir d'une matrice
 
-def random_oriented_int_matrix(n, bound, null_diag=True):
-    '''
-    input: int, int, bool; taille, valeur max, diagonale nulle
-    ouput: int list list; 
-
-    renvoie la matrice d'adjacence d'un graphe oriente
-
-    '''
-    l = random_int_matrix(n,bound, null_diag)
-    for i in range(n):
-        for k in range(n):
-            if l[i][k]!=0:
-                l[k][i]=0
-    return l
-
-def random_triangular_int_matrix(n, bound, null_diag=True):
-    '''
-    input: int, int, bool; taille, valeur max, diagonale nulle
-    ouput: int list list; 
-
-    renvoie la matrice d'adjacence d'un graphe dirige cyclique
-
-    '''
-    l = random_oriented_int_matrix(n,bound, null_diag=True)
-    for i in range(n):
-        for j in range(n):
-            if i>j:
-                l[i][j]=0
-    return l
-
-def graph_from_adjacency_matrix(mat):
-    '''
-    input: int list list; matrice à convertir en graphe
-    output: open_digraph; graphe obtenu à partir de la matrice
-
-    renvoie un multigraphe à partir d'une matrice
-
-    '''
-    nodelist=[]
-    for i in range(len(mat)): #il y a n noeuds
-        nwnd=node(i, '', {}, {}) #on init le ième noeud
-        for j in range(len(mat)):  #on parcourt les colonnes d'une même ligne
-            if mat[i][j]!=0: #si !=0 alors le noeud a un enfant d'id le num de colonne
-                nwnd.add_child_id(j,mat[i][j])  #on ajoute l'enfant
-            if j==i: #on se place dans la ième colonne pour parcourir les parents
-                for l in range(len(mat)):  #on parcourt les lignes de cette colonne
-                    if mat[l][j]!=0: #si !=0 alors l est l'id du parent du noeud i
-                        nwnd.add_parents_id(l,mat[l][j]) #on ajoute le parent
-        nodelist.append(nwnd)
-    return open_digraph([],[],nodelist)
-
+        '''
+        nodelist=[]
+        for i in range(len(mat)): #il y a n noeuds
+            nwnd=node(i, '', {}, {}) #on init le ième noeud
+            for j in range(len(mat)):  #on parcourt les colonnes d'une même ligne
+                if mat[i][j]!=0: #si !=0 alors le noeud a un enfant d'id le num de colonne
+                    nwnd.add_child_id(j,mat[i][j])  #on ajoute l'enfant
+                if j==i: #on se place dans la ième colonne pour parcourir les parents
+                    for l in range(len(mat)):  #on parcourt les lignes de cette colonne
+                        if mat[l][j]!=0: #si !=0 alors l est l'id du parent du noeud i
+                            nwnd.add_parents_id(l,mat[l][j]) #on ajoute le parent
+            nodelist.append(nwnd)
+        return cls([],[],nodelist)
+#classmethod
 def parallel(g1,g2):
     ''' 
     input : open_digraph, open_digraph; graphes à fusionner
@@ -1090,7 +876,7 @@ def parallel(g1,g2):
     ge=g1.copy()
     ge.iparallel(g2)
     return ge
-
+#classmethod
 def compose(g,f):
     '''
     input : open_digraph, open_digraph; graphes f et g à composer
@@ -1113,56 +899,4 @@ def min(l, f):
             u=v
     return u
             
-
-class bool_circ(open_digraph):
-
-    def __init__(self,g) :
-        super().__init__(g.get_input_ids(), g.get_output_ids(), g.get_node())
-        if not self.is_well_formed():
-            raise ValueError
-    
-    def is_cyclic(self) : 
-        '''
-        output : bool;
-        renvoie vrai si le graphe est acyclique
-        '''
-
-        def is_cycle(g) : 
-            if g.get_id_node_map() == {} : 
-                return True
-            else : 
-                l_oupt = g.get_output_ids()
-                if l_oupt == [] : 
-                    return False
-                else :
-                    g.remove_node(l_oupt.pop(0))
-                    return is_cycle(g)
-        return is_cycle(self.copy())
-
-    def is_well_formed(self):
-        if self.is_cyclic() :
-            return False 
-        else : 
-            n = self.get_node()
-            outp = self.get_input_ids()
-            inp = self.get_input_ids()
-            for node in n : 
-                l = node.get_label()
-                if  l == '' : 
-                    if node.get_id() in outp or node.get_id() in inp :
-                        continue 
-                    elif node.indegree() != 1 :
-                        return False
-                elif l == '&' or l == '|' : 
-                    if node.outdegree() != 1 :
-                        return False
-                elif l == '~' :
-                    if node.indegree() != 1 and node.outdegree() != 1 :
-                        return False
-                elif l == '0' or l == '1':
-                    if node.indegree() != 0 and node.outdegree() != 1 : 
-                        return False
-                elif  l != '^' :
-                    return False
-            return True
 
