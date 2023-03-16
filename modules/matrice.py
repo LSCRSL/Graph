@@ -1,12 +1,5 @@
 import random as rand
 
-def parcours_mat(mat, ligne, dict, compteur, list_node) : 
-    if list_node[ligne] not in dict.keys() : 
-        dict[list_node[ligne]] = compteur
-        for j in range(len(mat)) : 
-            if mat[ligne][j] != 0 : 
-                parcours_mat(mat, j, dict, compteur, list_node)
-
 def random_int_list(n,bound,j) :
     '''
     input : int, int, int

@@ -115,16 +115,18 @@ class chemin:
         input : int ;id du noeud
         output : profondeur
         
-        si le noeud est à None on renvoie la profondeur du graphe, sinon la profondeur du noeud
+        renvoie la profondeur du graphe si le paramètre noeud est à None, sinon renvoie la profondeur du noeud
+        Profondeur graphe vide : 0
         '''
         if noeud == None :
             return len(self.tri_topologique())
         tri = self.tri_topologique()
+        #on cherche notre noeuds dans le tri topologique
         for i in range(len(tri)) : 
             for j in range(len(tri[i])) : 
                 if tri[i][j] == noeud : 
                     return i+1
-
+        #leve une erreur si le noeud n'est pas dans le graphe
         raise ValueError
 
 
@@ -138,17 +140,16 @@ class chemin:
         Tri = self.tri_topologique()
         taille = len(Tri)
         pos = 0
-        #on récupère l'ensemble dans lequel est le noeud u
+        #on cherche dans quel ensemble l_i est le noeud u
         for i in range(taille) : 
             for j in range(len(Tri[i])) : 
                 if Tri[i][j] == u :
                     pos = i
                     break
-        #on déclare et initialise nos dictionnaires
         dist = {u:0}
         prev = {}
         b = False
-        #on parcourt les ensembles suivants
+        #on parcourt les ensembles après l_i jusqu'à tomber sur le noeud v
         for ens in range(pos+1, taille):
             if b :
                 break
@@ -161,12 +162,17 @@ class chemin:
                 if elt == v : 
                     b = True
                     break
+        #on regarde si le chemin est possible
+        if v not in prev.keys() : 
+            if u != v : 
+                return -1,[]
+            else :
+                return 0,[u]
         #on crée le chemin
         vv = v
         res = [vv]
         while u not in res : 
             vv = prev[vv]
             res.insert(0,vv)
-        print(dist)
         return dist[v],res
     

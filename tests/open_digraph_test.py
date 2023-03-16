@@ -313,6 +313,18 @@ class OpenDigraphTest (unittest.TestCase):
         G8 = open_digraph([21,20],[10], [ai,ci,a,b,c,d,e,f,g,h,i,j,k] )
         res=[[21, 20, 1], [0, 2], [3, 4], [5, 6], [7, 8, 9], [10]]
         self.assertEqual(G8.tri_topologique(),res)
+        self.assertEqual(G8.profondeur(5), 4)
+        self.assertEqual(G8.profondeur(),6)
+        self.assertEqual(open_digraph.empty().profondeur(), 0)
+
+        self.assertEqual(G8.plusLongChemin(0,7)[0], 3)
+        self.assertEqual(G8.plusLongChemin(0,7)[1], [0,3,5,7])
+        self.assertEqual(G8.plusLongChemin(0,4)[0], -1)
+        self.assertEqual(G8.plusLongChemin(0,4)[1], [])
+        self.assertEqual(G8.plusLongChemin(0,0)[0], 0)
+        self.assertEqual(G8.plusLongChemin(0,0)[1], [0])
+        
+
 
 
 class BoolCircTest (unittest.TestCase):
