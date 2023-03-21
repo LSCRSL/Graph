@@ -56,6 +56,10 @@ class bool_circ(open_digraph):
 
     @classmethod
     def formule_arbre(cls,s):
+        '''
+        input: string; formule propositionnelle à traduire en arbre
+        output: bool_circ * (string list); tuple composé du circuit bolléen et de la liste des noms des variables
+        '''
         en=node(0,'',{},{})
         g=open_digraph([],[0],[en])
         current_node=0
@@ -71,7 +75,24 @@ class bool_circ(open_digraph):
                 cn=g.get_node_by_id(current_node)
                 cn.set_label(cn.get_label()+s2)
                 current_node=cn.get_children_ids()[0]
+                
                 s2=''
-            else:
+            elif char=='0' or char=='1':
                 s2=s2+char
-        return cls(g)
+            elif char!='&' and char!='|' and char!= '~' and char!='^' and char!='':
+                s2=s2+char
+            else:
+                s2=char
+                
+        trouve ={}
+        for noeud in g.get_node():
+            label=noeud.get_label()
+            id=noeud.get_id()
+            char=label
+            if char!='&' and char!='|' and char!= '~' and char!='^' and char!='' and char!='0' and char!='1':
+                if label in trouve.keys():
+                    g.fusion(trouve[label], id, label)
+                else:
+                    trouve[label] = id
+                noeud.set_label('')
+        return (cls(g),list(trouve.keys()))

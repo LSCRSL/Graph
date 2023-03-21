@@ -210,7 +210,12 @@ class open_digraph(gs.get_set, arm.add_remove, path.chemin, connect.connectivity
             if verbose:
                 f.write(f"{n.get_id()} [label=\"{n.get_label()}\\n{n.get_id()}\", color={color}];\n")
             else:
-                f.write(f"{n.get_id()} [label={n.get_label()}, color={color}];\n")
+                lab=n.get_label()
+                if lab=='' or lab=='|' or lab=='&' or lab=='^' or lab=='~':
+                    lab='"'+lab+'"'
+                    f.write(f"{n.get_id()} [label={lab}, color={color}];\n")
+                else:
+                    f.write(f"{n.get_id()} [label={n.get_label()}, color={color}];\n")
         for n in self.get_node():
             cid=n.get_children_ids()
             cmul=n.get_children_mult()

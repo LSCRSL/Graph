@@ -224,7 +224,7 @@ j=node(9,'9',{6:1},{})
 k=node(10,'10',{7:1},{})
     
 G8 = open_digraph([21,20],[10], [ai,ci,a,b,c,d,e,f,g,h,i,j,k] )
-
+'''
 #G8.fusion()
 G8.display('G8')
 
@@ -237,11 +237,9 @@ G8.fusion(0,3, True)
 G8.fusion(6,7)
 G8.display('G8après')
 
-#%% TP9
+'''
 
 
-G9 = bool_circ.formule_arbre('((x0)&((x1)&(x2)))|((x1)&(~(x2)))')
-G9.display('G9', True)
 
 
 
