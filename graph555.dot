@@ -1,0 +1,17 @@
+digraph G{
+   0 [label=a0,input=-1,output=-1];
+   1 [label=b1,input=-1,output=-1];
+   2 [label=c2,input=-1,output=-1];
+   3 [label=i03,input=0,output=-1];
+   4 [label=i14,input=1,output=-1];
+   5 [label=o05,input=-1,output=0];
+   6 [label=o16,input=-1,output=1];
+   0 -> 1;
+   0 -> 2;
+   1 -> 2;
+   1 -> 2;
+   1 -> 5;
+   2 -> 6;
+   3 -> 0;
+   4 -> 0;
+}

@@ -1,0 +1,19 @@
+digraph G{
+0 [label="|", color=black];
+1 [label="", color=blue];
+2 [label="", color=purple];
+3 [label="", color=purple];
+4 [label=" ", color=purple];
+5 [label=" ", color=purple];
+6 [label="&", color=black];
+8 [label="~", color=black];
+0 -> 1;
+2 -> 0;
+3 -> 2;
+4 -> 2;
+4 -> 6;
+5 -> 2;
+5 -> 8;
+6 -> 0;
+8 -> 6;
+}

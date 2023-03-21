@@ -354,8 +354,12 @@ class BoolCircTest (unittest.TestCase):
     def test_formule(self):
         G9, inputs = bool_circ.formule_arbre('((x0)&((x1)&(x2)))|((x1)&(~(x2)))')
         self.assertEqual(inputs, ['x0','x1','x2'])
-        G9.display('testG9')
-        
+        #G9.display('testG9')
+        s1='((x0)&((x1)&(x2)))|((x1)&(~(x2)))'
+        s2='((x0)&(~(x1)))|(x2)'
+        G9mul, inputs2 = bool_circ.formule_arbre(s1,s2)
+        self.assertEqual(inputs2, ['x0','x1','x2'])
+        #G9mul.display('testG9mul')
 
         
 if __name__ == '__main__': # the following code is called only when
