@@ -338,3 +338,50 @@ class open_digraph(gs.get_set, arm.add_remove, path.chemin, connect.connectivity
                             nwnd.add_parents_id(l,mat[l][j]) #on ajoute le parent
             nodelist.append(nwnd)
         return cls([],[],nodelist)
+    
+    def fusion(self,id1,id2, noloop=False, label='" "') : 
+        '''
+        input : int, int, bool, string
+        fusion les noeuds donées en argument avec label ou non et supprime les boucles si le parametre noloop = True
+        '''
+        node1 = self.get_node_by_id(id1)
+        node2 = self.get_node_by_id(id2)
+        p1 = node1.get_parent_ids()
+        p2 = node2.get_parent_ids()
+        c1 = node1.get_children_ids()
+        c2 = node2.get_children_ids()
+    
+        #fusion des parents
+        for par2 in p2 : 
+            #rajout du noeud ou augmentation de la multiplicité
+            node1.add_parents_id(par2, node2.parents[par2])
+            
+            #on prend le noeud parent
+            noeud_parent = self.get_node_by_id(par2)
+            
+            #rajout du noeud ou augmentation de la multiplicité
+            noeud_parent.add_child_id(id1, node2.parents[par2])        
+                
+        #fusion des enfants       
+        for child2 in c2 : 
+            #rajout du noeud ou augmentation de la multiplicité
+            node1.add_child_id(child2, node2.children[child2])
+            
+            #on prend le noeud enfant
+            noeud_child = self.get_node_by_id(child2)
+            
+            #rajout du noeud ou augmentation de la multiplicité
+            noeud_child.add_parents_id(id1, node2.children[child2])
+            
+        #on supprime le noeud doublon
+        self.remove_node_by_id(id2)
+        
+        #on met le label        
+        node1.set_label(label)
+
+        if noloop : 
+            if id1 in node1.get_parent_ids() :
+                node1.remove_parent_id(id1)
+            if id1 in node1.get_children_ids() : 
+                node1.remove_child_id(id1)
+                
