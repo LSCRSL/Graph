@@ -351,6 +351,9 @@ class BoolCircTest (unittest.TestCase):
         self.assertEqual(5, GCa.min_id())
         self.assertEqual(25, GCa.max_id())
 
+        G9 = bool_circ.formule_arbre('((x0)&((x1)&(x2)))|((x1)&(~(x2)))')
+        G9.display('testG9')
+
         
 if __name__ == '__main__': # the following code is called only when
     unittest.main() # precisely this file is run

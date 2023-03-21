@@ -1,12 +1,13 @@
 from modules.open_digraph import *
+
 class bool_circ(open_digraph):
     '''
     Classe des circuits booléens
     '''
     def __init__(self,g) :
         super().__init__(g.get_input_ids(), g.get_output_ids(), g.get_node())
-        if not self.is_well_formed():
-            raise ValueError
+        '''if not self.is_well_formed():
+            raise ValueError'''
     
     def is_cyclic(self) : 
         '''
@@ -52,3 +53,25 @@ class bool_circ(open_digraph):
                 elif  l != '^' :
                     return False
             return True
+
+    @classmethod
+    def formule_arbre(cls,s):
+        en=node(0,'',{},{})
+        g=open_digraph([],[0],[en])
+        current_node=0
+        s2=''
+        for char in s:
+            if char=='(':
+                cn=g.get_node_by_id(current_node)
+                cn.set_label(cn.get_label()+s2)
+                newn=g.add_node('',None,{current_node:1})
+                current_node=newn
+                s2=''
+            elif char==')':
+                cn=g.get_node_by_id(current_node)
+                cn.set_label(cn.get_label()+s2)
+                current_node=cn.get_children_ids()[0]
+                s2=''
+            else:
+                s2=s2+char
+        return cls(g)

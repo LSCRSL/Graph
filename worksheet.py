@@ -225,14 +225,13 @@ k=node(10,'10',{7:1},{})
     
 G8 = open_digraph([21,20],[10], [ai,ci,a,b,c,d,e,f,g,h,i,j,k] )
 
-G8.display()
+#G8.display()
 
 print(G8.profondeur(5))
 
 print(G8.plusLongChemin(0,5))
 
+## %% TP9
+G9 = bool_circ.formule_arbre('((x0)&((x1)&(x2)))|((x1)&(~(x2)))')
+G9.display('G9')
 
-
-
-
-# %%
