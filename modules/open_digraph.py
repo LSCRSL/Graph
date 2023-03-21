@@ -347,7 +347,7 @@ class open_digraph(gs.get_set, arm.add_remove, path.chemin, connect.connectivity
     def fusion(self,id1,id2, noloop=False, label='" "') : 
         '''
         input : int, int, bool, string
-        fusion les noeuds donées en argument avec label ou non et supprime les boucles si le parametre noloop = True
+        fusion les noeuds donnés en argument avec label ou non et supprime les boucles si le parametre noloop = True
         '''
         node1 = self.get_node_by_id(id1)
         node2 = self.get_node_by_id(id2)

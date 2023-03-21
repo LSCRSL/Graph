@@ -94,5 +94,48 @@ class bool_circ(open_digraph):
                     g.fusion(trouve[label], id, label)
                 else:
                     trouve[label] = id
+                g.add_input_id(id)
                 noeud.set_label('')
         return (cls(g),list(trouve.keys()))
+    
+    def f_arbre(cls,*args) : 
+        g = open_digraph.empty()
+        for s in args : 
+            current_node= g.add_node('', {}, {})
+            g.add_output_node(current_node)
+            s2=''
+            for char in s:
+                if char=='(':
+                    cn=g.get_node_by_id(current_node)
+                    cn.set_label(cn.get_label()+s2)
+                    newn=g.add_node('',None,{current_node:1})
+                    current_node=newn
+                    s2=''
+                elif char==')':
+                    cn=g.get_node_by_id(current_node)
+                    cn.set_label(cn.get_label()+s2)
+                    current_node=cn.get_children_ids()[0]
+                    
+                    s2=''
+                elif char=='0' or char=='1':
+                    s2=s2+char
+                elif char!='&' and char!='|' and char!= '~' and char!='^' and char!='':
+                    s2=s2+char
+                else:
+                    s2=char
+
+        trouve ={}
+        for noeud in g.get_node():
+            label=noeud.get_label()
+            id=noeud.get_id()
+            char=label
+            if char!='&' and char!='|' and char!= '~' and char!='^' and char!='' and char!='0' and char!='1':
+                if label in trouve.keys():
+                    g.fusion(trouve[label], id, label)
+                else:
+                    trouve[label] = id
+                g.add_input_id(id)
+                noeud.set_label('')
+
+        return (cls(g),list(trouve.keys()))
+        
