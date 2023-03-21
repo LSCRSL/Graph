@@ -231,7 +231,9 @@ print(G8.profondeur(5))
 
 print(G8.plusLongChemin(0,5))
 
-## %% TP9
+#%% TP9
+
+
 G9 = bool_circ.formule_arbre('((x0)&((x1)&(x2)))|((x1)&(~(x2)))')
-G9.display('G9')
+G9.display('G9', True)
 
