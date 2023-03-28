@@ -112,6 +112,39 @@ class bool_circ(open_digraph):
                 oln.append(node)
         g.set_input_ids(iln)
         g.set_outputs_ids(oln)
+        
+        binaire = ['|', '&', '^']
+        nb_bin = len(binaire)
+        for noeud in g.get_node() : 
+            if noeud.indegree() == 1 and noeud.outdegree() == 1 : 
+                noeud.set_label('~')
+                
+            elif noeud.indegree() > 1 and noeud.outdegree() == 1 :
+                
+                u = rand.randrange(0,nb_bin)
+                
+                noeud.set_label(binaire[u])
+
+            elif noeud.indegree() > 1 and noeud.outdegree() > 1 :
+                parents = noeud.get_parent_ids()
+                mult_parents = noeud.get_parent_mult()
+                #noeud parent
+                u = rand.randrange(0,nb_bin)
+
+                dic_parent = {}
+                for i in range(len(parents)):
+                    dic_parent[parents[i]] = mult_parents[i]
+
+                new_node_id = g.add_node(binaire[u], dic_parent, {noeud.get_id():1})
+                
+                #nv noeud seul parent
+                for p in parents : 
+                    g.remove_parallel_edges(p,noeud.get_id())
+                    
+                noeud.set_parent_ids(new_node_id)
+        
+        
+        '''
         f1,f2 = True, True
         while f1:
             linp=g.get_input_ids()
@@ -120,7 +153,7 @@ class bool_circ(open_digraph):
                 n2=g.linp[1]
                 g.fusion(n1,n2)
             elif len(linp)<input:
-                g.add_input_node(g.get_node_ids[0])
+                g.add_input_node(g.get_node_ids()[0])
             else:
                 f1=False
         while f2:
@@ -130,9 +163,36 @@ class bool_circ(open_digraph):
                 n2=lout[1]
                 g.fusion(n1,n2)
             elif len(lout)<output:
-                g.add_input_node(g.get_node_ids[0])
+                g.add_input_node(g.get_node_ids()[0])
             else:
                 f2=False
-
+        '''
         return cls(g)
+    
+    def half_adder(self, n, registre1,registre2 ) : 
+        '''
+        input : n : int , registre1 : int, registre2 : int
+        output : registre : int
+
+        prend 2 registres de taille 2*{n+1} et renvoie le registre associe à la somme de ceux donnés en argument
+        '''
+
+        carry = 0
+
+    
+        return 0
+    
+    def adder(self, n, registre1,registre2 ,carry) : 
+        '''
+        input : n : int , registre1 : int, registre2 : int
+        output : registre : int
+
+        prend 2 registres de taille 2*{n+1} et renvoie le registre associe à la somme de ceux donnés en argument
+        '''
+        
+        
+
+    
+        return 0
+
 

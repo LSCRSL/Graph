@@ -53,7 +53,7 @@ class add_remove:
 
     def add_node(self, label,parents, children) : 
         ''' 
-        inputs: string, int list,int list; 
+        inputs: string, int->int dict,int ->int dict; 
         Méthode qui rajoute un noeud (avec label) au graphe (en utilisant un
         nouvel id), et le lie avec les noeuds d’ids parents et children (avec leurs mul-
         tiplicités respectives). Si les valeurs par défaut de parents et/ou children sont
