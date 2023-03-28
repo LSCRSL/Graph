@@ -101,7 +101,9 @@ class bool_circ(open_digraph):
         input: int, int, int; taille (en nb de noeuds), nb d'input, nb d'output
         output: bool_circ; circuit booléen généré aléatoirement
         '''
-        g=open_digraph.random(size,3,0,0,"DAG")
+        if size<input+output:
+            raise ValueError
+        g=open_digraph.random(size,2,0,0,"DAG")
         g.display("g",True)
         iln=[]
         oln=[]
@@ -112,7 +114,6 @@ class bool_circ(open_digraph):
                 oln.append(node)
         g.set_input_ids(iln)
         g.set_outputs_ids(oln)
-        
         binaire = ['|', '&', '^']
         nb_bin = len(binaire)
         for noeud in g.get_node() : 
@@ -142,31 +143,27 @@ class bool_circ(open_digraph):
                     g.remove_parallel_edges(p,noeud.get_id())
                     
                 noeud.set_parent_ids(new_node_id)
-        
-        
-        '''
-        f1,f2 = True, True
-        while f1:
+        while len(g.get_input_ids())!=input or len(g.get_output_ids())!=output:
             linp=g.get_input_ids()
-            if len(linp)>input and input>=1:
-                n1=g.linp[0]
-                n2=g.linp[1]
+            if len(linp)>input:
+                n1=linp[0]
+                n2=linp[1]
                 g.fusion(n1,n2)
             elif len(linp)<input:
-                g.add_input_node(g.get_node_ids()[0])
-            else:
-                f1=False
-        while f2:
+                for id in g.get_node_ids():
+                    if id not in g.get_input_ids():
+                        g.add_input_node(id)
+                        break
             lout=g.get_output_ids()
-            if len(lout)>output and output>=1:
+            if len(lout)>output:
                 n1=lout[0]
                 n2=lout[1]
                 g.fusion(n1,n2)
             elif len(lout)<output:
-                g.add_input_node(g.get_node_ids()[0])
-            else:
-                f2=False
-        '''
+                for id in g.get_node_ids():
+                    if id not in g.get_output_ids() and id not in g.get_input_ids():
+                        g.add_output_node(id)
+                        break
         return cls(g)
     
     def half_adder(self, n, registre1,registre2 ) : 
