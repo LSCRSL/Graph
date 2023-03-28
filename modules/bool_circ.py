@@ -173,23 +173,38 @@ class bool_circ(open_digraph):
 
         prend 2 registres de taille 2*{n+1} et renvoie le registre associe à la somme de ceux donnés en argument
         '''
+        #appel de la fonction adder
 
         carry = 0
-
+        
     
         return 0
     
-    def adder(self, n, registre1,registre2 ,carry) : 
+    @classmethod
+    def adder(cls, n) : 
         '''
         input : n : int , registre1 : int, registre2 : int
         output : registre : int
 
         prend 2 registres de taille 2*{n+1} et renvoie le registre associe à la somme de ceux donnés en argument
         '''
+        if n == 0 : 
+            a=node(1,'',{},{4:1, 6:1})
+            b=node(2,'',{},{4:1,6:1})
+            c=node(3,'',{},{8:1,7:1})
+            d=node(4,'^', {1:1, 2:1},{5:1})
+            e=node(5,'',{4:1},{8:1,7:1})
+            f=node(6,'&',{2:1,1:1},{9:1})
+            g=node(7,'&',{3:1,5:1},{9:1})
+            h=node(8,'^',{3:1,5:1},{})
+            i=node(9,'|',{6:1, 7:1},{})
+
+            g = open_digraph([1,2,3],[8,9], [a,b,c,d,e,f,g,h,i] )
+            return cls(g)
+        else :
+            return open_digraph.compose(open_digraph.parallel(open_digraph.identity(n),cls.adder(n-1)), open_digraph.parallel(cls.adder(n-1), open_digraph.identity(n)))
         
         
 
-    
-        return 0
 
 

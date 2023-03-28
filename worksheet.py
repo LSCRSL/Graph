@@ -245,4 +245,6 @@ s3="((x0)&(x1)&(x2))|((x1)&(~(x2)))"
 
 #%% TP10
 G10=bool_circ.random(5,3,1)
-G10.display("G10",True)
+g = bool_circ.adder(0)
+g.display("G10",True)
+
