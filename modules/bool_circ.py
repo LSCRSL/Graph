@@ -14,7 +14,6 @@ class bool_circ(open_digraph):
         output : bool;
         renvoie vrai si le graphe est acyclique
         '''
-
         def is_cycle(g) : 
             if g.get_id_node_map() == {} : 
                 return True
@@ -95,4 +94,45 @@ class bool_circ(open_digraph):
                 noeud.set_label('')
         print(g)
         return (cls(g),list(trouve.keys()))
-        
+    
+    @classmethod
+    def random(cls,size,input=1,output=1):
+        '''
+        input: int, int, int; taille (en nb de noeuds), nb d'input, nb d'output
+        output: bool_circ; circuit booléen généré aléatoirement
+        '''
+        g=open_digraph.random(size,3,0,0,"DAG")
+        g.display("g",True)
+        iln=[]
+        oln=[]
+        for node in g.get_node():
+            if len(node.get_parent_ids())==0:
+                iln.append(node)
+            if len(node.get_children_ids())==0:
+                oln.append(node)
+        g.set_input_ids(iln)
+        g.set_outputs_ids(oln)
+        f1,f2 = True, True
+        while f1:
+            linp=g.get_input_ids()
+            if len(linp)>input and input>=1:
+                n1=g.linp[0]
+                n2=g.linp[1]
+                g.fusion(n1,n2)
+            elif len(linp)<input:
+                g.add_input_node(g.get_node_ids[0])
+            else:
+                f1=False
+        while f2:
+            lout=g.get_output_ids()
+            if len(lout)>output and output>=1:
+                n1=lout[0]
+                n2=lout[1]
+                g.fusion(n1,n2)
+            elif len(lout)<output:
+                g.add_input_node(g.get_node_ids[0])
+            else:
+                f2=False
+
+        return cls(g)
+

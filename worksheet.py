@@ -239,9 +239,10 @@ G8.display('G8après')
 
 '''
 
-
-
 s3="((x0)&(x1)&(x2))|((x1)&(~(x2)))"
-G9encore, inputs3 = bool_circ.formule_arbre(s3)
+#G9encore, inputs3 = bool_circ.formule_arbre(s3)
 #G9encore.display('G9encore')
 
+#%% TP10
+G10=bool_circ.random(5,3,1)
+G10.display("G10",True)

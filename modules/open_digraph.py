@@ -40,7 +40,7 @@ class open_digraph(gs.get_set, arm.add_remove, path.chemin, connect.connectivity
         o = self.outputs.copy()
         l_n = [node.copy() for node in self.nodes.values()]
         return open_digraph(i, o, l_n)
-    
+
     def new_id(self) : 
         '''
         output: int; méthode qui renvoie un indice non-utilisé dans le graphe
