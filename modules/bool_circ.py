@@ -166,7 +166,8 @@ class bool_circ(open_digraph):
                         break
         return cls(g)
     
-    def half_adder(self, n, registre1,registre2 ) : 
+    @classmethod
+    def half_adder(cls, n ) : 
         '''
         input : n : int , registre1 : int, registre2 : int
         output : registre : int
@@ -175,10 +176,12 @@ class bool_circ(open_digraph):
         '''
         #appel de la fonction adder
 
-        carry = 0
-        
-    
-        return 0
+        g = cls.adder(n).copy()
+        for ID in g.get_input_ids() : 
+            if g.get_node_by_id(ID).get_label() == 'c' : 
+                g.get_input_ids().remove(ID)
+                g.get_node_by_id(ID).set_label('0')
+        return g
     
     @classmethod
     def adder(cls, n) : 
@@ -188,22 +191,51 @@ class bool_circ(open_digraph):
 
         prend 2 registres de taille 2*{n+1} et renvoie le registre associe à la somme de ceux donnés en argument
         '''
+
+        
         if n == 0 : 
-            a=node(1,'',{},{4:1, 6:1})
-            b=node(2,'',{},{4:1,6:1})
-            c=node(3,'',{},{8:1,7:1})
+            i0 = node(10, 'a', {}, {1:1})
+            i1 = node(11, 'b', {}, {2:1})
+            i2 = node(12, 'c', {}, {3:1})
+            a=node(1,"",{10:1},{4:1, 6:1})
+            b=node(2,"",{11:1},{4:1,6:1})
+            c=node(3,"",{12:1},{8:1,7:1})
             d=node(4,'^', {1:1, 2:1},{5:1})
-            e=node(5,'',{4:1},{8:1,7:1})
+            e=node(5,"",{4:1},{8:1,7:1})
             f=node(6,'&',{2:1,1:1},{9:1})
             g=node(7,'&',{3:1,5:1},{9:1})
-            h=node(8,'^',{3:1,5:1},{})
-            i=node(9,'|',{6:1, 7:1},{})
+            h=node(8,'^',{3:1,5:1},{14:1})
+            i=node(9,'|',{6:1, 7:1},{13:1})
+            o0 = node(13, "cp", {9:1}, {})
+            o1 = node(14, 'r', {8:1}, {})
 
-            g = open_digraph([1,2,3],[8,9], [a,b,c,d,e,f,g,h,i] )
+            g = open_digraph([10,11,12],[13,14], [a,b,c,d,e,f,g,h,i, i0, i1,i2, o0,o1] )
+
             return cls(g)
         else :
-            return open_digraph.compose(open_digraph.parallel(open_digraph.identity(n),cls.adder(n-1)), open_digraph.parallel(cls.adder(n-1), open_digraph.identity(n)))
+            g1 = cls.adder(n-1)
+            g2 = cls.adder(n-1)
+            c = -1
+            c_prime = -1
+            #on récupère l'id noeud d'input c
+            for id in g1.get_input_ids() : 
+                if g1.get_node_by_id(id).get_label() == 'c' : 
+                    c = id + g2.max_id() -g2.min_id() + 1
+            
+            #on recupere l'id noeud output c'
+            for id in g2.get_output_ids() : 
+                if g2.get_node_by_id(id).get_label() == "cp" : 
+                    c_prime = id
+
+            g3 = open_digraph.parallel(g1, g2)
+
+            #on fusionne les noeuds
+            g3.fusion(c,c_prime,'')
+            g3.get_input_ids().remove(c)
+            return g3
         
+     
+    
         
 
 

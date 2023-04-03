@@ -51,7 +51,7 @@ class add_remove:
         for (src,tgt) in edges : 
             self.add_edge(src,tgt)
 
-    def add_node(self, label,parents, children) : 
+    def add_node(self, label="",parents=None, children=None) : 
         ''' 
         inputs: string, int->int dict,int ->int dict; 
         Méthode qui rajoute un noeud (avec label) au graphe (en utilisant un

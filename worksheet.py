@@ -244,7 +244,8 @@ s3="((x0)&(x1)&(x2))|((x1)&(~(x2)))"
 #G9encore.display('G9encore')
 
 #%% TP10
-G10=bool_circ.random(5,3,1)
-g = bool_circ.adder(0)
-g.display("G10",True)
+#G10=bool_circ.random(5,3,1)
+g = bool_circ.adder(2)
+g1 = bool_circ.half_adder(0)
+g1.display("G10",False)
 
