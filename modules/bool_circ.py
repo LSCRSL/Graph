@@ -265,7 +265,7 @@ class bool_circ(open_digraph):
         noeudH = self.get_node_by_id(idH)
         l = noeudH.get_label()
         noeudB = self.get_node_by_id(idB)
-        childNB = noeudB.get_children_id()
+        childNB = noeudB.get_children_ids()
         self.add_edges(idH,childNB[0])
         for i in range(1,len(childNB)) : 
             id2 = self.add_node(l, {},{childNB[i]:1})
@@ -341,28 +341,32 @@ class bool_circ(open_digraph):
         effectue la transformation elements neutres dans le graphe
         '''
         noeud = self.get_node_by_id(id)
-        if "&" in noeud.get_label() : 
+        if "&" or "1" in noeud.get_label() : 
             noeud.set_label("1")
         else : 
             noeud.set_label("0")
 
-    def evaluate(self):
+    def evaluate(self,cpt):
         '''
         évalue le cicruit booléen en appliquant les règles
         "ET", "OU", "OU EXCLUSIF", "NON", "Copies" et "éléments neutres"
         '''
         cofeuilles=[]
         nl=self.get_node()
+        notcof=[]
         for n in nl:
             if n.get_parent_ids()==[] and n.get_children_ids()!=[]:
                 cofeuilles.append(n.get_id())
-        while cofeuilles!=[]:
+            else:
+                notcof.append(n)
+        while cofeuilles!=[] and self.profondeur()>2:
             for c in cofeuilles:
+                cpt+=1
                 n=self.get_node_by_id(c)
                 for child in n.get_children_ids():
                     cnode=self.get_node_by_id(child)
                     lab=cnode.get_label()
-                    if lab=='':
+                    if lab=='' and cnode.get_children_ids()!=[]:
                         self.copies(c,child)
                     elif lab=='~':
                         self.porte_Non(c,child)
@@ -372,9 +376,22 @@ class bool_circ(open_digraph):
                         self.porte_OU(c,child)
                     elif lab=='^':
                         self.porte_OU_EX(c,child)
-            self.evaluate()
+                    self.display("g"+str(cpt),True)
+                for nc in notcof:
+                    nodec=self.get_node_by_id(nodec)
+                    if nodec.get_label() not in [0,1]:
+                        for ncc in nodec.get_children_ids():
+                            nncc=self.get_node_by_id(ncc)
+                            if nncc.get_label()=='':
+                                if nncc.get_children_ids()==[]:
+                                    self.remove_nodes_by_id(ncc,nc)
+                                    print("effacement")
+
+            self.evaluate(cpt)
         for nid in self.get_node_ids():
             self.elmt_neutres(nid)
+            
+
 
 def calcul(a,b,taille) :
 
