@@ -324,14 +324,15 @@ class bool_circ(open_digraph):
         '''
         noeudH = self.get_node_by_id(idH)
         if noeudH.get_label() == "0" : 
-            self.remove(idH)
+            self.remove_node_by_id(idH)
         else : 
-            self.remove(idH)
+            self.remove_node_by_id(idH)
             c_node = self.get_node_by_id(idB).get_children_ids()
             id = self.add_node("~", {idB:1}, {})
             for i in range(0,len(c_node)) : 
                 self.remove_edge(idH, c_node[i])
                 self.add_edge(id, c_node[i])
+            self.remove_edge(idB, self.get_node_by_id(id).get_children_ids()[0])
 
     def elmt_neutres(self, id) : 
         '''
@@ -340,7 +341,7 @@ class bool_circ(open_digraph):
         effectue la transformation elements neutres dans le graphe
         '''
         noeud = self.get_node_by_id(id)
-        if noeud.get_label() == "&" : 
+        if "&" in noeud.get_label() : 
             noeud.set_label("1")
         else : 
             noeud.set_label("0")
