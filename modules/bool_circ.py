@@ -262,13 +262,11 @@ class bool_circ(open_digraph):
         noeudH = self.get_node_by_id(idH)
         l = noeudH.get_label()
         noeudB = self.get_node_by_id(idB)
-        childNB = noeudB.get_children_ids()
-        self.add_edge(idH,childNB[0])
+        childNB = noeudB.get_children_id()
+        self.add_edges(idH,childNB[0])
         for i in range(1,len(childNB)) : 
             id2 = self.add_node(l, {},{childNB[i]:1})
-
-        self.remove_node_by_id(idB)
-        print(self.get_node_by_id(idH))
+        self.remove_node_by_id(noeudB)
 
     def porte_Non(self,idH,idB ) : 
         '''
@@ -290,6 +288,13 @@ class bool_circ(open_digraph):
         if noeudH.get_label() == "1" : 
             self.remove_node_by_id(idH)
         else : 
+            nodeB=self.get_node_by_id(idB)
+            for parent in nodeB.get_parent_ids():
+                if parent!=idH:
+                    self.add_node('',{parent:1},{})
+                    self.remove_edge(parent,idB)
+            self.fusion(idH,idB,True,"0")
+            '''
             self.fusion(idH,idB,True, "0")
             p_node = noeudH.get_parent_ids()
             print(idH)
@@ -297,7 +302,7 @@ class bool_circ(open_digraph):
             for i in range(len(p_node)) : 
                 self.remove_edge(p_node[i], idH)
                 id = self.add_node(" "" ", {p_node[i]:1}, {})
-                print(id)
+                print(id)'''
                 
         
     def porte_OU(self, idH, idB) : 
@@ -345,6 +350,36 @@ class bool_circ(open_digraph):
             noeud.set_label("1")
         else : 
             noeud.set_label("0")
+
+    def evaluate(self):
+        '''
+        évalue le cicruit booléen en appliquant les règles
+        "ET", "OU", "OU EXCLUSIF", "NON", "Copies" et "éléments neutres"
+        '''
+        cofeuilles=[]
+        nl=self.get_node()
+        for n in nl:
+            if n.get_parent_ids()==[] and n.get_children_ids()==[]:
+                cofeuilles.append(n.get_id())
+        while cofeuilles!=[]:
+            for c in cofeuilles:
+                n=self.get_node_by_id(c)
+                for child in n.get_children_ids():
+                    cnode=self.get_node_by_id(child)
+                    lab=cnode.get_label()
+                    if lab=='':
+                        self.copies(c,child)
+                    elif lab=='~':
+                        self.porte_Non(c,child)
+                    elif lab=='&':
+                        self.porte_Et(c,child)
+                    elif lab=='|':
+                        self.porte_OU(c,child)
+                    elif lab=='^':
+                        self.porte_OU_EX(c,child)
+            self.evaluate()
+        for nid in self.get_node_ids():
+            self.elmt_neutres(nid)
 
     
 
