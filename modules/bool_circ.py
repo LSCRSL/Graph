@@ -1,4 +1,5 @@
 from modules.open_digraph import *
+import math
 
 class bool_circ(open_digraph):
     '''
@@ -250,7 +251,9 @@ class bool_circ(open_digraph):
                 s = "0" + s
         graph = open_digraph.empty()
         for i in range(0,taille) : 
-            graph.add_node(s[i])
+            id = graph.add_node(s[i])
+            graph.add_output_node(id)
+        
         return cls(graph)
     
     def copies(self, idH, idB) : 
@@ -351,7 +354,7 @@ class bool_circ(open_digraph):
         cofeuilles=[]
         nl=self.get_node()
         for n in nl:
-            if n.get_parent_ids()==[] and n.get_children_ids()==[]:
+            if n.get_parent_ids()==[] and n.get_children_ids()!=[]:
                 cofeuilles.append(n.get_id())
         while cofeuilles!=[]:
             for c in cofeuilles:
@@ -372,6 +375,25 @@ class bool_circ(open_digraph):
             self.evaluate()
         for nid in self.get_node_ids():
             self.elmt_neutres(nid)
+
+def calcul(a,b,taille) :
+
+    n = math.log(taille,2)
+    print(n)
+    #if type(n) != int : 
+        #raise ValueError
+    
+    g1 = bool_circ.registre(a,taille)
+    g2 = bool_circ.registre(b,taille) 
+
+    g = bool_circ.parallel(g1,g2)
+    ha = bool_circ.half_adder(n)
+    ha.icompose(g)
+    bool_circ(ha).evaluate()
+
+    return g
+
+
 
     
 
