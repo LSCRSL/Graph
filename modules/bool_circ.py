@@ -169,10 +169,10 @@ class bool_circ(open_digraph):
     @classmethod
     def half_adder(cls, n ) : 
         '''
-        input : n : int , registre1 : int, registre2 : int
-        output : registre : int
+        input : n : int , 
+        output : bool_circ
 
-        prend 2 registres de taille 2*{n+1} et renvoie le registre associe à la somme de ceux donnés en argument
+        renvoie adder n avec le carry = 0
         '''
         #appel de la fonction adder
 
@@ -186,10 +186,10 @@ class bool_circ(open_digraph):
     @classmethod
     def adder(cls, n) : 
         '''
-        input : n : int , registre1 : int, registre2 : int
-        output : registre : int
+        input : n : int
+        output : bool_circ
 
-        prend 2 registres de taille 2*{n+1} et renvoie le registre associe à la somme de ceux donnés en argument
+        renvoie le registre de taille n
         '''
 
         
@@ -230,9 +230,128 @@ class bool_circ(open_digraph):
             g3 = open_digraph.parallel(g1, g2)
 
             #on fusionne les noeuds
-            g3.fusion(c,c_prime,'')
+            g3.fusion(c,c_prime,"")
             g3.get_input_ids().remove(c)
             return g3
+
+    @classmethod  
+    def registre(cls,n, taille) : 
+        '''
+        inputs : int, int
+        ouputs : bool_circ 
+
+        retourne un circuit booleen qui représente le registre instancié en l'entier
+        '''
+        s = bin(n)[2:]
+        if len(s) > taille : 
+            raise ValueError
+        else : 
+            for i in range(len(s),taille) : 
+                s = "0" + s
+        graph = open_digraph.empty()
+        for i in range(0,taille) : 
+            graph.add_node(s[i])
+        return cls(graph)
+    
+    def copies(self, idH, idB) : 
+        '''
+        inputs : int : id noeud haut, int : id noeud bas
+        
+        effectue la transformation copie dans le graphe
+        '''
+        noeudH = self.get_node_by_id(idH)
+        l = noeudH.get_label()
+        noeudB = self.get_node_by_id(idB)
+        childNB = noeudB.get_children_id()
+        self.add_edges(idH,childNB[0])
+        for i in range(1,len(childNB)) : 
+            id2 = self.add_node(l, {},{childNB[i]:1})
+        self.remove_node_by_id(noeudB)
+
+    def porte_Non(self,idH,idB ) : 
+        '''
+        inputs : int : id noeud haut, int : id noeud bas
+        
+        effectue la transformation porte NON dans le graphe
+        '''
+        noeudH = self.get_node_by_id(idH)
+        l = noeudH.get_label()
+        self.fusion(idH,idB,False,str(1-l))
+
+    def porte_Et(self, idH, idB) :
+        '''
+        inputs : int : id noeud haut, int : id noeud bas
+        
+        effectue la transformation porte ET dans le graphe
+        '''
+        noeudH = self.get_node_by_id(idH)
+        if noeudH.get_label() == "1" : 
+            self.remove(idH)
+        else : 
+            self.fusion(idH,idB, "0")
+            p_node = self.get_parents_id(idH)
+            for i in range(0,len(p_node)) : 
+                id = self.add_node(" ", {p_node[i]:1}, {})
+                self.remove_edge(idH, p_node[i])
+        
+    def porte_OU(self, idH, idB) : 
+        '''
+        inputs : int : id noeud haut, int : id noeud bas
+        
+        effectue la transformation porte OU dans le graphe
+        '''
+        noeudH = self.get_node_by_id(idH)
+        if noeudH.get_label() == "0" : 
+            self.remove(idH)
+        else : 
+            self.fusion(idH,idB, "1")
+            p_node = self.get_parents_id(idH)
+            for i in range(0,len(p_node)) : 
+                id = self.add_node(" ", {p_node[i]:1}, {})
+                self.remove_edge(idH, p_node[i])
+
+    def porte_OU_EX(self, idH, idB) : 
+        '''
+        inputs : int : id noeud haut, int : id noeud bas
+        
+        effectue la transformation porte OU EXCLUSIF dans le graphe
+        '''
+        noeudH = self.get_node_by_id(idH)
+        if noeudH.get_label() == "0" : 
+            self.remove(idH)
+        else : 
+            self.remove(idH)
+            c_node = self.get_children_id(idB)
+            id = self.add_node("~", {idB:1}, {})
+            for i in range(0,len(c_node)) : 
+                self.remove_edge(idH, c_node[i])
+                self.add_edge(id, c_node[i])
+
+    def elmt_neutres(self, id) : 
+        '''
+        inputs : int : id noeud à modifier
+        
+        effectue la transformation elements neutres dans le graphe
+        '''
+        noeud = self.get_node_by_id(id)
+        if noeud.get_label() == "&" : 
+            noeud.set_label("1")
+        else : 
+            noeud.set_label("0")
+
+    
+
+            
+
+
+
+    
+
+        
+            
+
+        
+
         
      
     

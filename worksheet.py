@@ -247,5 +247,11 @@ s3="((x0)&(x1)&(x2))|((x1)&(~(x2)))"
 #G10=bool_circ.random(5,3,1)
 g = bool_circ.adder(2)
 g1 = bool_circ.half_adder(0)
-g1.display("G10",False)
+g.display("G10",True)
+#%%TP11
+g2 = bool_circ.registre(11,8)
+
+a = node(0, "0", {}, {1:1})
+#b = node(0)
+g2.display("TP11",False)
 
