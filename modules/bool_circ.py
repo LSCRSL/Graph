@@ -294,15 +294,6 @@ class bool_circ(open_digraph):
                     self.add_node('',{parent:1},{})
                     self.remove_edge(parent,idB)
             self.fusion(idH,idB,True,"0")
-            '''
-            self.fusion(idH,idB,True, "0")
-            p_node = noeudH.get_parent_ids()
-            print(idH)
-            print(p_node)
-            for i in range(len(p_node)) : 
-                self.remove_edge(p_node[i], idH)
-                id = self.add_node(" "" ", {p_node[i]:1}, {})
-                print(id)'''
                 
         
     def porte_OU(self, idH, idB) : 
@@ -315,11 +306,12 @@ class bool_circ(open_digraph):
         if noeudH.get_label() == "0" : 
             self.remove_node_by_id(idH)
         else : 
+            nodeB=self.get_node_by_id(idB)
+            for parent in nodeB.get_parent_ids():
+                if parent!=idH:
+                    self.add_node('',{parent:1},{})
+                    self.remove_edge(parent,idB)
             self.fusion(idH,idB,True, "1")
-            p_node = noeudH.get_parent_ids()
-            for i in range(0,len(p_node)) : 
-                id = self.add_node(" ", {p_node[i]:1}, {})
-                self.remove_edge(idH, p_node[i])
 
     def porte_OU_EX(self, idH, idB) : 
         '''
