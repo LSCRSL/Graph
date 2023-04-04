@@ -249,9 +249,18 @@ g = bool_circ.adder(2)
 g1 = bool_circ.half_adder(0)
 g.display("G10",True)
 #%%TP11
-g2 = bool_circ.registre(11,8)
+#g2 = bool_circ.registre(11,8)
+#g2.display("TP11", False)
 
 a = node(0, "0", {}, {1:1})
-#b = node(0)
-g2.display("TP11",False)
+b = node(1 , " &", {0:1,2:1,3:1}, {4:1})
+c = node(2, " ", {}, {1:1})
+d = node(3, " ", {}, {1:1})
+e = node(4, " ", {1:1}, {})
+g = open_digraph([],[], [a,b,c,d,e])
+g2 = bool_circ(g)
+
+g2.display("avant",True)
+g2.porte_OU(0,1)
+g2.display("apres",True)
 

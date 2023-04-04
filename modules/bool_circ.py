@@ -262,11 +262,13 @@ class bool_circ(open_digraph):
         noeudH = self.get_node_by_id(idH)
         l = noeudH.get_label()
         noeudB = self.get_node_by_id(idB)
-        childNB = noeudB.get_children_id()
-        self.add_edges(idH,childNB[0])
+        childNB = noeudB.get_children_ids()
+        self.add_edge(idH,childNB[0])
         for i in range(1,len(childNB)) : 
             id2 = self.add_node(l, {},{childNB[i]:1})
-        self.remove_node_by_id(noeudB)
+
+        self.remove_node_by_id(idB)
+        print(self.get_node_by_id(idH))
 
     def porte_Non(self,idH,idB ) : 
         '''
@@ -276,7 +278,7 @@ class bool_circ(open_digraph):
         '''
         noeudH = self.get_node_by_id(idH)
         l = noeudH.get_label()
-        self.fusion(idH,idB,False,str(1-l))
+        self.fusion(idH,idB,True,str(1-int(l)))
 
     def porte_Et(self, idH, idB) :
         '''
@@ -286,13 +288,17 @@ class bool_circ(open_digraph):
         '''
         noeudH = self.get_node_by_id(idH)
         if noeudH.get_label() == "1" : 
-            self.remove(idH)
+            self.remove_node_by_id(idH)
         else : 
-            self.fusion(idH,idB, "0")
-            p_node = self.get_parents_id(idH)
-            for i in range(0,len(p_node)) : 
-                id = self.add_node(" ", {p_node[i]:1}, {})
-                self.remove_edge(idH, p_node[i])
+            self.fusion(idH,idB,True, "0")
+            p_node = noeudH.get_parent_ids()
+            print(idH)
+            print(p_node)
+            for i in range(len(p_node)) : 
+                self.remove_edge(p_node[i], idH)
+                id = self.add_node(" "" ", {p_node[i]:1}, {})
+                print(id)
+                
         
     def porte_OU(self, idH, idB) : 
         '''
@@ -302,10 +308,10 @@ class bool_circ(open_digraph):
         '''
         noeudH = self.get_node_by_id(idH)
         if noeudH.get_label() == "0" : 
-            self.remove(idH)
+            self.remove_node_by_id(idH)
         else : 
-            self.fusion(idH,idB, "1")
-            p_node = self.get_parents_id(idH)
+            self.fusion(idH,idB,True, "1")
+            p_node = noeudH.get_parent_ids()
             for i in range(0,len(p_node)) : 
                 id = self.add_node(" ", {p_node[i]:1}, {})
                 self.remove_edge(idH, p_node[i])
@@ -321,7 +327,7 @@ class bool_circ(open_digraph):
             self.remove(idH)
         else : 
             self.remove(idH)
-            c_node = self.get_children_id(idB)
+            c_node = self.get_node_by_id(idB).get_children_ids()
             id = self.add_node("~", {idB:1}, {})
             for i in range(0,len(c_node)) : 
                 self.remove_edge(idH, c_node[i])
