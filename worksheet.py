@@ -271,15 +271,15 @@ g.display("ADD", True)
 '''
 
 #%%TP11 evaluate
-a = node(0, "1", {}, {1:1})
+a = node(0, "0", {}, {1:1})
 b = node(1 , "|", {0:1,2:1,3:1}, {4:1})
-c = node(2, " 0", {}, {1:1})
-d = node(3, " 1", {}, {1:1})
-e = node(4, " ", {1:1}, {})
+c = node(2, "0", {}, {1:1})
+d = node(3, "0", {}, {1:1})
+e = node(4, "", {1:1}, {})
 g = open_digraph([],[], [a,b,c,d,e])
 Geval= bool_circ(g)
 Geval.display('G_av_eval', True)
-Geval.evaluate(0)
-Geval.display("G_ap_eval",True)
+Geval.evaluate()
+Geval.display("GG_ap_eval1",True)
 
 
