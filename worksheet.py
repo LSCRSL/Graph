@@ -266,9 +266,8 @@ g2.porte_OU(0,1)
 g2.display("apres",True)
 
 
-g = calcul(0,1,1)
-g.display("ADD", True)
-'''
+
+
 
 #%%TP11 evaluate
 a = node(0, "0", {}, {1:1})
@@ -280,6 +279,9 @@ g = open_digraph([],[], [a,b,c,d,e])
 Geval= bool_circ(g)
 Geval.display('G_av_eval', True)
 Geval.evaluate()
-Geval.display("GG_ap_eval1",True)
+Geval.display("GG_ap_eval1",True)'''
+
+g = calcul(0,2,2)
+g.display("ADD", True)
 
 

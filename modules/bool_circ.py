@@ -266,10 +266,10 @@ class bool_circ(open_digraph):
         l = noeudH.get_label()
         noeudB = self.get_node_by_id(idB)
         childNB = noeudB.get_children_ids()
-        self.add_edges(idH,childNB[0])
+        self.add_edge(idH,childNB[0])
         for i in range(1,len(childNB)) : 
             id2 = self.add_node(l, {},{childNB[i]:1})
-        self.remove_node_by_id(noeudB)
+        self.remove_node_by_id(idB)
 
     def porte_Non(self,idH,idB ) : 
         '''
@@ -351,12 +351,14 @@ class bool_circ(open_digraph):
         évalue le cicruit booléen en appliquant les règles
         "ET", "OU", "OU EXCLUSIF", "NON", "Copies" et "éléments neutres"
         '''
+        self.display("graphbis", True)
         cofeuilles=[]
         nl=self.get_node()
         for n in nl:
             if n.get_parent_ids()==[] and n.get_children_ids()!=[]:
                 cofeuilles.append(n.get_id())
         while cofeuilles!=[] and self.profondeur()>2:
+
             for c in cofeuilles:
                 n=self.get_node_by_id(c)
                 for child in n.get_children_ids():
@@ -373,6 +375,8 @@ class bool_circ(open_digraph):
                     elif lab=='^':
                         self.porte_OU_EX(c,child)
             self.evaluate()
+
+            
         gl=self.connected_list()
         for g in gl:
             rml=[]
@@ -392,7 +396,6 @@ class bool_circ(open_digraph):
 def calcul(a,b,taille) :
 
     n = math.log(taille,2)
-    print(n)
     #if type(n) != int : 
         #raise ValueError
     
@@ -400,9 +403,20 @@ def calcul(a,b,taille) :
     g2 = bool_circ.registre(b,taille) 
 
     g = bool_circ.parallel(g1,g2)
+    
     ha = bool_circ.half_adder(n)
+
     ha.icompose(g)
-    bool_circ(ha).evaluate()
+
+    for n in g.get_node() : 
+        c_id = n.get_parent_ids()
+        if (c_id == []) & ( (n.get_label() == "0") | (n.get_label() == "1")): 
+            ha.fusion(n.get_id(),n.get_children_ids()[0],True,n.get_label())
+            ha.fusion(n.get_id(),n.get_children_ids()[0],True,n.get_label())
+            
+    bc = bool_circ(ha)
+    bc.display("g1",True)
+    bc.evaluate()
 
     return g
 
