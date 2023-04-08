@@ -2,6 +2,7 @@ from modules.open_digraph import *
 from modules.bool_circ import *
 import inspect 
 
+#%% TP1 tests
 # Déclaration et initialisation des noeuds
 n0 = node(0, 'a', {3:1, 4:1}, {1:1, 2:1})
 n1 = node(1, 'b', {0:1}, {2:2, 5:1})
@@ -13,14 +14,12 @@ o1 = node(6, 'o1', {2:1}, {})
 # Déclaration et initialisation du graph
 G = open_digraph([3,4], [5,6], [n0,n1,n2,i0,i1,o0,o1])
 
-
 G.save_as_dot_file(os.getcwd())
 G1 = open_digraph.from_dot_file('graph.dot')
 print(str(G1))
 
 #G1.display()
 
-#%% TP1 tests
 print(str(G))
 H = open_digraph.empty()
 print(str(H))
@@ -48,8 +47,6 @@ o1 = node(0, 'o1', {2:1}, {})
 G = open_digraph([3,4], [5,6], [n0,n1,n2,i0,i1,o0,o1])
 print(G.dict_of_graph())
 # %% TP5 tests
-from modules.open_digraph import * #pour executer seulement cette cellule
-import inspect 
 try:
     GC = bool_circ(G1)
     print(GC.is_cyclic())
@@ -147,11 +144,7 @@ GCC.display()'''
 #GT = open_digraph.identity(4)
 '''
 GC.save_as_dot_file(os.getcwd())
-
-
 GCC.save_as_dot_file(os.getcwd())
-
-
 GT.save_as_dot_file(os.getcwd())
 '''
 
@@ -206,7 +199,6 @@ print(GC.dist_ancetre(GC.get_node_by_id(26),GC.get_node_by_id(27)))
 print("\nDistance avec ancetre de 2 noeuds qui ne sont pas dans la même composante : ")
 print(GC.dist_ancetre(GC.get_node_by_id(20),GC.get_node_by_id(27)))
 
-
 #%% TP8 TESTS
 
 ai=node(21,'iO',{},{0:1})
@@ -249,8 +241,8 @@ g = bool_circ.adder(2)
 g1 = bool_circ.half_adder(0)
 #g.display("G10",True)
 #%%TP11
-'''g2 = bool_circ.registre(11,8)
-g2.display("TP11", False)
+g2 = bool_circ.registre(11,8)
+#g2.display("TP11", False)
 
 a = node(0, "1", {}, {1:1})
 b = node(1 , "|", {0:1,2:1,3:1}, {4:1})
@@ -260,14 +252,11 @@ e = node(4, " ", {1:1}, {})
 g = open_digraph([],[], [a,b,c,d,e])
 g2 = bool_circ(g)
 
-g2.display("avant",True)
+'''
+g2.display("avant")
 g2.porte_OU(0,1)
 #g2.evaluate()
-g2.display("apres",True)
-
-
-
-
+g2.display("apres")
 
 #%%TP11 evaluate
 a = node(0, "0", {}, {1:1})
@@ -277,11 +266,11 @@ d = node(3, "0", {}, {1:1})
 e = node(4, "", {1:1}, {})
 g = open_digraph([],[], [a,b,c,d,e])
 Geval= bool_circ(g)
-Geval.display('G_av_eval', True)
+Geval.display('G_av_eval')
 Geval.evaluate()
-Geval.display("GG_ap_eval1",True)'''
-
+Geval.display("GG_ap_eval1")
+'''
 g = calcul(0,2,2)
-g.display("ADD", True)
+g.display("ADD")
 
 

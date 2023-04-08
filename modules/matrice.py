@@ -1,9 +1,11 @@
 import random as rand
+'''
+Fichier contenant toutes les fonctions relatives aux matrices.
+'''
 
 def random_int_list(n,bound,j) :
     '''
     input : int, int, int
-        
     renvoie une liste de taille n de nombres aléatoires entre 0 et bound
     ''' 
     l = []
@@ -101,4 +103,3 @@ def random_triangular_int_matrix(n, bound, null_diag=True):
             if i>j:
                 l[i][j]=0
     return l
-

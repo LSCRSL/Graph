@@ -13,11 +13,13 @@ class node:
         self.label = label
         self.parents = parents
         self.children = children
+
     def __str__(self):
         '''
         output: string; les attributs du noeud
         '''
         return "ID: "+str(self.id)+"  Label:"+self.label+"  Parents:"+str(self.parents)+"  Children:"+str(self.children) +"\n"
+    
     def __repr__(self):
         '''
         output: string; appelle __str__
@@ -126,7 +128,6 @@ class node:
         if id in self.get_parent_ids() : 
             self.parents[id] -= 1
             if self.parents[id] == 0 :
-                #il faut l'enlever dans la section enfant du noeud du parent
                 del self.parents[id]
         
     def remove_child_once(self, id) : 
@@ -136,7 +137,6 @@ class node:
         if id in self.get_children_ids() : 
             self.children[id] -= 1
             if self.children[id] == 0 :
-                #ici on utilise .children c'est ok ?
                 del self.children[id]
 
     def remove_parent_id(self, id) : 
@@ -174,4 +174,7 @@ class node:
         return cpt
 
     def degree(self) : 
+        '''
+        output: int; la somme des degrés entrant et sortant du noeud
+        '''
         return self.indegree() + self.outdegree()

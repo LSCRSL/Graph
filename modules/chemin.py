@@ -1,14 +1,3 @@
-def min(l, f):
-    '''
-    input:node list, node->int dict;
-    output: node; l'élément de la liste qui est associé au plus petit entier
-    '''
-    u=l[0]
-    for v in l:
-        if f[v]>f[u]:
-            u=v
-    return u
-
 class chemin:
     '''Classe dans laquelle on regroupe toutes les méthodes
     relatives aux chemins dans un open_digraph
@@ -49,7 +38,6 @@ class chemin:
             if tgt==u:
                 return dist, prev
         return dist, prev
-        
         
     def shortest_path(self, src, tgt, direction=None):
         '''
@@ -115,7 +103,7 @@ class chemin:
         input : int ;id du noeud
         output : profondeur
         
-        renvoie la profondeur du graphe si le paramètre noeud est à None, sinon renvoie la profondeur du noeud
+        Renvoie la profondeur du graphe si le paramètre noeud est à None, sinon renvoie la profondeur du noeud
         Profondeur graphe vide : 0
         '''
         if noeud == None :
@@ -176,3 +164,13 @@ class chemin:
             res.insert(0,vv)
         return dist[v],res
     
+def min(l, f):
+    '''
+    input:node list, node->int dict;
+    output: node; l'élément de la liste qui est associé au plus petit entier
+    '''
+    u=l[0]
+    for v in l:
+        if f[v]>f[u]:
+            u=v
+    return u

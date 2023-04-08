@@ -211,7 +211,7 @@ class open_digraph(gs.get_set, arm.add_remove, path.chemin, connect.connectivity
                 f.write(f"{n.get_id()} [label=\"{n.get_label()}\\n{n.get_id()}\", color={color}];\n")
             else:
                 lab=n.get_label()
-                if lab=='' or lab=='|' or lab=='&' or lab=='^' or lab=='~':
+                if lab=='' or lab=='|' or lab=='&' or lab=='^' or lab=='~' or lab==' ':
                     lab='"'+lab+'"'
                     f.write(f"{n.get_id()} [label={lab}, color={color}];\n")
                 else:
@@ -270,6 +270,11 @@ class open_digraph(gs.get_set, arm.add_remove, path.chemin, connect.connectivity
 
     @classmethod
     def identity(cls, n):
+        '''
+        input: int; nombre de noeuds
+
+        renvoie le graphe identité à n noeuds
+        '''
         g=open_digraph.empty()
         for i in range(n):
             ni=node(i,'{:}'.format(i),{},{})
@@ -355,38 +360,28 @@ class open_digraph(gs.get_set, arm.add_remove, path.chemin, connect.connectivity
         p2 = node2.get_parent_ids()
         c1 = node1.get_children_ids()
         c2 = node2.get_children_ids()
-    
         #fusion des parents
         for par2 in p2 : 
             #rajout du noeud ou augmentation de la multiplicité
             node1.add_parents_id(par2, node2.parents[par2])
-            
             #on prend le noeud parent
             noeud_parent = self.get_node_by_id(par2)
-            
             #rajout du noeud ou augmentation de la multiplicité
             noeud_parent.add_child_id(id1, node2.parents[par2])        
-                
         #fusion des enfants       
         for child2 in c2 : 
             #rajout du noeud ou augmentation de la multiplicité
             node1.add_child_id(child2, node2.children[child2])
-            
             #on prend le noeud enfant
             noeud_child = self.get_node_by_id(child2)
-            
             #rajout du noeud ou augmentation de la multiplicité
             noeud_child.add_parents_id(id1, node2.children[child2])
-            
         #on supprime le noeud doublon
         self.remove_node_by_id(id2)
-        
         #on met le label        
         node1.set_label(label)
-
         if noloop : 
             if id1 in node1.get_parent_ids() :
                 node1.remove_parent_id(id1)
             if id1 in node1.get_children_ids() : 
                 node1.remove_child_id(id1)
-                

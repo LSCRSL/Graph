@@ -54,11 +54,12 @@ class add_remove:
     def add_node(self, label="",parents=None, children=None) : 
         ''' 
         inputs: string, int->int dict,int ->int dict; 
+        Output: id du nouveau noeud.
+
         Méthode qui rajoute un noeud (avec label) au graphe (en utilisant un
         nouvel id), et le lie avec les noeuds d’ids parents et children (avec leurs mul-
         tiplicités respectives). Si les valeurs par défaut de parents et/ou children sont
         None, leur attribuer un dictionnaire vide.
-        Output: id du nouveau noeud.
         '''
         if parents == None : 
             parents = {}
@@ -81,7 +82,8 @@ class add_remove:
         '''
         input: int; id du noeud vers lequel le nouveau noeud ajouté au graphe pointe
 
-        Vérifie si l'ajout de l'input est possible, si oui effectue l'ajout, si non renvoie une erreur
+        Vérifie si l'ajout de l'input est possible, si oui effectue l'ajout, 
+        si non renvoie une erreur
         '''
         if (tgt in self.get_input_ids() or (tgt in self.get_output_ids())) :
             raise ValueError
@@ -93,7 +95,8 @@ class add_remove:
         '''
         input: int; id du noeud qui pointe vers un nouveau noeud ajouté au graphe
 
-        Vérifie si l'ajout de l'output est possible, si oui effectue l'ajout, si non renvoie une erreur
+        Vérifie si l'ajout de l'output est possible, si oui effectue l'ajout,
+        si non renvoie une erreur
         '''
         if (src in self.get_input_ids() or (src in self.get_output_ids())) : 
             raise ValueError
@@ -146,14 +149,16 @@ class add_remove:
 
     def remove_edges(self, l_p_id) : 
         '''
-        input: (int*int) list; liste des couples id source/id target qui caractérisent les arêtes à retirer pour une multiplicité
+        input: (int*int) list; liste des couples id source/id target qui 
+        caractérisent les arêtes à retirer pour une multiplicité
         '''
         for (src,tgt) in l_p_id : 
             self.remove_edge(src, tgt)
     
     def remove_several_parallel_edges(self, l_p_id) : 
         '''
-        input: (int*int) list; liste des couples id source/id target qui caractérisent les arêtes à retirer pour toutes les multiplicités
+        input: (int*int) list; liste des couples id source/id target qui 
+        caractérisent les arêtes à retirer pour toutes les multiplicités
         '''
         for (src,tgt) in l_p_id : 
             self.remove_parallel_edges(src,tgt)
@@ -161,7 +166,6 @@ class add_remove:
     def remove_nodes_by_id(self, l_id) : 
         '''
         input: int list; liste des id des noeuds à retirer
-         
         '''
         for id in l_id : 
             self.remove_node_by_id(id)

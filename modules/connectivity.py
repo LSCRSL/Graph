@@ -1,8 +1,8 @@
-
 class connectivity:
     '''Classe dans laquelle on regroupe toutes les méthodes
     relatives aux compositions et parallélisme entre deux graphes
     '''
+
     def shift_indices(self,n):
         '''
         input: int; valeur à ajouter à tous les id des noeuds du graph
@@ -41,7 +41,6 @@ class connectivity:
             self.add_nodes(node)
         self.set_input_ids(nlin)
         self.set_outputs_ids(nlout)
-
 
     def min_id(self):
         '''
@@ -110,6 +109,10 @@ class connectivity:
                 self.add_edge(ii,oi)
 
     def connected_components(self) : 
+        '''
+        output: int -> int dict;
+        méthode qui associe à chaque noeud du graphe un numéro de composante connexe
+        '''
         cpt = 0
         dict = {}
         for node in self.get_node() :
@@ -119,11 +122,14 @@ class connectivity:
         return (cpt,dict)
     
     def same_graph(self,node, cpt, dict) :
+        '''
+        input:node, int, int->int dict;
+        Sous-fonction pour la méthode connected_components()
+        '''
         if node.get_id() in dict.keys() : 
             for parent in node.get_parent_ids() : 
                 if parent not in dict.keys() : 
                     self.same_graph(self.get_node_by_id(parent), cpt,dict)
-            
             for child in node.get_children_ids() :
                 if child not in dict.keys() : 
                     self.same_graph(self.get_node_by_id(child), cpt,dict)
@@ -131,9 +137,6 @@ class connectivity:
             dict[node.get_id()] = cpt
             for parent in  node.get_parent_ids():
                 self.same_graph(self.get_node_by_id(parent), cpt,dict)
-
             for child in node.get_children_ids() :
                 dict[child] = cpt
                 self.same_graph(self.get_node_by_id(child), cpt,dict)
-
-    

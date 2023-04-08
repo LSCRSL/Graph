@@ -40,7 +40,6 @@ class InitTest(unittest.TestCase):
         self.assertListEqual(G.inputs, [3,4])
         self.assertListEqual(G.outputs, [5,6])
 
-
 class NodeTest(unittest.TestCase):
     '''
     Classe pour tester les méthodes de 
@@ -167,8 +166,7 @@ class OpenDigraphTest (unittest.TestCase):
         '''
         Méthode pour tester la fonction is_well_formed, 
         et vérifier que l'ajout d'inputs et d'outputs
-        est correct
-        
+        est correcte
         '''
         n0 = node(0, 'a', {3:1, 4:1}, {1:1, 2:1})
         n1 = node(1, 'b', {0:1}, {2:2, 5:1})
@@ -323,9 +321,6 @@ class OpenDigraphTest (unittest.TestCase):
         self.assertEqual(G8.plusLongChemin(0,4)[1], [])
         self.assertEqual(G8.plusLongChemin(0,0)[0], 0)
         self.assertEqual(G8.plusLongChemin(0,0)[1], [0])
-        
-
-
 
 class BoolCircTest (unittest.TestCase):
     def test_id(self):
@@ -338,10 +333,9 @@ class BoolCircTest (unittest.TestCase):
         a3 = node(3, '~', {2:1}, {4:1} )
         a4 = node(4, '|', {1:1, 3:1}, {20:1})
         x4 = node(20, '', {4:1}, {})
-        
         Ga = open_digraph([10,11,12],[20], [a0,a1,a2,a3,a4, x1, x2, x3, x4] )
-
         GCa = bool_circ(Ga)
+
         self.assertEqual(0, GCa.min_id())
         self.assertEqual(20, GCa.max_id())
         GCa.shift_indices(10)

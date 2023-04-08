@@ -28,6 +28,9 @@ class bool_circ(open_digraph):
         return is_cycle(self.copy())
 
     def is_well_formed(self):
+        '''
+        output:bool; renvoie vrai si les propriétés d'un circuit booléen sont respectées
+        '''
         if self.is_cyclic() :
             return False 
         else : 
@@ -56,6 +59,11 @@ class bool_circ(open_digraph):
     
     @classmethod
     def formule_arbre(cls,*args) : 
+        '''
+        input: *args
+        Méthode de class qui construit un circuit booléen à l'aide de la chaîne de 
+        caractères donnée en argument
+        '''
         g = open_digraph.empty()
         for s in args : 
             current_node= g.add_node('', {}, {})
@@ -80,7 +88,6 @@ class bool_circ(open_digraph):
                     s2=s2+char
                 else:
                     s2=char
-
         trouve ={}
         for noeud in g.get_node():
             label=noeud.get_label()
@@ -93,7 +100,6 @@ class bool_circ(open_digraph):
                     trouve[label] = id
                 g.add_input_id(id)
                 noeud.set_label('')
-        print(g)
         return (cls(g),list(trouve.keys()))
     
     @classmethod
@@ -120,29 +126,21 @@ class bool_circ(open_digraph):
         for noeud in g.get_node() : 
             if noeud.indegree() == 1 and noeud.outdegree() == 1 : 
                 noeud.set_label('~')
-                
             elif noeud.indegree() > 1 and noeud.outdegree() == 1 :
-                
                 u = rand.randrange(0,nb_bin)
-                
                 noeud.set_label(binaire[u])
-
             elif noeud.indegree() > 1 and noeud.outdegree() > 1 :
                 parents = noeud.get_parent_ids()
                 mult_parents = noeud.get_parent_mult()
                 #noeud parent
                 u = rand.randrange(0,nb_bin)
-
                 dic_parent = {}
                 for i in range(len(parents)):
                     dic_parent[parents[i]] = mult_parents[i]
-
                 new_node_id = g.add_node(binaire[u], dic_parent, {noeud.get_id():1})
-                
-                #nv noeud seul parent
+                #nouveau noeud seul parent
                 for p in parents : 
                     g.remove_parallel_edges(p,noeud.get_id())
-                    
                 noeud.set_parent_ids(new_node_id)
         while len(g.get_input_ids())!=input or len(g.get_output_ids())!=output:
             linp=g.get_input_ids()
@@ -170,13 +168,12 @@ class bool_circ(open_digraph):
     @classmethod
     def half_adder(cls, n ) : 
         '''
-        input : n : int , 
+        input : int 
         output : bool_circ
 
         renvoie adder n avec le carry = 0
         '''
         #appel de la fonction adder
-
         g = cls.adder(n).copy()
         for ID in g.get_input_ids() : 
             if g.get_node_by_id(ID).get_label() == 'c' : 
@@ -187,13 +184,11 @@ class bool_circ(open_digraph):
     @classmethod
     def adder(cls, n) : 
         '''
-        input : n : int
+        input : int
         output : bool_circ
 
         renvoie le registre de taille n
         '''
-
-        
         if n == 0 : 
             i0 = node(10, 'a', {}, {1:1})
             i1 = node(11, 'b', {}, {2:1})
@@ -209,9 +204,7 @@ class bool_circ(open_digraph):
             i=node(9,'|',{6:1, 7:1},{13:1})
             o0 = node(13, "cp", {9:1}, {})
             o1 = node(14, 'r', {8:1}, {})
-
             g = open_digraph([10,11,12],[13,14], [a,b,c,d,e,f,g,h,i, i0, i1,i2, o0,o1] )
-
             return cls(g)
         else :
             g1 = cls.adder(n-1)
@@ -222,14 +215,11 @@ class bool_circ(open_digraph):
             for id in g1.get_input_ids() : 
                 if g1.get_node_by_id(id).get_label() == 'c' : 
                     c = id + g2.max_id() -g2.min_id() + 1
-            
             #on recupere l'id noeud output c'
             for id in g2.get_output_ids() : 
                 if g2.get_node_by_id(id).get_label() == "cp" : 
                     c_prime = id
-
             g3 = open_digraph.parallel(g1, g2)
-
             #on fusionne les noeuds
             g3.fusion(c,c_prime,"")
             g3.get_input_ids().remove(c)
@@ -351,14 +341,13 @@ class bool_circ(open_digraph):
         évalue le cicruit booléen en appliquant les règles
         "ET", "OU", "OU EXCLUSIF", "NON", "Copies" et "éléments neutres"
         '''
-        self.display("graphbis", True)
+        #self.display("graphbis", True)
         cofeuilles=[]
         nl=self.get_node()
         for n in nl:
             if n.get_parent_ids()==[] and n.get_children_ids()!=[]:
                 cofeuilles.append(n.get_id())
         while cofeuilles!=[] and self.profondeur()>2:
-
             for c in cofeuilles:
                 n=self.get_node_by_id(c)
                 for child in n.get_children_ids():
@@ -375,8 +364,6 @@ class bool_circ(open_digraph):
                     elif lab=='^':
                         self.porte_OU_EX(c,child)
             self.evaluate()
-
-            
         gl=self.connected_list()
         for g in gl:
             rml=[]
@@ -388,34 +375,30 @@ class bool_circ(open_digraph):
                 self.remove_nodes_by_id(rml)
         for nid in self.get_node_ids():
             self.elmt_neutres(nid)
-         
-
 
 def calcul(a,b,taille) :
-
+    '''
+    input:int,int,int;
+    output: bool_circ
+    
+    Fonction pour tester la méthode evaluate() sur l'additionneur
+    '''
     n = math.log(taille,2)
     #if type(n) != int : 
         #raise ValueError
-    
     g1 = bool_circ.registre(a,taille)
     g2 = bool_circ.registre(b,taille) 
-
     g = bool_circ.parallel(g1,g2)
-    
     ha = bool_circ.half_adder(n)
-
     ha.icompose(g)
-
     for n in g.get_node() : 
         c_id = n.get_parent_ids()
         if (c_id == []) & ( (n.get_label() == "0") | (n.get_label() == "1")): 
             ha.fusion(n.get_id(),n.get_children_ids()[0],True,n.get_label())
-            ha.fusion(n.get_id(),n.get_children_ids()[0],True,n.get_label())
-            
+            ha.fusion(n.get_id(),n.get_children_ids()[0],True,n.get_label())  
     bc = bool_circ(ha)
     bc.display("g1",True)
     bc.evaluate()
-
     return g
 
 
