@@ -388,9 +388,7 @@ class bool_circ(open_digraph):
                 self.remove_nodes_by_id(rml)
         for nid in self.get_node_ids():
             self.elmt_neutres(nid)
-        
-            
-            
+         
 
 
 def calcul(a,b,taille) :
