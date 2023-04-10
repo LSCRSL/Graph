@@ -269,8 +269,14 @@ Geval= bool_circ(g)
 Geval.display('G_av_eval')
 Geval.evaluate()
 Geval.display("GG_ap_eval1")
-'''
+
 g = calcul(0,2,2)
 g.display("ADD")
+'''
 
+#%% TP12 TESTS encodeur et decodeur
+encodeur=bool_circ.encodeur(0,0,0,0)
+#encodeur.display('encodeur') #testé
+decodeur=bool_circ.decodeur(0,0,0,0,0,1,0)
+#decodeur.display("decodeur", True) #testé
 

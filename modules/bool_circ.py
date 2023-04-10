@@ -58,7 +58,7 @@ class bool_circ(open_digraph):
             return True
     
     @classmethod
-    def formule_arbre(cls,*args) : 
+    def formule_arbre(cls,*args) : #également appelée "parse_parenthese()"
         '''
         input: *args
         Méthode de class qui construit un circuit booléen à l'aide de la chaîne de 
@@ -375,7 +375,77 @@ class bool_circ(open_digraph):
                 self.remove_nodes_by_id(rml)
         for nid in self.get_node_ids():
             self.elmt_neutres(nid)
+    
+    @classmethod
+    def encodeur(cls, in1,in2,in3,in4):
+        '''
+        input: int, int, int, int; des bits à encoder
+        renvoie le cicruit booléen correspondant à l'encodeur
+        '''
+        i0=node(0,str(in1),{},{4:1})
+        i1=node(1,str(in2),{},{5:1})
+        i2=node(2,str(in3),{},{6:1})
+        i3=node(3,str(in4),{},{7:1})
+        a=node(4,'',{0:1},{8:1,12:1,13:1})
+        b=node(5,'',{1:1},{9:1,12:1,14:1})
+        c=node(6,'',{2:1},{10:1,13:1,14:1})
+        d=node(7,'',{3:1},{11:1,12:1,13:1,14:1})
+        o0=node(8,'',{4:1},{})
+        o1=node(9,'',{5:1},{})
+        o2=node(10,'',{6:1},{})
+        o3=node(11,'',{7:1},{})
+        n1=node(12,'^',{4:1,5:1,7:1},{15:1})
+        n2=node(13,'^',{4:1,6:1,7:1},{16:1})
+        n3=node(14,'^',{5:1,6:1,7:1},{17:1})
+        o4=node(15,'',{12:1},{})
+        o5=node(16,'',{13:1},{})
+        o6=node(17,'',{14:1},{})
+        g=open_digraph([0,1,2,3],[8,9,10,11,15,16,17],[i0,i1,i2,i3,a,b,c,d,o0,o1,o2,o3,o4,o5,o6,n1,n2,n3])
+        return cls(g)
 
+    @classmethod
+    def decodeur(cls, in1, in2, in3, in4, in5, in6, in7):
+        '''
+        input: int * 7; bits à évaluer
+        renvoie le circuit booléen correspondant au décodeur
+        '''
+        b=bool_circ.encodeur(in1,in2,in3,in4)
+        tab=[in5,in6,in7]
+        for i in range (0,3):
+            s=str(tab[i])
+            b.add_nodes(node(18+i,s,{},{12+i:1}))
+            b.add_input_id(18+i)
+        for i in range(4,8):
+            n=node(17+i,'^',{i:1},{i+4:1})
+            b.add_nodes(n)
+            b.add_edge(i,17+i)
+            b.remove_edge(i,i+4)
+        n1=node(25,'&',{15:1,16:1,26:1},{21:1})
+        n2=node(26,'~',{17:1},{25:1})
+        b.add_nodes_list([n1,n2])
+        b.add_edge(15,25)
+        b.add_edge(16,25)
+        b.add_edge(17,26)
+        n3=node(27,'&',{15:1,17:1,28:1},{22:1})
+        n4=node(28,'~',{16:1},{27:1})
+        b.add_nodes_list([n3,n4])
+        b.add_edge(15,27)
+        b.add_edge(17,27)
+        b.add_edge(16,28)
+        n5=node(29,'&',{16:1,17:1,30:1},{23:1})
+        n6=node(30,'~',{15:1},{29:1})
+        b.add_nodes_list([n5,n6])
+        b.add_edge(16,29)
+        b.add_edge(17,29)
+        b.add_edge(15,30)
+        n7=node(31,'&',{16:1,17:1,15:1},{24:1})
+        b.add_nodes(n7)
+        b.add_edge(15,31)
+        b.add_edge(16,31)
+        b.add_edge(17,31)
+        return cls(b)
+
+        
 def calcul(a,b,taille) :
     '''
     input:int,int,int;
@@ -400,26 +470,4 @@ def calcul(a,b,taille) :
     bc.display("g1",True)
     bc.evaluate()
     return g
-
-
-
-    
-
-            
-
-
-
-    
-
-        
-            
-
-        
-
-        
-     
-    
-        
-
-
 
