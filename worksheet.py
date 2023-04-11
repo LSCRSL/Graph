@@ -255,7 +255,7 @@ g2 = bool_circ(g)
 '''
 g2.display("avant")
 g2.porte_OU(0,1)
-#g2.evaluate()
+g2.evaluate()
 g2.display("apres")
 
 #%%TP11 evaluate
@@ -269,10 +269,10 @@ Geval= bool_circ(g)
 Geval.display('G_av_eval')
 Geval.evaluate()
 Geval.display("GG_ap_eval1")
-
-g = calcul(0,2,2)
-g.display("ADD")
 '''
+g = calcul(2,2,2)
+g.display("ADD")
+
 
 #%% TP12 TESTS encodeur et decodeur
 encodeur=bool_circ.encodeur(0,0,0,0)
@@ -317,3 +317,48 @@ binvol=bool_circ(open_digraph([0,1,2],[7,8,9],[i1,i2,i3,a,b,o1,o2,o3]))
 #binvol.display("av_invol")
 binvol.invol_xor(5,6)
 #binvol.display("ap_invol")  #test ok
+
+i1=node(0,'1',{},{5:1})
+i2=node(1,'0',{},{5:1})
+i3=node(2,'0',{},{5:1})
+a=node(5,'^',{0:1,1:1,2:1},{7:1})
+o1=node(7,'',{5:1},{})
+eff=bool_circ(open_digraph([0,1,2],[7],[i1,i2,i3,a,o1]))
+#eff.display("av_eff",True)
+eff.effacement(5,7)
+#eff.display("ap_eff", True)  #test ok
+
+i1=node(0,'1',{},{5:1})
+i2=node(1,'0',{},{5:1})
+i3=node(2,'0',{},{5:1})
+i4 =node(3,'1',{},{6:1})
+a=node(5,'^',{0:1,1:1,2:1,6:1},{7:1})
+b=node(6, '~', {3:1},{5:1})
+o1=node(7,'',{5:1},{})
+nxor=bool_circ(open_digraph([0,1,2,3],[7],[i1,i2,i3,i4,a,b,o1]))
+#nxor.display("av_xor",True)
+nxor.non_xor(6,5)
+#nxor.display("ap_xor",True)  #test ok
+
+i1=node(0,'1',{7:1},{})
+i2=node(1,'0',{7:1},{})
+i3=node(2,'0',{7:1},{})
+i4 =node(3,'1',{},{6:1})
+b=node(6, '~', {3:1},{7:1})
+o1=node(7,'',{6:1},{0:1,1:1,2:1})
+ncop=bool_circ(open_digraph([3],[0,1,2],[i1,i2,i3,i4,b,o1]))
+#ncop.display("av_cop",True)
+ncop.non_copie(6,7)
+#ncop.display("ap_cop",True)  #test ok
+
+i1=node(0,' ',{7:1},{})
+i2=node(1,' ',{},{6:1})
+b=node(6, '~', {1:1},{7:1})
+o1=node(7,'~',{6:1},{0:1})
+ninv=bool_circ(open_digraph([1],[0],[i1,i2,b,o1]))
+#ninv.display("av_ninv",True)
+ninv.invol_non(6,7)
+#ninv.display("ap_ninv",True)  #test ok
+
+
+

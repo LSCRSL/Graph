@@ -402,13 +402,101 @@ class bool_circ(open_digraph):
         if (labb!='' and labb!=' ') :
             raise ValueError
         else:
-            parents=nh.get_parents_ids()
+            parents=nh.get_parent_ids()
+            self.remove_node_by_id(idb)
+            self.remove_node_by_id(idh)
             for pid in parents:
-                nn=node(self.new_id(),'', {pid:1},{})
-                self.add_nodes(nn)
-                self.add_edge(pid,nn.get_id())
-                self.remove_edge(pid, idb)
-            self.remove_nodes_by_id([idh,idb])
+                id = self.add_node('', {pid:1}, {})
+    
+
+    def non_xor(self, idh,idb) : 
+        '''
+        inputs: int, int ; id du noeud d'operation ou valeur quelconque en amont et de son fils copie de label ' '
+
+        effectue le non à travers xor
+        '''
+        noeudH = self.get_node_by_id(idh)
+        noeudB = self.get_node_by_id(idb)
+        parentH = noeudH.get_parent_ids()
+        #on enleve l'arete entre les deux noeuds
+        self.remove_edge(idh,idb)
+        #on enleve l'arete entre ~ et son parent
+        self.remove_edge(parentH[0], idh)
+
+        self.add_edge(parentH[0], idb)
+        childrenB = noeudB.get_children_ids()
+        self.remove_edge(idb, childrenB[0])
+        self.add_edge(idh,childrenB[0])
+        self.add_edge(idb,idh)
+        
+
+    def non_copie(self, idh,idb) : 
+        '''
+        inputs: int, int ; id du noeud d'operation ou valeur quelconque en amont et de son fils copie de label ' '
+
+        effectue le non à travers copie
+        '''
+        noeudH = self.get_node_by_id(idh)
+        noeudB = self.get_node_by_id(idb)
+        parentH = noeudH.get_parent_ids()
+        self.add_edge(parentH[0],idb)
+        self.remove_node_by_id(idh)
+        print(self.get_node())
+        for child in noeudB.get_children_ids() : 
+            self.remove_edge(idb, child)
+            id = self.add_node("~", {idb:1}, {child:1})
+                
+    def invol_non(self,idh,idb) : 
+        '''
+        inputs: int, int ; id du noeud d'operation ou valeur quelconque en amont et de son fils copie de label ' '
+
+        effectue l'involution de non
+        '''
+        noeudH = self.get_node_by_id(idh)
+        noeudB = self.get_node_by_id(idb)
+        parentH = noeudH.get_parent_ids()
+        childB = noeudB.get_children_ids()
+        self.add_edge(parentH[0], childB[0])
+        self.remove_node_by_id(idh)
+        self.remove_node_by_id(idb)
+
+    def evaluate__(self) : 
+        #ne pas utiliser les cofeuilles, avoir une liste de noeud (au depart tous les noeuds) et regarder si l'on peut appliquer une transformation
+        #si ce n'est pas le cas on enleve le noeud de la liste, lorsqu'il y a un tranformation de faite on ajoute à la liste les noeuds voisins (s'ils ne sont pas deja dedans)
+        #et on regarde si l'on peut effectuer une transformation, dans la cad contraire on enleve le noeud de la liste etc ... 
+        #on repete ce processus tant que la liste n'est pas vide.
+        cofeuilles = []
+        nl = self.get_node()
+        for n in nl : 
+            if n.get_parents_ids() == [] and n.get_children_ids()!= [] : 
+                cofeuilles.append(n.get_id())
+        while cofeuilles != [] : 
+            for c in cofeuilles : 
+                noeud = self.get_node_by_id(c)
+                for child in noeud.get_children_ids() : 
+                    child_noeud = self.get_node_by_id(child)
+                    lbl_noeud = noeud.get_label()
+                    lbl_ch_n = child_noeud.get_label()
+                    if lbl_noeud == '' :
+                        if lbl_ch_n == '' : 
+                            self.asso_copie(c,child)
+                        elif lbl_ch_n == '^' :
+                            self.invol_xor(c,child)
+                    elif lbl_noeud == '^' :
+                        if lbl_ch_n == '^' :
+                            self.asso_xor(c,child)
+                    elif lbl_noeud == '~' : 
+                        if lbl_ch_n == '' :
+                            self.non_copie(c,child)
+                        elif lbl_ch_n == '^' :
+                            self.non_xor(c,child)
+                        elif lbl_ch_n == '~':
+                            self.invol_non(c,child)
+                    elif lbl_noeud != '' & lbl_ch_n == '' : 
+                        self.effacement(c,child)
+            
+
+
         
 
     def evaluate(self):
@@ -416,7 +504,8 @@ class bool_circ(open_digraph):
         évalue le cicruit booléen en appliquant les règles
         "ET", "OU", "OU EXCLUSIF", "NON", "Copies" et "éléments neutres"
         '''
-        #self.display("graphbis", True)
+        self.display("graphbis", True)
+        
         cofeuilles=[]
         nl=self.get_node()
         for n in nl:
@@ -542,6 +631,7 @@ def calcul(a,b,taille) :
             ha.fusion(n.get_id(),n.get_children_ids()[0],True,n.get_label())
             ha.fusion(n.get_id(),n.get_children_ids()[0],True,n.get_label())  
     bc = bool_circ(ha)
+
     bc.display("g1",True)
     bc.evaluate()
     return g
