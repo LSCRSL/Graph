@@ -280,3 +280,40 @@ encodeur=bool_circ.encodeur(0,0,0,0)
 decodeur=bool_circ.decodeur(0,0,0,0,0,1,0)
 #decodeur.display("decodeur", True) #testé
 
+#%% TP12 TESTS règles de réécriture
+i1=node(0,'1',{},{5:1})
+i2=node(1,'0',{},{5:1})
+i3=node(2,'0',{},{6:1})
+i4=node(3,'1',{},{6:1})
+a=node(5,'^',{0:1,1:1},{6:1})
+b=node(6, '^', {5:1,2:1,3:1},{7:1})
+o1=node(7,'',{6:1},{})
+baxor=bool_circ(open_digraph([0,1,2,3],[7],[i1,i2,i3,i4,a,b,o1]))
+#baxor.display("avant_asso_XOR")
+baxor.asso_xor(5,6)
+#baxor.display("apres_asso_XOR") #test ok
+
+i1=node(0,'1',{},{1:1})
+a=node(1,'',{0:1},{2:1,3:1,4:1})
+b=node(2,'',{1:1},{5:1,6:1})
+o1=node(3,'',{1:1},{})
+o2=node(4,'',{1:1},{})
+o3=node(5,'',{2:1},{})
+o4=node(6,'',{2:1},{})
+bac=bool_circ(open_digraph([0],[3,4,5,6],[i1,a,b,o1,o2,o3,o4]))
+#bac.display("av_asso_copie")
+bac.asso_copie(1,2)
+#bac.display("ap_asso_copie") #test ok
+
+i1=node(0,'1',{},{5:1})
+i2=node(1,'0',{},{5:1})
+i3=node(2,'0',{},{6:1})
+a=node(5,'^',{0:1,1:1,6:2},{7:1})
+b=node(6, '', {2:1},{5:2,8:1,9:1})
+o1=node(7,'',{5:1},{})
+o2=node(8,'',{6:1},{})
+o3=node(9,'',{6:1},{})
+binvol=bool_circ(open_digraph([0,1,2],[7,8,9],[i1,i2,i3,a,b,o1,o2,o3]))
+#binvol.display("av_invol")
+binvol.invol_xor(5,6)
+#binvol.display("ap_invol")  #test ok

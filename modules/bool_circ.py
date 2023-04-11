@@ -336,6 +336,81 @@ class bool_circ(open_digraph):
         else : 
             noeud.set_label("0")
 
+    def asso_xor(self, idh, idb):
+        '''
+        inputs: int, int ; id du noeud '^' en amont et de son fils de label '^'
+
+        effectue l'associativité de XOR
+        '''
+        nh, nb = self.get_node_by_id(idh), self.get_node_by_id(idb)
+        if nh.get_label()!='^' or nb.get_label()!='^':
+            raise ValueError
+        else:
+            parents=nh.get_parent_ids()
+            for pid in parents:
+                self.add_edge(pid,idb)
+                self.remove_edge(pid,idh)
+            self.remove_edge(idh,idb)
+            self.remove_node(idh)
+
+    def asso_copie(self,idh,idb):
+        '''
+        inputs: int, int ; id du noeud copie ' ' en aval et de son parent de label ' '
+
+        effectue l'associativité de la copie
+        '''
+        nh, nb = self.get_node_by_id(idh), self.get_node_by_id(idb)
+        labh, labb = nh.get_label(), nb.get_label()
+        if (labh!='' and labh!=' ') or (labb!='' and labb!=' ') :
+            raise ValueError
+        else:
+            children=nb.get_children_ids()
+            for cid in children:
+                self.add_edge(idh,cid)
+                self.remove_edge(idb, cid)
+            self.remove_edge(idh,idb)
+            self.remove_node(idb)
+
+    def invol_xor(self, idOE, idC):
+        '''
+        inputs: int, int ; id du noeud OU exclusif '^' et d'un des parents de label ''
+
+        effectue l'involution de XOR
+        '''
+        no, nc = self.get_node_by_id(idOE), self.get_node_by_id(idC)
+        labo, labc = no.get_label(), nc.get_label()
+        if (labo!='^') or (labc!='' and labc!=' ') :
+            raise ValueError
+        else:
+            i=0
+            tab=no.get_parent_ids()
+            while tab[i]!=idC:
+                i+=1
+            mult=no.get_parent_mult()[i]
+            self.remove_parallel_edges(idC, idOE)
+            if mult%2==1: #on laisse une arrête si le nombre d'arrête est impair
+                self.add_edge(idC,idOE)
+
+    def effacement(self, idh, idb):
+        '''
+        inputs: int, int ; id du noeud d'operation ou valeur quelconque en amont et de son fils copie de label ' '
+
+        effectue l'effacement
+        '''
+        nh, nb = self.get_node_by_id(idh), self.get_node_by_id(idb)
+        labh, labb = nh.get_label(), nb.get_label()
+        if (labb!='' and labb!=' ') :
+            raise ValueError
+        else:
+            parents=nh.get_parents_ids()
+            for pid in parents:
+                nn=node(self.new_id(),'', {pid:1},{})
+                self.add_nodes(nn)
+                self.add_edge(pid,nn.get_id())
+                self.remove_edge(pid, idb)
+            self.remove_nodes_by_id([idh,idb])
+        
+
     def evaluate(self):
         '''
         évalue le cicruit booléen en appliquant les règles
