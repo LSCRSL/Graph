@@ -130,6 +130,7 @@ class add_remove:
         inputs: int, int; id source et id cible des arêtes à retirer
         '''
         l = self.get_node_by_ids([src,tgt])
+        print(l)
         SRC = l[0]
         TGT = l[1]
         SRC.remove_child_id(tgt)

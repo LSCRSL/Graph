@@ -270,15 +270,16 @@ Geval.display('G_av_eval')
 Geval.evaluate()
 Geval.display("GG_ap_eval1")
 '''
-g = calcul(2,2,2)
-g.display("ADD")
+#g = calcul(2,2,2)
+#g.display("ADD")
 
 
 #%% TP12 TESTS encodeur et decodeur
-encodeur=bool_circ.encodeur(0,0,0,0)
+encodeur=bool_circ.encodeur()
 #encodeur.display('encodeur') #testé
-decodeur=bool_circ.decodeur(0,0,0,0,0,1,0)
+decodeur=bool_circ.decodeur()
 #decodeur.display("decodeur", True) #testé
+
 
 #%% TP12 TESTS règles de réécriture
 i1=node(0,'1',{},{5:1})
@@ -356,9 +357,14 @@ i2=node(1,' ',{},{6:1})
 b=node(6, '~', {1:1},{7:1})
 o1=node(7,'~',{6:1},{0:1})
 ninv=bool_circ(open_digraph([1],[0],[i1,i2,b,o1]))
-#ninv.display("av_ninv",True)
+ninv.display("av_ninv",True)
 ninv.invol_non(6,7)
-#ninv.display("ap_ninv",True)  #test ok
+ninv.display("ap_ninv",True)  #test ok
+
+g = bool_circ(open_digraph.compose(decodeur,encodeur))
+g.display("edec")
+g.eval()
+g.display("enc-dec")
 
 
 

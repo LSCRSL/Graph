@@ -68,7 +68,7 @@ class node:
         output: int list; 
         '''
         return list(self.children.values())
-
+    
     @classmethod
     def node_empty(cls) : 
         '''

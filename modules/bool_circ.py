@@ -460,44 +460,84 @@ class bool_circ(open_digraph):
         self.remove_node_by_id(idh)
         self.remove_node_by_id(idb)
 
-    def evaluate__(self) : 
-        #ne pas utiliser les cofeuilles, avoir une liste de noeud (au depart tous les noeuds) et regarder si l'on peut appliquer une transformation
-        #si ce n'est pas le cas on enleve le noeud de la liste, lorsqu'il y a un tranformation de faite on ajoute à la liste les noeuds voisins (s'ils ne sont pas deja dedans)
+    def eval(self) : 
+        #ne pas utiliser les cofeuilles, avoir une liste de noeud (au depart tous les noeuds)  (OK)
+        # et regarder si l'on peut appliquer une transformation (OK)
+        #si ce n'est pas le cas on enleve le noeud de la liste, (OK)
+        # lorsqu'il y a un transformation de faite on ajoute à la liste les noeuds voisins (s'ils ne sont pas deja dedans) (OK)
         #et on regarde si l'on peut effectuer une transformation, dans la cad contraire on enleve le noeud de la liste etc ... 
         #on repete ce processus tant que la liste n'est pas vide.
-        cofeuilles = []
-        nl = self.get_node()
-        for n in nl : 
-            if n.get_parents_ids() == [] and n.get_children_ids()!= [] : 
-                cofeuilles.append(n.get_id())
-        while cofeuilles != [] : 
-            for c in cofeuilles : 
-                noeud = self.get_node_by_id(c)
-                for child in noeud.get_children_ids() : 
-                    child_noeud = self.get_node_by_id(child)
-                    lbl_noeud = noeud.get_label()
-                    lbl_ch_n = child_noeud.get_label()
-                    if lbl_noeud == '' :
-                        if lbl_ch_n == '' : 
-                            self.asso_copie(c,child)
-                        elif lbl_ch_n == '^' :
-                            self.invol_xor(c,child)
-                    elif lbl_noeud == '^' :
-                        if lbl_ch_n == '^' :
-                            self.asso_xor(c,child)
-                    elif lbl_noeud == '~' : 
-                        if lbl_ch_n == '' :
-                            self.non_copie(c,child)
-                        elif lbl_ch_n == '^' :
-                            self.non_xor(c,child)
-                        elif lbl_ch_n == '~':
-                            self.invol_non(c,child)
-                    elif lbl_noeud != '' & lbl_ch_n == '' : 
-                        self.effacement(c,child)
-            
+        noeuds = self.get_node()
+        while noeuds != [] : 
+            print("ok")
+            for n in noeuds : 
+                transf = False
+                enf = n.get_children_ids()
 
+                if n.get_label() == "^" and len(enf) == 1 and self.get_node_by_id(enf[0]).get_label() == "^" :
+                    
+                    ne = self.get_node_by_id(enf[0])
+                    self.asso_xor(n.get_id(), enf[0])
+                    transf = True
+                    #faire nouveau voisinage
+                    if ne not in noeuds : 
+                        noeuds.append(ne)
 
-        
+                elif n.get_label() == '' : 
+                    i = 0
+                    for e in enf : 
+                        ne = self.get_node_by_id(e)
+
+                        if ne.get_label() == '' : 
+                            self.asso_copie(n.get_id(), e)
+                            transf = True
+                            if ne not in noeuds : 
+                                noeuds.append(ne)
+
+                        if ne.get_label() == '^' and n.get_children_mult()[i] > 1 : 
+                            self.invol_xor(n.get_id(), e)
+                            transf = True
+                            if ne not in noeuds : 
+                                noeuds.append(ne)
+                        i+=1
+
+                elif n.get_label() == '~' :
+                    ne = self.get_node_by_id(enf[0])
+
+                    if ne.get_label() == "^" : 
+                        self.non_xor(n.get_id(), enf[0])
+                        transf = True
+                        if ne not in noeuds : 
+                            noeuds.append(ne)
+
+                    if ne.get_label() == '' : 
+                        self.non_copie(n.get_id(), enf[0])
+                        transf = True
+                        if ne not in noeuds : 
+                            noeuds.append(ne)
+
+                    if ne.get_label() == '~' : 
+                        self.invol_non(n.get_id(), enf[0])
+                        transf = True
+                        if ne not in noeuds : 
+                                noeuds.append(ne)
+                
+                elif n.get_label() != ''  and len(enf) == 1 :
+                    ne = self.get_node_by_id(enf[0])
+                    if ne.get_label() == '' and len(ne.get_children_ids()) == 0 :
+                        print(ne)
+                        #il y a plus l enfant dans le graphe
+                        self.effacement(n.get_id(), enf[0])
+                        transf = True
+                        if ne not in noeuds : 
+                            noeuds.append(ne)
+
+                if not transf : 
+                    print(n)
+                    noeuds.remove(n)
+        self.display("ok")
+        #print(noeuds)
+
 
     def evaluate(self):
         '''
@@ -541,15 +581,15 @@ class bool_circ(open_digraph):
             self.elmt_neutres(nid)
     
     @classmethod
-    def encodeur(cls, in1,in2,in3,in4):
+    def encodeur(cls):
         '''
         input: int, int, int, int; des bits à encoder
         renvoie le cicruit booléen correspondant à l'encodeur
         '''
-        i0=node(0,str(in1),{},{4:1})
-        i1=node(1,str(in2),{},{5:1})
-        i2=node(2,str(in3),{},{6:1})
-        i3=node(3,str(in4),{},{7:1})
+        i0=node(0,'',{},{4:1})
+        i1=node(1,'',{},{5:1})
+        i2=node(2,'',{},{6:1})
+        i3=node(3,'',{},{7:1})
         a=node(4,'',{0:1},{8:1,12:1,13:1})
         b=node(5,'',{1:1},{9:1,12:1,14:1})
         c=node(6,'',{2:1},{10:1,13:1,14:1})
@@ -568,16 +608,14 @@ class bool_circ(open_digraph):
         return cls(g)
 
     @classmethod
-    def decodeur(cls, in1, in2, in3, in4, in5, in6, in7):
+    def decodeur(cls):
         '''
         input: int * 7; bits à évaluer
         renvoie le circuit booléen correspondant au décodeur
         '''
-        b=bool_circ.encodeur(in1,in2,in3,in4)
-        tab=[in5,in6,in7]
+        b=bool_circ.encodeur()
         for i in range (0,3):
-            s=str(tab[i])
-            b.add_nodes(node(18+i,s,{},{12+i:1}))
+            b.add_nodes(node(18+i,'',{},{12+i:1}))
             b.add_input_id(18+i)
         for i in range(4,8):
             n=node(17+i,'^',{i:1},{i+4:1})
