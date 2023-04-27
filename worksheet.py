@@ -252,11 +252,11 @@ e = node(4, " ", {1:1}, {})
 g = open_digraph([],[], [a,b,c,d,e])
 g2 = bool_circ(g)
 
-'''
-g2.display("avant")
+
+#g2.display("avant")
 g2.porte_OU(0,1)
-g2.evaluate()
-g2.display("apres")
+#g2.evaluate()
+#g2.display("apres")
 
 #%%TP11 evaluate
 a = node(0, "0", {}, {1:1})
@@ -266,11 +266,11 @@ d = node(3, "0", {}, {1:1})
 e = node(4, "", {1:1}, {})
 g = open_digraph([],[], [a,b,c,d,e])
 Geval= bool_circ(g)
-Geval.display('G_av_eval')
-Geval.evaluate()
-Geval.display("GG_ap_eval1")
-'''
-#g = calcul(2,2,2)
+#Geval.display('G_av_eval')
+#Geval.evaluate()
+#Geval.display("GG_ap_eval1")
+
+g = calcul(2,2,2)
 #g.display("ADD")
 
 
@@ -357,14 +357,14 @@ i2=node(1,' ',{},{6:1})
 b=node(6, '~', {1:1},{7:1})
 o1=node(7,'~',{6:1},{0:1})
 ninv=bool_circ(open_digraph([1],[0],[i1,i2,b,o1]))
-ninv.display("av_ninv",True)
+#ninv.display("av_ninv",True)
 ninv.invol_non(6,7)
-ninv.display("ap_ninv",True)  #test ok
+#ninv.display("ap_ninv",True)  #test ok
 
 g = bool_circ(open_digraph.compose(decodeur,encodeur))
-g.display("edec")
-g.eval()
-g.display("enc-dec")
+#g.display("edec")
+#g.eval()
+#g.display("enc-dec")
 
 
 

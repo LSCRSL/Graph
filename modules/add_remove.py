@@ -120,6 +120,10 @@ class add_remove:
         inputs: int, int; id source et id cible de l'arête à retirer
         '''
         l = self.get_node_by_ids([src,tgt])
+        print(self.get_node())
+        print(src)
+        print(tgt)
+        print(l)
         SRC = l[0]
         TGT = l[1]
         SRC.remove_child_once(tgt)
@@ -130,7 +134,6 @@ class add_remove:
         inputs: int, int; id source et id cible des arêtes à retirer
         '''
         l = self.get_node_by_ids([src,tgt])
-        print(l)
         SRC = l[0]
         TGT = l[1]
         SRC.remove_child_id(tgt)
@@ -171,19 +174,15 @@ class add_remove:
         for id in l_id : 
             self.remove_node_by_id(id)
 
-    #Méthode pour add
+
     def new_id(self) : 
         '''
         output: int; méthode qui renvoie un indice non-utilisé dans le graphe
         '''
-        def f(i) :
-            '''
-            input: int; id
-            output: int; fonction récursive qui renvoie le prochain indice libre
-            '''
-            for (id,n) in self.nodes.items() : 
-                if (i == id) : 
-                    i+=1
-                    f(i)
-            return i
-        return f(0)  
+
+        m = 0 
+        for k in self.get_id_node_map().keys() : 
+            if k >= m : 
+                m = k+1
+        return m
+    

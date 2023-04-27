@@ -254,11 +254,16 @@ class bool_circ(open_digraph):
         '''
         noeudH = self.get_node_by_id(idH)
         l = noeudH.get_label()
+        #print(l)
         noeudB = self.get_node_by_id(idB)
         childNB = noeudB.get_children_ids()
         self.add_edge(idH,childNB[0])
         for i in range(1,len(childNB)) : 
             id2 = self.add_node(l, {},{childNB[i]:1})
+            self.add_input_id(id2)
+            
+            #print("new :")
+            #print(n.get_label())
         self.remove_node_by_id(idB)
 
     def porte_Non(self,idH,idB ) : 
@@ -302,7 +307,7 @@ class bool_circ(open_digraph):
             nodeB=self.get_node_by_id(idB)
             for parent in nodeB.get_parent_ids():
                 if parent!=idH:
-                    self.add_node('x',{parent:1},{})
+                    self.add_node("",{parent:1},{})
                     self.remove_edge(parent,idB)
             self.fusion(idH,idB,True, "1")
 
@@ -312,6 +317,7 @@ class bool_circ(open_digraph):
         
         effectue la transformation porte OU EXCLUSIF dans le graphe
         '''
+        print(self.get_node())
         noeudH = self.get_node_by_id(idH)
         if noeudH.get_label() == "0" : 
             self.remove_node_by_id(idH)
@@ -320,7 +326,7 @@ class bool_circ(open_digraph):
             c_node = self.get_node_by_id(idB).get_children_ids()
             id = self.add_node("~", {idB:1}, {})
             for i in range(0,len(c_node)) : 
-                self.remove_edge(idH, c_node[i])
+                #self.remove_edge(idH, c_node[i])
                 self.add_edge(id, c_node[i])
             self.remove_edge(idB, self.get_node_by_id(id).get_children_ids()[0])
 
@@ -335,6 +341,91 @@ class bool_circ(open_digraph):
             noeud.set_label("1")
         else : 
             noeud.set_label("0")
+
+    def transformations(self, id_noeud) : 
+        '''
+        input : int ; id du noeud
+
+        regarde si l'on peut appliquer une transformation et si oui, l'effectue
+        '''
+        a_lieu = False
+        noeud = self.get_node_by_id(id_noeud)
+        enf = noeud.get_children_ids()
+        nb_enf = len(enf)
+        if (noeud.get_label() != 0 and noeud.get_label() != 1) : 
+            self.elmt_neutres(id_noeud)
+            a_lieu = True
+        elif nb_enf == 1 and (noeud.get_label() == '0' or noeud.get_label() == '1'): 
+                    id_enf = enf[0]
+                    label_enf = self.get_node_by_id(id_enf).get_label()
+                    if  label_enf == "" : 
+                        self.copies(id_noeud,id_enf)
+                        a_lieu = True
+                    elif label_enf == "^" : 
+                        print(id_noeud)
+                        self.porte_OU_EX(id_noeud,id_enf)
+                        a_lieu = True
+                    elif label_enf == "~" : 
+                        self.porte_Non(id_noeud,id_enf)
+                    elif label_enf == "|" : 
+                        self.porte_OU(id_noeud,id_enf)
+                        a_lieu = True
+                    elif label_enf == "&" : 
+                        self.porte_Et(id_noeud,id_enf)
+                        a_lieu = True
+        return a_lieu
+
+    def evaluate(self):
+        '''
+        évalue le cicruit booléen en appliquant les règles
+        "ET", "OU", "OU EXCLUSIF", "NON", "Copies" et "éléments neutres"
+        '''
+        '''
+        self.display("graphbis", True)
+        
+        cofeuilles=[]
+        nl=self.get_node()
+        for n in nl:
+            if n.get_parent_ids()==[] and n.get_children_ids()!=[]:
+                cofeuilles.append(n.get_id())
+
+        while cofeuilles!=[] and self.profondeur()>2:
+            for c in cofeuilles:
+                n=self.get_node_by_id(c)
+                for child in n.get_children_ids():
+                    cnode=self.get_node_by_id(child)
+                    lab=cnode.get_label()
+                    if lab=='' and cnode.get_children_ids()!=[]:
+                        self.copies(c,child)
+                    elif lab=='~':
+                        self.porte_Non(c,child)
+                    elif lab=='&':
+                        self.porte_Et(c,child)
+                    elif lab=="|":
+                        self.porte_OU(c,child)
+                    elif lab=='^':
+                        self.porte_OU_EX(c,child)
+            self.evaluate()
+        gl=self.connected_list()
+        for g in gl:
+            rml=[]
+            for n in g.get_node():
+                if n.get_label()=='x':
+                    for nb in g.get_node_ids():
+                        rml.append(nb)
+            if rml !=[]:
+                self.remove_nodes_by_id(rml)
+        for nid in self.get_node_ids():
+            self.elmt_neutres(nid)
+        '''
+        #pb d'indices
+        transform = True
+        while transform : 
+            transform = False
+            for node in self.get_node():
+                if node != None and node.get_parent_ids() == [] and node in self.get_node() :
+                    if self.transformations(node.get_id()) : 
+                        transform = True
 
     def asso_xor(self, idh, idb):
         '''
@@ -441,7 +532,6 @@ class bool_circ(open_digraph):
         parentH = noeudH.get_parent_ids()
         self.add_edge(parentH[0],idb)
         self.remove_node_by_id(idh)
-        print(self.get_node())
         for child in noeudB.get_children_ids() : 
             self.remove_edge(idb, child)
             id = self.add_node("~", {idb:1}, {child:1})
@@ -467,9 +557,9 @@ class bool_circ(open_digraph):
         # lorsqu'il y a un transformation de faite on ajoute à la liste les noeuds voisins (s'ils ne sont pas deja dedans) (OK)
         #et on regarde si l'on peut effectuer une transformation, dans la cad contraire on enleve le noeud de la liste etc ... 
         #on repete ce processus tant que la liste n'est pas vide.
+        #pb le graphe ne se modifie pas
         noeuds = self.get_node()
         while noeuds != [] : 
-            print("ok")
             for n in noeuds : 
                 transf = False
                 enf = n.get_children_ids()
@@ -525,7 +615,6 @@ class bool_circ(open_digraph):
                 elif n.get_label() != ''  and len(enf) == 1 :
                     ne = self.get_node_by_id(enf[0])
                     if ne.get_label() == '' and len(ne.get_children_ids()) == 0 :
-                        print(ne)
                         #il y a plus l enfant dans le graphe
                         self.effacement(n.get_id(), enf[0])
                         transf = True
@@ -533,52 +622,9 @@ class bool_circ(open_digraph):
                             noeuds.append(ne)
 
                 if not transf : 
-                    print(n)
                     noeuds.remove(n)
         self.display("ok")
-        #print(noeuds)
 
-
-    def evaluate(self):
-        '''
-        évalue le cicruit booléen en appliquant les règles
-        "ET", "OU", "OU EXCLUSIF", "NON", "Copies" et "éléments neutres"
-        '''
-        self.display("graphbis", True)
-        
-        cofeuilles=[]
-        nl=self.get_node()
-        for n in nl:
-            if n.get_parent_ids()==[] and n.get_children_ids()!=[]:
-                cofeuilles.append(n.get_id())
-        while cofeuilles!=[] and self.profondeur()>2:
-            for c in cofeuilles:
-                n=self.get_node_by_id(c)
-                for child in n.get_children_ids():
-                    cnode=self.get_node_by_id(child)
-                    lab=cnode.get_label()
-                    if lab=='' and cnode.get_children_ids()!=[]:
-                        self.copies(c,child)
-                    elif lab=='~':
-                        self.porte_Non(c,child)
-                    elif lab=='&':
-                        self.porte_Et(c,child)
-                    elif lab=="|":
-                        self.porte_OU(c,child)
-                    elif lab=='^':
-                        self.porte_OU_EX(c,child)
-            self.evaluate()
-        gl=self.connected_list()
-        for g in gl:
-            rml=[]
-            for n in g.get_node():
-                if n.get_label()=='x':
-                    for nb in g.get_node_ids():
-                        rml.append(nb)
-            if rml !=[]:
-                self.remove_nodes_by_id(rml)
-        for nid in self.get_node_ids():
-            self.elmt_neutres(nid)
     
     @classmethod
     def encodeur(cls):
@@ -659,18 +705,24 @@ def calcul(a,b,taille) :
     #if type(n) != int : 
         #raise ValueError
     g1 = bool_circ.registre(a,taille)
+    g1.display("g1",True)
     g2 = bool_circ.registre(b,taille) 
+    g2.display("g2",True)
     g = bool_circ.parallel(g1,g2)
+    g.display("g",True)
     ha = bool_circ.half_adder(n)
     ha.icompose(g)
+    ha.display("ha",True)
     for n in g.get_node() : 
         c_id = n.get_parent_ids()
         if (c_id == []) & ( (n.get_label() == "0") | (n.get_label() == "1")): 
             ha.fusion(n.get_id(),n.get_children_ids()[0],True,n.get_label())
-            ha.fusion(n.get_id(),n.get_children_ids()[0],True,n.get_label())  
+            ha.fusion(n.get_id(),n.get_children_ids()[0],True,n.get_label()) 
+            ha.add_input_id(n.get_id()) 
     bc = bool_circ(ha)
 
-    bc.display("g1",True)
+    bc.display("G_final",True)
     bc.evaluate()
-    return g
+    bc.display("G_eval", True)
+    return bc
 
