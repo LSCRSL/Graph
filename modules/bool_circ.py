@@ -254,16 +254,12 @@ class bool_circ(open_digraph):
         '''
         noeudH = self.get_node_by_id(idH)
         l = noeudH.get_label()
-        #print(l)
         noeudB = self.get_node_by_id(idB)
         childNB = noeudB.get_children_ids()
         self.add_edge(idH,childNB[0])
         for i in range(1,len(childNB)) : 
             id2 = self.add_node(l, {},{childNB[i]:1})
             self.add_input_id(id2)
-            
-            #print("new :")
-            #print(n.get_label())
         self.remove_node_by_id(idB)
 
     def porte_Non(self,idH,idB ) : 
@@ -289,7 +285,7 @@ class bool_circ(open_digraph):
             nodeB=self.get_node_by_id(idB)
             for parent in nodeB.get_parent_ids():
                 if parent!=idH:
-                    self.add_node('x',{parent:1},{})
+                    self.add_node("",{parent:1},{})
                     self.remove_edge(parent,idB)
             self.fusion(idH,idB,True,"0")
                 
@@ -317,7 +313,6 @@ class bool_circ(open_digraph):
         
         effectue la transformation porte OU EXCLUSIF dans le graphe
         '''
-        print(self.get_node())
         noeudH = self.get_node_by_id(idH)
         if noeudH.get_label() == "0" : 
             self.remove_node_by_id(idH)
@@ -337,7 +332,7 @@ class bool_circ(open_digraph):
         effectue la transformation elements neutres dans le graphe
         '''
         noeud = self.get_node_by_id(id)
-        if noeud.get_label()== "&"  or noeud.get_label()=="1": 
+        if noeud.get_label()== "&": 
             noeud.set_label("1")
         else : 
             noeud.set_label("0")
@@ -353,17 +348,17 @@ class bool_circ(open_digraph):
         noeud = self.get_node_by_id(id_noeud)
         enf = noeud.get_children_ids()
         nb_enf = len(enf)
-        if (noeud.get_label() != 0 and noeud.get_label() != 1) : 
+        if (noeud.get_label() == '&' or noeud.get_label() =='|'  or noeud.get_label() == '^') and nb_enf == 1: 
             self.elmt_neutres(id_noeud)
             a_lieu = True 
         elif nb_enf == 1 and (noeud.get_label() == '0' or noeud.get_label() == '1'): #la 2ème condition est redondante puisque c'est elif
                     id_enf = enf[0]
-                    label_enf = self.get_node_by_id(id_enf).get_label()
-                    if  label_enf == "" : 
+                    noeud_enf = self.get_node_by_id(id_enf)
+                    label_enf = noeud_enf.get_label()
+                    if (label_enf == "" or label_enf ==" ") and len(noeud_enf.get_children_ids()) > 0: 
                         self.copies(id_noeud,id_enf)
                         a_lieu = True
                     elif label_enf == "^" : 
-                        print(id_noeud)
                         self.porte_OU_EX(id_noeud,id_enf)
                         a_lieu = True
                     elif label_enf == "~" : 
@@ -381,15 +376,16 @@ class bool_circ(open_digraph):
         évalue le cicruit booléen en appliquant les règles
         "ET", "OU", "OU EXCLUSIF", "NON", "Copies" et "éléments neutres"
         '''
-        '''
-        self.display("graphbis", True)
         
+        ''''
         cofeuilles=[]
         nl=self.get_node()
         for n in nl:
             if n.get_parent_ids()==[] and n.get_children_ids()!=[]:
                 cofeuilles.append(n.get_id())
-
+        '''
+        '''
+        cofeuilles = self.get_input_ids()
         while cofeuilles!=[] and self.profondeur()>2:
             for c in cofeuilles:
                 n=self.get_node_by_id(c)
@@ -419,14 +415,20 @@ class bool_circ(open_digraph):
         for nid in self.get_node_ids():
             self.elmt_neutres(nid)
         '''
-        #pb d'indices
+        i = 0
         transform = True
         while transform : 
+            i+=1
+            #self.display("evaluate" + str(i), True)
             transform = False
-            for node in self.get_node():
-                if node != None and node.get_parent_ids() == [] and node in self.get_node() : #la dernière condition est redondante non? puisqu'on prend déjà les node qui sont dans self.get_node()...
-                    if self.transformations(node.get_id()) : 
-                        transform = True
+            for node in self.get_node() :
+                id = node.get_id()
+                if id not in self.get_output_ids() :
+                    if node != None and node.get_parent_ids() == [] and node in self.get_node() : 
+                            if self.transformations(id) : 
+                                transform = True  
+             
+                 
 
     def asso_xor(self, idh, idb):
         '''
@@ -557,10 +559,13 @@ class bool_circ(open_digraph):
         #ne pas utiliser les cofeuilles, avoir une liste de noeud (au depart tous les noeuds)  (OK)
         # et regarder si l'on peut appliquer une transformation (OK)
         #si ce n'est pas le cas on enleve le noeud de la liste, (OK)
-        # lorsqu'il y a un transformation de faite on ajoute à la liste les noeuds voisins (s'ils ne sont pas deja dedans) (OK)
+        #lorsqu'il y a un transformation de faite on ajoute à la liste les noeuds voisins (s'ils ne sont pas deja dedans) (OK)
         #et on regarde si l'on peut effectuer une transformation, dans la cad contraire on enleve le noeud de la liste etc ... 
         #on repete ce processus tant que la liste n'est pas vide.
-        #pb le graphe ne se modifie pas
+
+        #la fct est hideuse, on peut clairement faire plus joli
+        #la pb etait que le graphe ne se modifiait pas, en faisant des modifs avec le prof, on a remarqué qu'il fallait regler les cas limites
+        #donc entre temps les pbs au niveau des cas limites sont apparus. J'ai pas eu le temps de tout régler.
         noeuds = self.get_node()
         while noeuds != [] : 
             for n in noeuds : 
@@ -570,10 +575,10 @@ class bool_circ(open_digraph):
                     ne = self.get_node_by_id(enf[0])
                     self.asso_xor(n.get_id(), enf[0])
                     transf = True
-                    #faire nouveau voisinage
+                    #normalement la je rajoute le noeud voisin s'il n'est pas déjà dans la liste
                     if ne not in noeuds : 
                         noeuds.append(ne)
-                elif n.get_label() == '' : 
+                elif n.get_label() == '' :  
                     i = 0
                     for e in enf : 
                         ne = self.get_node_by_id(e)
@@ -608,12 +613,14 @@ class bool_circ(open_digraph):
                 elif n.get_label() != ''  and len(enf) == 1 :
                     ne = self.get_node_by_id(enf[0])
                     if ne.get_label() == '' and len(ne.get_children_ids()) == 0 :
-                        #il y a plus l enfant dans le graphe
+                        #erreur car il y a plus l enfant dans le graphe
+                        #il faut donc vérifier s'il est dedans 
                         self.effacement(n.get_id(), enf[0])
                         transf = True
                         if ne not in noeuds : 
                             noeuds.append(ne)
                 if not transf : 
+                    #si on a fait aucune tranformation on peut enlever le noeud de la liste mais pas du graphe !
                     noeuds.remove(n)
         self.display("ok")
 
@@ -694,6 +701,7 @@ def calcul(a,b,taille) :
     Fonction pour tester la méthode evaluate() sur l'additionneur
     '''
     n = math.log(taille,2)
+    print(n)
     #if type(n) != int : 
         #raise ValueError
     g1 = bool_circ.registre(a,taille)
@@ -711,6 +719,7 @@ def calcul(a,b,taille) :
             ha.fusion(n.get_id(),n.get_children_ids()[0],True,n.get_label())
             ha.fusion(n.get_id(),n.get_children_ids()[0],True,n.get_label()) 
             ha.add_input_id(n.get_id()) 
+
     bc = bool_circ(ha)
 
     bc.display("G_final",True)

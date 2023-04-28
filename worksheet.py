@@ -270,7 +270,8 @@ Geval= bool_circ(g)
 #Geval.evaluate()
 #Geval.display("GG_ap_eval1")
 
-g = calcul(2,2,2)
+#g = calcul(2,2,2)
+g = calcul(2,1,2)
 #g.display("ADD")
 
 

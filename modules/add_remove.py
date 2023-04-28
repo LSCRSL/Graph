@@ -120,10 +120,6 @@ class add_remove:
         inputs: int, int; id source et id cible de l'arête à retirer
         '''
         l = self.get_node_by_ids([src,tgt])
-        print(self.get_node())
-        print(src)
-        print(tgt)
-        print(l)
         SRC = l[0]
         TGT = l[1]
         SRC.remove_child_once(tgt)
@@ -143,8 +139,7 @@ class add_remove:
         '''
         input: int; id du noeud pour lequel on retire les arêtes associées
         '''
-        n = self.get_node_by_id(id)
-    
+        n = self.get_node_by_id(id)    
         for p in n.get_parent_ids() :
             self.remove_parallel_edges(p, id)
         for c in n.get_children_ids() : 
