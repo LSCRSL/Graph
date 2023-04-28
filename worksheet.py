@@ -363,8 +363,6 @@ ninv.invol_non(6,7)
 
 g = bool_circ(open_digraph.compose(decodeur,encodeur))
 #g.display("edec")
-#g.eval()
+g.eval()
 #g.display("enc-dec")
-
-
-
+#print("ok")

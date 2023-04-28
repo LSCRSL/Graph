@@ -345,6 +345,7 @@ class bool_circ(open_digraph):
     def transformations(self, id_noeud) : 
         '''
         input : int ; id du noeud
+        output: bool; true si la transformation a eu lieu
 
         regarde si l'on peut appliquer une transformation et si oui, l'effectue
         '''
@@ -354,8 +355,8 @@ class bool_circ(open_digraph):
         nb_enf = len(enf)
         if (noeud.get_label() != 0 and noeud.get_label() != 1) : 
             self.elmt_neutres(id_noeud)
-            a_lieu = True
-        elif nb_enf == 1 and (noeud.get_label() == '0' or noeud.get_label() == '1'): 
+            a_lieu = True 
+        elif nb_enf == 1 and (noeud.get_label() == '0' or noeud.get_label() == '1'): #la 2ème condition est redondante puisque c'est elif
                     id_enf = enf[0]
                     label_enf = self.get_node_by_id(id_enf).get_label()
                     if  label_enf == "" : 
@@ -423,7 +424,7 @@ class bool_circ(open_digraph):
         while transform : 
             transform = False
             for node in self.get_node():
-                if node != None and node.get_parent_ids() == [] and node in self.get_node() :
+                if node != None and node.get_parent_ids() == [] and node in self.get_node() : #la dernière condition est redondante non? puisqu'on prend déjà les node qui sont dans self.get_node()...
                     if self.transformations(node.get_id()) : 
                         transform = True
 
@@ -513,7 +514,6 @@ class bool_circ(open_digraph):
         self.remove_edge(idh,idb)
         #on enleve l'arete entre ~ et son parent
         self.remove_edge(parentH[0], idh)
-
         self.add_edge(parentH[0], idb)
         childrenB = noeudB.get_children_ids()
         self.remove_edge(idb, childrenB[0])
@@ -551,6 +551,9 @@ class bool_circ(open_digraph):
         self.remove_node_by_id(idb)
 
     def eval(self) : 
+        '''
+        méthode qui évalue le cicruit booléen 
+        '''
         #ne pas utiliser les cofeuilles, avoir une liste de noeud (au depart tous les noeuds)  (OK)
         # et regarder si l'on peut appliquer une transformation (OK)
         #si ce n'est pas le cas on enleve le noeud de la liste, (OK)
@@ -563,55 +566,45 @@ class bool_circ(open_digraph):
             for n in noeuds : 
                 transf = False
                 enf = n.get_children_ids()
-
                 if n.get_label() == "^" and len(enf) == 1 and self.get_node_by_id(enf[0]).get_label() == "^" :
-                    
                     ne = self.get_node_by_id(enf[0])
                     self.asso_xor(n.get_id(), enf[0])
                     transf = True
                     #faire nouveau voisinage
                     if ne not in noeuds : 
                         noeuds.append(ne)
-
                 elif n.get_label() == '' : 
                     i = 0
                     for e in enf : 
                         ne = self.get_node_by_id(e)
-
                         if ne.get_label() == '' : 
                             self.asso_copie(n.get_id(), e)
                             transf = True
                             if ne not in noeuds : 
                                 noeuds.append(ne)
-
                         if ne.get_label() == '^' and n.get_children_mult()[i] > 1 : 
                             self.invol_xor(n.get_id(), e)
                             transf = True
                             if ne not in noeuds : 
                                 noeuds.append(ne)
                         i+=1
-
                 elif n.get_label() == '~' :
                     ne = self.get_node_by_id(enf[0])
-
                     if ne.get_label() == "^" : 
                         self.non_xor(n.get_id(), enf[0])
                         transf = True
                         if ne not in noeuds : 
                             noeuds.append(ne)
-
                     if ne.get_label() == '' : 
                         self.non_copie(n.get_id(), enf[0])
                         transf = True
                         if ne not in noeuds : 
                             noeuds.append(ne)
-
                     if ne.get_label() == '~' : 
                         self.invol_non(n.get_id(), enf[0])
                         transf = True
                         if ne not in noeuds : 
                                 noeuds.append(ne)
-                
                 elif n.get_label() != ''  and len(enf) == 1 :
                     ne = self.get_node_by_id(enf[0])
                     if ne.get_label() == '' and len(ne.get_children_ids()) == 0 :
@@ -620,7 +613,6 @@ class bool_circ(open_digraph):
                         transf = True
                         if ne not in noeuds : 
                             noeuds.append(ne)
-
                 if not transf : 
                     noeuds.remove(n)
         self.display("ok")
