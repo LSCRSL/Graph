@@ -270,9 +270,8 @@ Geval= bool_circ(g)
 #Geval.evaluate()
 #Geval.display("GG_ap_eval1")
 
-#g = calcul(2,2,2)
 g = calcul(2,1,2)
-#g.display("ADD")
+#g.display("2+1", True)
 
 
 #%% TP12 TESTS encodeur et decodeur
@@ -364,6 +363,35 @@ ninv.invol_non(6,7)
 
 g = bool_circ(open_digraph.compose(decodeur,encodeur))
 #g.display("edec")
-g.eval()
+#g.eval()
 #g.display("enc-dec")
-#print("ok")
+
+#TESTS POUR QUESTIONS HALF-ADDER
+h0 = bool_circ.half_adder(0)
+h1 = bool_circ.half_adder(1)
+h2 = bool_circ.half_adder(2)
+h3 = bool_circ.half_adder(3)
+#h10 = bool_circ.half_adder(10)
+
+print("Profondeur d'un Half-Adder_n")
+print("n = 0: " + str(h0.profondeur()))
+print("n = 1: " + str(h1.profondeur()))
+print("n = 2: " + str(h2.profondeur()))
+print("n = 3: " + str(h3.profondeur()))
+#print("n = 10: " + str(h10.profondeur()))
+
+print("Nb portes d'un Half-Adder")
+print("n = 0: " + str(h0.nb_portes()))
+print("n = 1: " + str(h1.nb_portes()))
+print("n = 2: " + str(h2.nb_portes()))
+print("n = 3: " + str(h3.nb_portes()))
+#print("n = 10: "+ str(h10.nb_portes()))
+
+print("La longueur plus court chemin d'un Half-Adder")
+print("n = 0: " + str(h0.shortest_path_entry_exit()))
+print("n = 1: " + str(h1.shortest_path_entry_exit()))
+print("n = 2: " + str(h2.shortest_path_entry_exit()))
+print("n = 3: " + str(h3.shortest_path_entry_exit()))
+
+
+

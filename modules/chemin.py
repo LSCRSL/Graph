@@ -42,7 +42,7 @@ class chemin:
     def shortest_path(self, src, tgt, direction=None):
         '''
         input: node, node, int; noeud source et noeud d'arrivé, direction optionnel
-        output: list; liste des noeuds qui forment le chemin le plus court du noeud source au noeud d'arrivé
+        output: list; liste des noeuds qui forment le chemin le plus court du noeud source au noeud d'arrivée
         '''
         res=[tgt]
         while src not in res:
@@ -163,6 +163,34 @@ class chemin:
             vv = prev[vv]
             res.insert(0,vv)
         return dist[v],res
+    
+    def nb_portes(self) :
+        '''
+        output : int
+        renvoie le nombre de portes dans le graphe donné
+        '''
+        noeuds = self.get_node()
+        i = 0
+        for n in noeuds : 
+            if (n.get_label() == "&") or (n.get_label() == "|") or (n.get_label() == "^") or (n.get_label() == "~") : 
+                i+=1
+        return i
+    
+    def shortest_path_entry_exit(self) :
+        '''
+        output : int
+        renvoie la longueur du plus court chemin entre une entrée et une sortie du graphe donné
+        '''
+        entry = self.get_input_ids()
+        exit = self.get_output_ids()
+        path = len(self.shortest_path(self.get_node_by_id(entry[0]), self.get_node_by_id(exit[0])))
+        for entree in entry : 
+            for sortie in exit : 
+                chemin = len(self.shortest_path(self.get_node_by_id(entree),self.get_node_by_id(sortie)))
+                if (chemin < path) : 
+                    path = chemin
+        return path
+
     
 def min(l, f):
     '''

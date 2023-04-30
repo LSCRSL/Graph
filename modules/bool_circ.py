@@ -29,7 +29,8 @@ class bool_circ(open_digraph):
 
     def is_well_formed(self):
         '''
-        output:bool; renvoie vrai si les propriétés d'un circuit booléen sont respectées
+        output:bool; 
+        renvoie vrai si les propriétés d'un circuit booléen sont respectées
         '''
         if self.is_cyclic() :
             return False 
@@ -178,6 +179,7 @@ class bool_circ(open_digraph):
         for ID in g.get_input_ids() : 
             if g.get_node_by_id(ID).get_label() == 'c' : 
                 g.get_input_ids().remove(ID)
+                #la retenue est initialisée à 0
                 g.get_node_by_id(ID).set_label('0')
         return g
     
@@ -376,45 +378,6 @@ class bool_circ(open_digraph):
         évalue le cicruit booléen en appliquant les règles
         "ET", "OU", "OU EXCLUSIF", "NON", "Copies" et "éléments neutres"
         '''
-        
-        ''''
-        cofeuilles=[]
-        nl=self.get_node()
-        for n in nl:
-            if n.get_parent_ids()==[] and n.get_children_ids()!=[]:
-                cofeuilles.append(n.get_id())
-        '''
-        '''
-        cofeuilles = self.get_input_ids()
-        while cofeuilles!=[] and self.profondeur()>2:
-            for c in cofeuilles:
-                n=self.get_node_by_id(c)
-                for child in n.get_children_ids():
-                    cnode=self.get_node_by_id(child)
-                    lab=cnode.get_label()
-                    if lab=='' and cnode.get_children_ids()!=[]:
-                        self.copies(c,child)
-                    elif lab=='~':
-                        self.porte_Non(c,child)
-                    elif lab=='&':
-                        self.porte_Et(c,child)
-                    elif lab=="|":
-                        self.porte_OU(c,child)
-                    elif lab=='^':
-                        self.porte_OU_EX(c,child)
-            self.evaluate()
-        gl=self.connected_list()
-        for g in gl:
-            rml=[]
-            for n in g.get_node():
-                if n.get_label()=='x':
-                    for nb in g.get_node_ids():
-                        rml.append(nb)
-            if rml !=[]:
-                self.remove_nodes_by_id(rml)
-        for nid in self.get_node_ids():
-            self.elmt_neutres(nid)
-        '''
         i = 0
         transform = True
         while transform : 
@@ -426,9 +389,16 @@ class bool_circ(open_digraph):
                 if id not in self.get_output_ids() :
                     if node != None and node.get_parent_ids() == [] and node in self.get_node() : 
                             if self.transformations(id) : 
-                                transform = True  
-             
-                 
+                                transform = True 
+        #on enleve les noeuds inutiles ie : pas la retenue ou un bit resultat
+        for n in self.get_node() : 
+            if len(n.get_children_ids()) == 1 : 
+                child = n.get_children_ids()[0]
+                label = self.get_node_by_id(child).get_label()
+                if  (label != "r") and (label != "cp") : 
+                    self.remove_node(n.get_id())
+                    self.remove_node(child)
+                
 
     def asso_xor(self, idh, idb):
         '''
@@ -691,28 +661,36 @@ class bool_circ(open_digraph):
         b.add_edge(16,31)
         b.add_edge(17,31)
         return cls(b)
+    
+    
 
         
 def calcul(a,b,taille) :
     '''
-    input:int,int,int;
+    input:
+        int: premier entier
+        int: deuxieme entier
+        int: taille du registre
+
     output: bool_circ
     
-    Fonction pour tester la méthode evaluate() sur l'additionneur
+    Fonction qui calcul l'addition de deux entiers
     '''
-    n = math.log(taille,2)
-    print(n)
-    #if type(n) != int : 
-        #raise ValueError
+    #ETAPE 1
     g1 = bool_circ.registre(a,taille)
-    g1.display("g1",True)
     g2 = bool_circ.registre(b,taille) 
-    g2.display("g2",True)
+
+    #ETAPE 2
     g = bool_circ.parallel(g1,g2)
-    g.display("g",True)
+
+    #ETAPE 3
+    n = math.log(taille,2)
+    if 2**n != taille : 
+        return ValueError    
     ha = bool_circ.half_adder(n)
+
+    #ETAPE 4
     ha.icompose(g)
-    ha.display("ha",True)
     for n in g.get_node() : 
         c_id = n.get_parent_ids()
         if (c_id == []) & ( (n.get_label() == "0") | (n.get_label() == "1")): 
@@ -722,8 +700,8 @@ def calcul(a,b,taille) :
 
     bc = bool_circ(ha)
 
-    bc.display("G_final",True)
     bc.evaluate()
-    bc.display("G_eval", True)
     return bc
+
+ 
 
