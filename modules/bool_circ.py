@@ -475,7 +475,7 @@ class bool_circ(open_digraph):
 
     def non_xor(self, idh,idb) : 
         '''
-        inputs: int, int ; id du noeud d'operation ou valeur quelconque en amont et de son fils copie de label ' '
+        inputs: int, int ; id du noeud '~' amont et de son fils '^'
 
         effectue le non à travers xor
         '''
@@ -495,7 +495,7 @@ class bool_circ(open_digraph):
 
     def non_copie(self, idh,idb) : 
         '''
-        inputs: int, int ; id du noeud d'operation ou valeur quelconque en amont et de son fils copie de label ' '
+        inputs: int, int ; id du noeud '~' en amont et de son fils copie de label ' '
 
         effectue le non à travers copie
         '''
@@ -510,7 +510,7 @@ class bool_circ(open_digraph):
                 
     def invol_non(self,idh,idb) : 
         '''
-        inputs: int, int ; id du noeud d'operation ou valeur quelconque en amont et de son fils copie de label ' '
+        inputs: int, int ; id du noeud '~' en amont et de son fils '~'
 
         effectue l'involution de non
         '''
@@ -521,6 +521,36 @@ class bool_circ(open_digraph):
         self.add_edge(parentH[0], childB[0])
         self.remove_node_by_id(idh)
         self.remove_node_by_id(idb)
+
+    def evaluatebis(self): #sous-fonction pour éval qui agit comme evaluate() mais qui ne retire pas les noeuds inutiles
+        '''
+        évalue le cicruit booléen en appliquant les règles
+        "ET", "OU", "OU EXCLUSIF", "NON", "Copies" et "éléments neutres"
+        '''
+        i = 0
+        transform = True
+        transform2 = True 
+        while transform or transform2: 
+            if not transform:
+                transform2=False
+                for node in self.get_node():
+                    if node.get_label()=='~':
+                        transform2=True
+            i+=1
+            #self.display("evaluate" + str(i), True)
+            transform = False
+            for node in self.get_node() :
+                id = node.get_id()
+                if id not in self.get_output_ids() :
+                    if node != None and node.get_parent_ids() == [] and node in self.get_node() : 
+                            if self.transformations(id) : 
+                                transform = True 
+        i=0                        
+        for oi in self.get_output_ids():
+            i+=1
+            o = self.get_node_by_id(oi)
+            op = self.get_node_by_id(o.get_parent_ids()[0])
+            o.set_label(op.get_label())
 
     def eval(self) : 
         '''
@@ -533,16 +563,15 @@ class bool_circ(open_digraph):
         #et on regarde si l'on peut effectuer une transformation, dans la cad contraire on enleve le noeud de la liste etc ... 
         #on repete ce processus tant que la liste n'est pas vide.
 
-        #la fct est hideuse, on peut clairement faire plus joli
-        #la pb etait que le graphe ne se modifiait pas, en faisant des modifs avec le prof, on a remarqué qu'il fallait regler les cas limites
-        #donc entre temps les pbs au niveau des cas limites sont apparus. J'ai pas eu le temps de tout régler.
         noeuds = self.get_node()
+        output = self.get_output_ids()
         while noeuds != [] : 
             for n in noeuds : 
                 transf = False
                 enf = n.get_children_ids()
                 if n.get_label() == "^" and len(enf) == 1 and self.get_node_by_id(enf[0]).get_label() == "^" :
                     ne = self.get_node_by_id(enf[0])
+                    print("\nB")
                     self.asso_xor(n.get_id(), enf[0])
                     transf = True
                     #normalement la je rajoute le noeud voisin s'il n'est pas déjà dans la liste
@@ -552,59 +581,67 @@ class bool_circ(open_digraph):
                     i = 0
                     for e in enf : 
                         ne = self.get_node_by_id(e)
-                        if ne.get_label() == '' : 
+                        if ne.get_label() == '' and len(ne.get_children_ids())>0: 
+                            print("\nA")
                             self.asso_copie(n.get_id(), e)
                             transf = True
                             if ne not in noeuds : 
                                 noeuds.append(ne)
                         if ne.get_label() == '^' and n.get_children_mult()[i] > 1 : 
-                            self.invol_xor(n.get_id(), e)
+                            print("\nG")
+                            self.invol_xor(e, n.get_id())
                             transf = True
                             if ne not in noeuds : 
                                 noeuds.append(ne)
                         i+=1
-                elif n.get_label() == '~' :
+                elif n.get_label() == '~' and n in self.get_node() :
                     ne = self.get_node_by_id(enf[0])
                     if ne.get_label() == "^" : 
+                        print("\nC")
                         self.non_xor(n.get_id(), enf[0])
+                        self.display("aprèsC")
                         transf = True
                         if ne not in noeuds : 
                             noeuds.append(ne)
-                    if ne.get_label() == '' : 
+                    if ne.get_label() == '' and len(ne.get_children_ids())>1: 
+                        print("\nD")
                         self.non_copie(n.get_id(), enf[0])
+                        self.display("aprèsD")
                         transf = True
                         if ne not in noeuds : 
                             noeuds.append(ne)
                     if ne.get_label() == '~' : 
+                        print("\nE")
                         self.invol_non(n.get_id(), enf[0])
                         transf = True
                         if ne not in noeuds : 
                                 noeuds.append(ne)
                 elif n.get_label() != ''  and len(enf) == 1 :
                     ne = self.get_node_by_id(enf[0])
-                    if ne.get_label() == '' and len(ne.get_children_ids()) == 0 :
+                    if ne.get_label() == '' and len(ne.get_children_ids()) == 0 and (enf[0] not in output):
                         #erreur car il y a plus l enfant dans le graphe
                         #il faut donc vérifier s'il est dedans 
+                        print("\nF")
                         self.effacement(n.get_id(), enf[0])
                         transf = True
                         if ne not in noeuds : 
                             noeuds.append(ne)
                 if not transf : 
-                    #si on a fait aucune tranformation on peut enlever le noeud de la liste mais pas du graphe !
-                    noeuds.remove(n)
-        self.display("ok")
+                    #si on a fait aucune tranformation on peut enlever le noeud de la liste mais pas du graphe
+                    noeuds.remove(n)     
+        self.evaluatebis()
 
     
     @classmethod
-    def encodeur(cls):
+    def encodeur(cls,b0,b1,b2,b3):
         '''
         input: int, int, int, int; des bits à encoder
         renvoie le cicruit booléen correspondant à l'encodeur
         '''
-        i0=node(0,'',{},{4:1})
-        i1=node(1,'',{},{5:1})
-        i2=node(2,'',{},{6:1})
-        i3=node(3,'',{},{7:1})
+        i0=node(0,str(b0),{},{4:1})
+        i1=node(1,str(b1),{},{5:1})
+        i2=node(2,str(b2),{},{6:1})
+        i3=node(3,str(b3),{},{7:1})
         a=node(4,'',{0:1},{8:1,12:1,13:1})
         b=node(5,'',{1:1},{9:1,12:1,14:1})
         c=node(6,'',{2:1},{10:1,13:1,14:1})
@@ -623,12 +660,12 @@ class bool_circ(open_digraph):
         return cls(g)
 
     @classmethod
-    def decodeur(cls):
+    def decodeur(cls, b0, b1, b2, b3, b4, b5, b6):
         '''
         input: int * 7; bits à évaluer
         renvoie le circuit booléen correspondant au décodeur
         '''
-        b=bool_circ.encodeur()
+        b=bool_circ.encodeur(b0,b1,b2,b3)
         for i in range (0,3):
             b.add_nodes(node(18+i,'',{},{12+i:1}))
             b.add_input_id(18+i)
@@ -637,6 +674,9 @@ class bool_circ(open_digraph):
             b.add_nodes(n)
             b.add_edge(i,17+i)
             b.remove_edge(i,i+4)
+        b.get_node_by_id(18).set_label(b4)
+        b.get_node_by_id(19).set_label(b5)
+        b.get_node_by_id(20).set_label(b6)
         n1=node(25,'&',{15:1,16:1,26:1},{21:1})
         n2=node(26,'~',{17:1},{25:1})
         b.add_nodes_list([n1,n2])
@@ -660,9 +700,79 @@ class bool_circ(open_digraph):
         b.add_edge(15,31)
         b.add_edge(16,31)
         b.add_edge(17,31)
+        b.set_output([8,9,10,11])
+        i = 21
+        for o in b.get_node_by_ids([8,9,10,11]):
+            o.set_parent_ids({i:1})
+            i+=1
         return cls(b)
     
-    
+    def bruit(self, o):
+        '''
+        input: int; indice d'un noeud en output de l'encodeur 
+        (on suppose la valeur comprise entre 0 et 6)
+
+        Ajoute du bruit au code de Hamming en corrompant 1 bit sur les 7 du code
+        '''
+        if o<=3:
+            ido=8+o
+            idi=o
+        else:
+            ido=11+o
+            idi=8+o
+        no=self.get_node_by_id(11+o)
+        n= node(20, '~', {idi:1}, {ido:1})
+        self.add_nodes(n)
+        self.add_edge(idi,20)
+        self.remove_edge(idi,ido)
+
+
+def code(b0,b1,b2,b3):
+    '''
+    input: int, int, int, int; valeurs des bits à encoder
+    output: int (*7); code à 7 bits obtenu grâce à l'encodeur
+
+    Fonction qui permet d'obtenir un code à 7 chiffres par l'encodeur
+    '''
+    encodeur=bool_circ.encodeur(b0,b1,b2,b3)
+    encodeur.eval()
+    res=encodeur.get_node_by_ids(encodeur.get_output_ids())
+    return (int(res[0].get_label()),int(res[1].get_label()),int(res[2].get_label()), 
+            int(res[3].get_label()),int(res[5].get_label()),int(res[4].get_label()),
+            int(res[6].get_label()))
+
+def code_bruit(b0,b1,b2,b3, bc):
+    '''
+    input: int, int, int, int, int; valeurs des bits à encoder 
+    et indice du bit avec du bruit
+
+    output: int (*7); code à 7 bits obtenu grâce à l'encodeur
+
+    Fonction qui permet d'obtenir un code à 7 chiffres par l'encodeur
+    avec un peu de bruit (ie un bit corrompu en sortie)
+    '''
+    encodeur=bool_circ.encodeur(b0,b1,b2,b3)
+    encodeur.eval()
+    encodeur.bruit(bc)
+    encodeur.eval()
+    res=encodeur.get_node_by_ids(encodeur.get_output_ids())
+    return (int(res[0].get_label()),int(res[1].get_label()),int(res[2].get_label()), 
+            int(res[3].get_label()),int(res[4].get_label()),int(res[5].get_label()),
+            int(res[6].get_label()))
+
+
+def decode(b0,b1,b2,b3,b4,b5,b6):
+    '''
+    input: int (*7); valeurs des bits à décoder
+    output: int, int, int, int; code à 4 bits 
+
+    Fonction qui permet de décoder un code obtenu grâce à l'encodeur
+    '''
+    encodeur=bool_circ.decodeur(b0,b1,b2,b3,b4,b5,b6)
+    encodeur.eval()
+    res=encodeur.get_node_by_ids(encodeur.get_output_ids())
+    return (int(res[0].get_label()),int(res[1].get_label()),
+            int(res[2].get_label()),int(res[3].get_label()))
 
         
 def calcul(a,b,taille) :
@@ -671,7 +781,6 @@ def calcul(a,b,taille) :
         int: premier entier
         int: deuxieme entier
         int: taille du registre
-
     output: bool_circ
     
     Fonction qui calcul l'addition de deux entiers
@@ -699,9 +808,6 @@ def calcul(a,b,taille) :
             ha.add_input_id(n.get_id()) 
 
     bc = bool_circ(ha)
-
     bc.evaluate()
     return bc
-
- 
 

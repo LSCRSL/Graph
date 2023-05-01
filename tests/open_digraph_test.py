@@ -355,6 +355,39 @@ class BoolCircTest (unittest.TestCase):
         self.assertEqual(inputs2, ['x0','x1','x2'])
         #G9mul.display('testG9mul')
 
+    def test_Code_Hamming(self):
+        '''
+        Verification que les valeurs d'entrée sont identiques à celles 
+        de sortie lorqu'appliquées au Code de Hamming sans bruit
+        '''
+        for a in range (1):
+            for b in range (1):
+                for c in range (1):
+                    for d in range (1):
+                        b0,b1,b2,b3,b4,b5,b6=code(a,b,c,d)
+                        ra, rb, rc, rd = decode(b0,b1,b2,b3,b4,b5,b6)
+                        self.assertEqual(a,ra)
+                        self.assertEqual(b,rb)
+                        self.assertEqual(c,rc)
+                        self.assertEqual(d,rd)
+                        
+    def test_Code_Hamming_bruit_faible(self):
+        '''
+        Verification que les valeurs d'entrée sont identiques à celles 
+        de sortie lorqu'appliquées au Code de Hamming avec du bruit faible
+        '''
+        for a in range (1):
+            for b in range (1):
+                for c in range (1):
+                    for d in range (1):
+                        for bruit in range(7):
+                            b0,b1,b2,b3,b4,b5,b6=code_bruit(a,b,c,d,bruit)
+                            ra, rb, rc, rd = decode(b0,b1,b2,b3,b4,b5,b6)
+                            self.assertEqual(a,ra)
+                            self.assertEqual(b,rb)
+                            self.assertEqual(c,rc)
+                            self.assertEqual(d,rd)                    
+
         
 if __name__ == '__main__': # the following code is called only when
     unittest.main() # precisely this file is run

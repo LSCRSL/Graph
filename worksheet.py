@@ -252,6 +252,13 @@ e = node(4, " ", {1:1}, {})
 g = open_digraph([],[], [a,b,c,d,e])
 g2 = bool_circ(g)
 
+i1 = node(0, '1', {}, {1:1})
+a = node(1,'~',{0:1}, {2:1})
+o1 = node(2, '', {1:1}, {})
+testNON = bool_circ(open_digraph([i1],[o1],[i1,a,o1]))
+#testNON.display("avantNON")
+testNON.porte_Non(0,1)
+#testNON.display("aprèsNON")
 
 #g2.display("avant")
 g2.porte_OU(0,1)
@@ -272,13 +279,6 @@ Geval= bool_circ(g)
 
 g = calcul(2,1,2)
 #g.display("2+1", True)
-
-
-#%% TP12 TESTS encodeur et decodeur
-encodeur=bool_circ.encodeur()
-#encodeur.display('encodeur') #testé
-decodeur=bool_circ.decodeur()
-#decodeur.display("decodeur", True) #testé
 
 
 #%% TP12 TESTS règles de réécriture
@@ -324,7 +324,7 @@ i2=node(1,'0',{},{5:1})
 i3=node(2,'0',{},{5:1})
 a=node(5,'^',{0:1,1:1,2:1},{7:1})
 o1=node(7,'',{5:1},{})
-eff=bool_circ(open_digraph([0,1,2],[7],[i1,i2,i3,a,o1]))
+eff=bool_circ(open_digraph([0,1,2],[],[i1,i2,i3,a,o1]))
 #eff.display("av_eff",True)
 eff.effacement(5,7)
 #eff.display("ap_eff", True)  #test ok
@@ -341,9 +341,9 @@ nxor=bool_circ(open_digraph([0,1,2,3],[7],[i1,i2,i3,i4,a,b,o1]))
 nxor.non_xor(6,5)
 #nxor.display("ap_xor",True)  #test ok
 
-i1=node(0,'1',{7:1},{})
-i2=node(1,'0',{7:1},{})
-i3=node(2,'0',{7:1},{})
+i1=node(0,'',{7:1},{})
+i2=node(1,'',{7:1},{})
+i3=node(2,'',{7:1},{})
 i4 =node(3,'1',{},{6:1})
 b=node(6, '~', {3:1},{7:1})
 o1=node(7,'',{6:1},{0:1,1:1,2:1})
@@ -352,8 +352,8 @@ ncop=bool_circ(open_digraph([3],[0,1,2],[i1,i2,i3,i4,b,o1]))
 ncop.non_copie(6,7)
 #ncop.display("ap_cop",True)  #test ok
 
-i1=node(0,' ',{7:1},{})
-i2=node(1,' ',{},{6:1})
+i1=node(0,'',{7:1},{})
+i2=node(1,'1',{},{6:1})
 b=node(6, '~', {1:1},{7:1})
 o1=node(7,'~',{6:1},{0:1})
 ninv=bool_circ(open_digraph([1],[0],[i1,i2,b,o1]))
@@ -361,12 +361,10 @@ ninv=bool_circ(open_digraph([1],[0],[i1,i2,b,o1]))
 ninv.invol_non(6,7)
 #ninv.display("ap_ninv",True)  #test ok
 
-g = bool_circ(open_digraph.compose(decodeur,encodeur))
-#g.display("edec")
-#g.eval()
-#g.display("enc-dec")
 
-#TESTS POUR QUESTIONS HALF-ADDER
+
+#%%TESTS POUR QUESTIONS HALF-ADDER 
+
 h0 = bool_circ.half_adder(0)
 h1 = bool_circ.half_adder(1)
 h2 = bool_circ.half_adder(2)
@@ -395,3 +393,46 @@ print("n = 3: " + str(h3.shortest_path_entry_exit()))
 
 
 
+#%% TESTS CODE DE HAMMING
+
+def test1(A,B,C,D):
+    e=bool_circ.encodeur(A,B,C,D)
+    e.display("Eav", True)
+    e.eval()
+    e.display("Eap",True)
+
+def test2(A,B,C,D, E, F, G):
+    de=bool_circ.decodeur(A,B,C,D,E,F,G)
+    de.display("DEav", True)
+    de.eval()
+    de.display("DEap",True)
+
+#test1(1,1,1,1)
+#test2(1,0,0,0,1,1,0)
+
+'''
+encodeur=bool_circ.encodeur(1,0,0,1)
+encodeur.display('encodeur',True)
+encodeur.eval()
+#encodeur.bruit(5)
+encodeur.eval()
+encodeur.display("encodeur_évalué",True)
+
+decodeur=bool_circ.decodeur(1,0,0,1,0,0,1)
+decodeur.display("decodeur", True) 
+decodeur.eval()
+decodeur.display("decodeur_évalué")'''
+
+print("\n\nTEST du Code de Hamming avec bruit pour la valeur d'entrée 0101\n")
+print("On ajoute du bruit à un indice >4, par exemple 6:\n")
+a,b,c,d,e,f,g=code_bruit(0,1,0,1,6)
+print("Code à la sortie de l'encodeur avec le bruit:")
+print(code_bruit(0,1,0,1,6))
+print("Code restitué par le décodeur:")
+print(decode(a,b,c,d,e,f,g))
+
+print("\nOn utilise le code sans bruit en témoin:\nCode à 7 bits:")
+a,b,c,d,e,f,g=code(0,1,0,1)
+print(code(0,1,0,1))
+print("Code restitué par le décodeur:")
+print(decode(a,b,c,d,e,f,g))
