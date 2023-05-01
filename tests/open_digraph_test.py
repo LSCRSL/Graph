@@ -360,10 +360,10 @@ class BoolCircTest (unittest.TestCase):
         Verification que les valeurs d'entrée sont identiques à celles 
         de sortie lorqu'appliquées au Code de Hamming sans bruit
         '''
-        for a in range (1):
-            for b in range (1):
-                for c in range (1):
-                    for d in range (1):
+        for a in range (2):
+            for b in range (2):
+                for c in range (2):
+                    for d in range (2):
                         b0,b1,b2,b3,b4,b5,b6=code(a,b,c,d)
                         ra, rb, rc, rd = decode(b0,b1,b2,b3,b4,b5,b6)
                         self.assertEqual(a,ra)
@@ -376,10 +376,10 @@ class BoolCircTest (unittest.TestCase):
         Verification que les valeurs d'entrée sont identiques à celles 
         de sortie lorqu'appliquées au Code de Hamming avec du bruit faible
         '''
-        for a in range (1):
-            for b in range (1):
-                for c in range (1):
-                    for d in range (1):
+        for a in range (2):
+            for b in range (2):
+                for c in range (2):
+                    for d in range (2):
                         for bruit in range(7):
                             b0,b1,b2,b3,b4,b5,b6=code_bruit(a,b,c,d,bruit)
                             ra, rb, rc, rd = decode(b0,b1,b2,b3,b4,b5,b6)
