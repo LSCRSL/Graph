@@ -556,13 +556,6 @@ class bool_circ(open_digraph):
         '''
         méthode qui évalue le cicruit booléen 
         '''
-        #ne pas utiliser les cofeuilles, avoir une liste de noeud (au depart tous les noeuds)  (OK)
-        # et regarder si l'on peut appliquer une transformation (OK)
-        #si ce n'est pas le cas on enleve le noeud de la liste, (OK)
-        #lorsqu'il y a un transformation de faite on ajoute à la liste les noeuds voisins (s'ils ne sont pas deja dedans) (OK)
-        #et on regarde si l'on peut effectuer une transformation, dans la cad contraire on enleve le noeud de la liste etc ... 
-        #on repete ce processus tant que la liste n'est pas vide.
-
         noeuds = self.get_node()
         output = self.get_output_ids()
         while noeuds != [] : 
@@ -571,10 +564,8 @@ class bool_circ(open_digraph):
                 enf = n.get_children_ids()
                 if n.get_label() == "^" and len(enf) == 1 and self.get_node_by_id(enf[0]).get_label() == "^" :
                     ne = self.get_node_by_id(enf[0])
-                    print("\nB")
                     self.asso_xor(n.get_id(), enf[0])
                     transf = True
-                    #normalement la je rajoute le noeud voisin s'il n'est pas déjà dans la liste
                     if ne not in noeuds : 
                         noeuds.append(ne)
                 elif n.get_label() == '' :  
@@ -582,13 +573,11 @@ class bool_circ(open_digraph):
                     for e in enf : 
                         ne = self.get_node_by_id(e)
                         if ne.get_label() == '' and len(ne.get_children_ids())>0: 
-                            print("\nA")
                             self.asso_copie(n.get_id(), e)
                             transf = True
                             if ne not in noeuds : 
                                 noeuds.append(ne)
                         if ne.get_label() == '^' and n.get_children_mult()[i] > 1 : 
-                            print("\nG")
                             self.invol_xor(e, n.get_id())
                             transf = True
                             if ne not in noeuds : 
@@ -597,21 +586,16 @@ class bool_circ(open_digraph):
                 elif n.get_label() == '~' and n in self.get_node() :
                     ne = self.get_node_by_id(enf[0])
                     if ne.get_label() == "^" : 
-                        print("\nC")
                         self.non_xor(n.get_id(), enf[0])
-                        self.display("aprèsC")
                         transf = True
                         if ne not in noeuds : 
                             noeuds.append(ne)
                     if ne.get_label() == '' and len(ne.get_children_ids())>1: 
-                        print("\nD")
                         self.non_copie(n.get_id(), enf[0])
-                        self.display("aprèsD")
                         transf = True
                         if ne not in noeuds : 
                             noeuds.append(ne)
                     if ne.get_label() == '~' : 
-                        print("\nE")
                         self.invol_non(n.get_id(), enf[0])
                         transf = True
                         if ne not in noeuds : 
@@ -619,15 +603,11 @@ class bool_circ(open_digraph):
                 elif n.get_label() != ''  and len(enf) == 1 :
                     ne = self.get_node_by_id(enf[0])
                     if ne.get_label() == '' and len(ne.get_children_ids()) == 0 and (enf[0] not in output):
-                        #erreur car il y a plus l enfant dans le graphe
-                        #il faut donc vérifier s'il est dedans 
-                        print("\nF")
                         self.effacement(n.get_id(), enf[0])
                         transf = True
                         if ne not in noeuds : 
                             noeuds.append(ne)
                 if not transf : 
-                    #si on a fait aucune tranformation on peut enlever le noeud de la liste mais pas du graphe
                     noeuds.remove(n)     
         self.evaluatebis()
 
@@ -810,4 +790,3 @@ def calcul(a,b,taille) :
     bc = bool_circ(ha)
     bc.evaluate()
     return bc
-
